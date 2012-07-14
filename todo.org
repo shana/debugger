@@ -1,0 +1,77 @@
+* Features
+
+** support for editing multiple files (tabs)
+
+** keyboard shortcuts
+*** save file
+*** file tab navigation
+
+** text selection
+*** copy
+*** paste over selection
+*** cut
+
+** big files (thousands of lines)
+   piece table + asynchronous classification should do the trick
+
+** code completion
+
+** code navigation
+
+** squiggly red lines for console errors in open file
+
+** remember files from last session
+
+** hot reloading in play mode
+   avoid hiccups caused by appdomain reloads
+
+** special manipulators for constants and unity api types
+*** sliders for numbers
+*** color picker for Color
+
+** auto update distribution model
+
+** brace matching
+
+** repl
+
+* Model
+
+** introduce tracking spans
+
+** support for tags (Error tag for squiggly red lines, for instance)
+
+** introduce support for remote replicas
+   the piece table algorithm makes it simple to keep remote replicas in sync.
+   completion service could host replicas of the open buffers and assemble completion information upon ITextBuffer.Changed.
+   completion requests would be answered immediately from the asynchronously computed information.
+
+* Languages
+
+** consider classifying on a separate thread for a more responsive UI
+
+** decent keyword completion support
+*** don't show popup inside comments or strings
+
+** decent completion support for members of the current script
+*** show member signature
+*** show documentation for unity api members
+*** show documentation from source code
+
+** Go to member in current file (R# ALT+\)
+
+** Go to symbol in current project (R# ALT+SHIT+T)
+*** requires background parsing of complete project
+
+** respect current platform (whenever user switchs targets)
+*** handle platform specific defines
+*** handle platform specific UnityEngine references
+
+* View
+
+** scrollable completion popup
+
+** tooltips for completion popup
+
+** support for arbitrary line adornments
+*** can be used to display squiggly red lines below text

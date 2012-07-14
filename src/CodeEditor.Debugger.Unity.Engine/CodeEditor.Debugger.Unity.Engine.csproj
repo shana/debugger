@@ -59,6 +59,10 @@
       <Project>{C290F98D-894E-4878-AE4A-D1E83DA95619}</Project>
       <Name>CodeEditor.Text.UI.Unity.Engine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CodeEditor.Text.UI\CodeEditor.Text.UI.csproj">
+      <Project>{6A91E197-9142-40C7-8C24-A75E8709E26D}</Project>
+      <Name>CodeEditor.Text.UI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

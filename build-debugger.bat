@@ -6,6 +6,7 @@ SET BIN="%PROJECTPATH%\Assets\bin"
 rd /s /q %BIN%
 mkdir %BIN%
 xcopy src\CodeEditor.Debugger.Unity.Standalone\bin\Debug\* %BIN%
+del %BIN%\UnityEngine.dll
 
 rd /s /q %BUILDPATH%
 mkdir %BUILDPATH%

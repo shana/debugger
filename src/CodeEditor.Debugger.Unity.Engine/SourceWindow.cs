@@ -1,3 +1,4 @@
+using System;
 using CodeEditor.Composition;
 using CodeEditor.Text.UI.Unity.Engine;
 using UnityEngine;
@@ -10,6 +11,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 		private readonly ITextViewFactory _viewFactory;
 		private ITextView _textView;
 		private volatile string _pendingSourceLocation;
+		private volatile int _pendingSourceLine;
 
 		[ImportingConstructor]
 		public SourceWindow(ITextViewFactory viewFactory)
@@ -25,6 +27,10 @@ namespace CodeEditor.Debugger.Unity.Engine
 			{
 				_textView = _viewFactory.ViewForFile(_pendingSourceLocation);
 				_textView.ViewPort = ViewPort;
+				_textView.Document.Caret.SetPosition(_pendingSourceLine-1,0);
+
+				_textView.EnsureCursorIsVisible();
+
 				_pendingSourceLocation = null;
 			}
 
@@ -37,6 +43,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 		public void ShowSourceLocation(string sourceFile, int lineNumber)
 		{
 			_pendingSourceLocation = sourceFile;
+			_pendingSourceLine = lineNumber;
 		}
 	}
 }
