@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Threading;
 using Mono.Debugger.Soft;
@@ -12,12 +13,12 @@ namespace CodeEditor.Debugger
 		private volatile VirtualMachine _vm;
 		private MethodEntryEventRequest _methodEntryRequest;
 		private bool _vmSuspended;
-		private Event _vmSuspendingEvent;
 		private readonly Queue<Event> _queuedEvents = new Queue<Event>();
 		private EventRequest _requestWaitingForResponse;
 
 		public Action<Event> VMGotSuspended = delegate { };
 		public Action<string> TraceCallback = delegate { };
+		private ThreadMirror _mainThread;
 
 		public void Start(int debuggerPort)
 		{
@@ -119,11 +120,13 @@ namespace CodeEditor.Debugger
 
 		private void HandleEvent(Event e)
 		{
-			Trace(e.ToString());
+			if (_mainThread == null)
+				_mainThread = e.Thread;
 			switch (e.EventType)
 			{
 				case EventType.VMStart:
-					break;
+					OnVMStart((VMStartEvent) e);
+					return;
 				case EventType.AssemblyLoad:
 					OnAssemblyLoad((AssemblyLoadEvent)e);
 					break;
@@ -155,6 +158,11 @@ namespace CodeEditor.Debugger
 			SafeResume();
 		}
 
+		private void OnVMStart(VMStartEvent vmStartEvent)
+		{
+			SafeResume();
+		}
+
 		private void OnStep(StepEvent stepEvent)
 		{
 			Trace("OnStep event");
@@ -172,7 +180,6 @@ namespace CodeEditor.Debugger
 
 		private void OnVMGotSuspended(Event e)
 		{
-			_vmSuspendingEvent = e;
 			_vmSuspended = true;
 
 			if (VMGotSuspended != null)
@@ -192,21 +199,34 @@ namespace CodeEditor.Debugger
 
 		private void OnAssemblyLoad(AssemblyLoadEvent e)
 		{
-			/*
 			var assembly = e.Assembly;
+			ProcessLoadedAssembly(assembly);
+		}
+
+		private void ProcessLoadedAssembly(AssemblyMirror assembly)
+		{
 			var hasDebugSymbols = HasDebugSymbols(assembly);
 			Trace("AssemblyLoad: {0}", assembly.GetName().FullName);
 			Trace("\tHasDebugSymbols: {0}", hasDebugSymbols);
-			return;
-			if (hasDebugSymbols && IsUserCode(assembly))
-			{
-				_methodEntryRequest.Disable();
-				if (_methodEntryRequest.AssemblyFilter != null)
-					_methodEntryRequest.AssemblyFilter.Add(assembly);
-				else
-					_methodEntryRequest.AssemblyFilter = new List<AssemblyMirror> { assembly };
-				_methodEntryRequest.Enable();
-			}*/
+			
+			if (!hasDebugSymbols || !IsUserCode(assembly)) return;
+			
+			_methodEntryRequest.Disable();
+			if (_methodEntryRequest.AssemblyFilter != null)
+				_methodEntryRequest.AssemblyFilter.Add(assembly);
+			else
+				_methodEntryRequest.AssemblyFilter = new List<AssemblyMirror> {assembly};
+			_methodEntryRequest.Enable();
+		}
+
+		private static bool IsUserCode(AssemblyMirror assembly)
+		{
+			return assembly.GetName().Name.StartsWith("Assembly-");
+		}
+
+		private static bool HasDebugSymbols(AssemblyMirror assembly)
+		{
+			return File.Exists(assembly.ManifestModule.FullyQualifiedName + ".mdb");
 		}
 
 		private void OnAssemblyUnload(AssemblyUnloadEvent e)
@@ -226,20 +246,24 @@ namespace CodeEditor.Debugger
 			WithErrorLogging(() => _vm.Resume());
 		}
 
-		private void SendBreakRequeest()
+		public void Break()
 		{
-			//cant figure out how to do this yet...
-			throw new NotImplementedException();
+			_methodEntryRequest.Enable();
 		}
 
 		public void SendStepRequest(StepDepth stepDepth)
 		{
-			var stepEventRequest = _vm.CreateStepRequest(_vmSuspendingEvent.Thread);
+			var stepEventRequest = _vm.CreateStepRequest(_mainThread);
 			stepEventRequest.Depth = stepDepth;
 			stepEventRequest.Size = StepSize.Line;
 			stepEventRequest.Enable();
 			SafeResume();
 			_requestWaitingForResponse = stepEventRequest;
+		}
+
+		public IList<ThreadMirror> GetThreads()
+		{
+			return _vm.GetThreads();
 		}
 
 		private void TraceError(Exception exception)
@@ -255,8 +279,13 @@ namespace CodeEditor.Debugger
 
 		private void Trace(string format, params object[] args)
 		{
-			var text = string.Format(format, args);
+			var text = String.Format(format, args);
 			TraceCallback(text);
+		}
+
+		public ThreadMirror GetMainThread()
+		{
+			return _mainThread;
 		}
 	}
 }
