@@ -142,5 +142,10 @@ namespace CodeEditor.Debugger.Unity.Standalone
 			Console.WriteLine(text);
 			_console.WriteLine(text);
 		}
+
+		public void OnApplicationQuit()
+		{
+			_debuggingSession.Disconnect();
+		}
 	}
 }

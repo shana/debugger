@@ -17,6 +17,11 @@ namespace CodeEditor.Debugger.Unity.Standalone
 			view.OnGUI();
 		}
 
+		public static void OnApplicationQuit()
+		{
+			view.OnApplicationQuit();
+		}
+
 		static string AssemblyPath
 		{
 			get { return Path.GetDirectoryName(typeof(Main).Assembly.ManifestModule.FullyQualifiedName); }

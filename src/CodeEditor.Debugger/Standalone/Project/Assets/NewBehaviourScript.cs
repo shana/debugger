@@ -11,4 +11,9 @@ public class NewBehaviourScript : MonoBehaviour
 	{
 		CodeEditor.Debugger.Unity.Standalone.Main.OnGUI ();
 	}
+
+	void OnApplicationQuit()
+	{
+		CodeEditor.Debugger.Unity.Standalone.Main.OnApplicationQuit ();
+	}
 }
