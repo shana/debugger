@@ -76,6 +76,10 @@
       <Project>{0E6DFD1C-426E-4F74-AD5B-D908458B3D7B}</Project>
       <Name>CodeEditor.Debugger.Unity.Engine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CodeEditor.Debugger\CodeEditor.Debugger.csproj">
+      <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
+      <Name>CodeEditor.Debugger</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
