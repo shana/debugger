@@ -11,6 +11,8 @@ namespace CodeEditor.Debugger.Unity.Engine
 		private readonly IDebuggerSession _debuggerSession;
 		private IList<ThreadMirror> _threads = new List<ThreadMirror>();
 
+		Dictionary<ThreadMirror,string> _captionCache = new Dictionary<ThreadMirror, string>();
+			
 		[ImportingConstructor]
 		public ThreadsDisplay(IDebuggerSession debuggerSession)
 		{
@@ -29,8 +31,18 @@ namespace CodeEditor.Debugger.Unity.Engine
 
 			foreach(var thread in _threads)
 			{
-				GUILayout.Label("Thread id: "+thread.Id+", Name: "+NameFor(thread));
+				GUILayout.Label(CaptionFor(thread));
 			}
+		}
+
+		private string CaptionFor(ThreadMirror thread)
+		{
+			if (_captionCache.ContainsKey(thread))
+				return _captionCache[thread];
+			var caption = "Thread id: "+thread.Id+", Name: "+NameFor(thread);
+
+			_captionCache[thread] = caption;
+			return caption;
 		}
 
 		public string Title
@@ -40,7 +52,14 @@ namespace CodeEditor.Debugger.Unity.Engine
 
 		private static string NameFor(ThreadMirror thread)
 		{
-			return thread.IsThreadPoolThread ? "ThreadPool" : thread.Name;
+			try
+			{
+				return thread.IsThreadPoolThread ? "ThreadPool" : thread.Name;
+			} catch (ObjectCollectedException)
+			{
+				return "Thread already dead";
+			}
+			
 		}
 
 		public void SetThreads(IList<ThreadMirror> threads)

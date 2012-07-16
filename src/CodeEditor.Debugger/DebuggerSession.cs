@@ -37,6 +37,7 @@ namespace CodeEditor.Debugger
 
 		public event Action<string> TraceCallback ;
 		private ThreadMirror _mainThread;
+		private List<AssemblyMirror> _loadedAssemblies = new List<AssemblyMirror>();
 
 		public void Start(int debuggerPort)
 		{
@@ -228,12 +229,11 @@ namespace CodeEditor.Debugger
 			
 			if (!hasDebugSymbols || !IsUserCode(assembly)) return;
 
+			_loadedAssemblies.Add(assembly);
+
 			var wasEnabled = _methodEntryRequest.Enabled;
 			_methodEntryRequest.Disable();
-			if (_methodEntryRequest.AssemblyFilter != null)
-				_methodEntryRequest.AssemblyFilter.Add(assembly);
-			else
-				_methodEntryRequest.AssemblyFilter = new List<AssemblyMirror> {assembly};
+			_methodEntryRequest.AssemblyFilter = _loadedAssemblies;
 			if (wasEnabled)
 				_methodEntryRequest.Enable();
 		}
@@ -250,6 +250,13 @@ namespace CodeEditor.Debugger
 
 		private void OnAssemblyUnload(AssemblyUnloadEvent e)
 		{
+			_loadedAssemblies.Remove(e.Assembly);
+
+			var wasEnabled = _methodEntryRequest.Enabled;
+			_methodEntryRequest.Disable();
+			_methodEntryRequest.AssemblyFilter = _loadedAssemblies;
+			if (wasEnabled)
+				_methodEntryRequest.Enable();
 			Trace("AssemblyUnload: {0}", e.Assembly.GetName().FullName);
 		}
 
