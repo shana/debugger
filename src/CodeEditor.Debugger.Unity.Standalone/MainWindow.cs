@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using CodeEditor.Composition;
 using CodeEditor.Debugger.Unity.Engine;
-using Mono.Debugger.Soft;
 using UnityEngine;
 using Event = Mono.Debugger.Soft.Event;
 using EventType = UnityEngine.EventType;
@@ -15,24 +14,25 @@ namespace CodeEditor.Debugger.Unity.Standalone
 	class MainWindow
 	{
 		private readonly SourceWindow _sourceWindow;
-		private readonly ConsoleWindow _console;
-		
-		private CallStackDisplay _callStackDisplay;
-		private readonly DebuggerSession _debuggingSession;
-		private ThreadsDisplay _threadDisplay;
-		private DebuggerWindowManager _windowManager;
-		private int _debugeeProcessID;
+		private readonly LogWindow _log;
+
+		private readonly IDebuggerSession _debuggingSession;
+		private readonly DebuggerWindowManager _windowManager;
+		private readonly ISourceNavigator _sourceNavigator;
+		private readonly int _debugeeProcessID;
 
 		[ImportingConstructor]
-		public MainWindow(SourceWindow sourceWindow, ConsoleWindow console)
+		public MainWindow(SourceWindow sourceWindow, LogWindow log, DebuggerWindowManager windowManager, ISourceNavigator sourceNavigator, IDebuggerSession debuggingSession)
 		{
 			_sourceWindow = sourceWindow;
-			_console = console;
-	
+			_log = log;
+			_windowManager = windowManager;
+			_sourceNavigator = sourceNavigator;
+			_debuggingSession = debuggingSession;
+
 			Camera.main.backgroundColor = new Color(0.125f,0.125f,0.125f,0);
 			Application.runInBackground = true;
 			
-			_debuggingSession = new DebuggerSession();
 			_debuggingSession.TraceCallback += s => Trace(s);
 			_debuggingSession.Start(DebuggerPortFromCommandLine());
 			_debuggingSession.VMGotSuspended += OnVMGotSuspended;
@@ -48,30 +48,21 @@ namespace CodeEditor.Debugger.Unity.Standalone
 
 		private void SetupDebuggingWindows()
 		{
-			_windowManager = new DebuggerWindowManager();
-			_windowManager.Add("Log",_console.OnGUI);
+			_windowManager.Add(new ExecutionFlowControlWindow(_debuggingSession));
+			_windowManager.Add(new CallStackDisplay(_debuggingSession, _sourceNavigator));
+			_windowManager.Add(new ThreadsDisplay(_debuggingSession));
 
-			_callStackDisplay = new CallStackDisplay(frame => ShowSourceLocation(frame.Location));
-			_windowManager.Add("CallStack", _callStackDisplay.OnGUI);
-
-			_threadDisplay = new ThreadsDisplay(_debuggingSession);
-			//_windowManager.Add("Threads", _threadDisplay.OnGUI);
+			_windowManager.Add(_log);
 		}
 
 
 		private void OnVMGotSuspended(Event e)
 		{
 			var stackFrames = _debuggingSession.GetMainThread().GetFrames();
-			_callStackDisplay.SetCallFrames(stackFrames);
-
-			_threadDisplay.SetThreads(_debuggingSession.GetThreads());
-
-			if (stackFrames.Any())
-			{
-				var topFrame = stackFrames[0];
-				ShowSourceLocation(topFrame.Location);
-			}
+			if (!stackFrames.Any()) return;
 			
+			var topFrame = stackFrames[0];
+			_sourceNavigator.ShowSourceLocation(topFrame.Location);
 		}
 
 		public void OnGUI()
@@ -81,8 +72,6 @@ namespace CodeEditor.Debugger.Unity.Standalone
 
 			if (UnityEngine.Event.current.type == EventType.Layout)
 				_debuggingSession.Update();
-
-			DoExecutionFlowUI();
 
 			_windowManager.OnGUI();
 			_sourceWindow.OnGUI();
@@ -95,45 +84,22 @@ namespace CodeEditor.Debugger.Unity.Standalone
 			{
 				process = Process.GetProcessById(_debugeeProcessID);
 			}
-			catch (ArgumentException e)
+			catch (ArgumentException)
 			{
 				return false;
 			}
 			return !process.HasExited;
 		}
 
-
-		private void DoExecutionFlowUI()
-		{
-			GUILayout.BeginHorizontal();
-			GUI.enabled = _debuggingSession.Suspended;// && !_debuggingSession.WaitingForResponse;
-			if (GUILayout.Button("Continue"))
-				_debuggingSession.SafeResume();
-			if (GUILayout.Button("Step Over"))
-				_debuggingSession.SendStepRequest(StepDepth.Over);
-			if (GUILayout.Button("Step In"))
-				_debuggingSession.SendStepRequest(StepDepth.Into);
-			if (GUILayout.Button("Step Out"))
-				_debuggingSession.SendStepRequest(StepDepth.Out);
-
-			GUI.enabled = !_debuggingSession.Suspended;// && !_debuggingSession.WaitingForResponse;
-			if (GUILayout.Button("Break"))
-				_debuggingSession.Break();
-
-			GUI.enabled = true;
-			GUILayout.EndHorizontal();
-		}
-
 		private void AdjustLayout()
 		{
-			var srcViewPort = new Rect(0, ToolbarHeight, Screen.width, Screen.height * .6f - ToolbarHeight);
+			var srcViewPort = new Rect(0, 0, Screen.width, Screen.height * .7f);
 			_sourceWindow.ViewPort = srcViewPort;
 
 			var consoleTop = srcViewPort.yMax + VerticalSpacing;
 			_windowManager.ViewPort = new Rect(0, consoleTop, Screen.width, Screen.height - consoleTop);
 		}
 
-		const int ToolbarHeight = 20;
 		const int VerticalSpacing = 4;
 
 		private int DebuggerPortFromCommandLine()
@@ -152,24 +118,11 @@ namespace CodeEditor.Debugger.Unity.Standalone
 			return int.Parse(args[index]);
 		}
 
-		private void ShowSourceLocation(Location location)
-		{
-			if (!IsValidLocation(location))
-				return;
-			Trace("{0}:{1}", location.SourceFile, location.LineNumber);
-			_sourceWindow.ShowSourceLocation(location.SourceFile, location.LineNumber);
-		}
-
-		private static bool IsValidLocation(Location location)
-		{
-			return location.LineNumber >= 1 && File.Exists(location.SourceFile);
-		}
-
 		private void Trace(string format, params object[] args)
 		{
 			var text = string.Format(format, args);
 			Console.WriteLine(text);
-			_console.WriteLine(text);
+			_log.WriteLine(text);
 		}
 
 		public void OnApplicationQuit()

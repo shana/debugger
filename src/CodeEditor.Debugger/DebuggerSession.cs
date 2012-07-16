@@ -3,11 +3,28 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading;
+using CodeEditor.Composition;
 using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger
 {
-	public class DebuggerSession
+	public interface IDebuggerSession
+	{
+		bool Suspended { get; }
+		event Action<Event> VMGotSuspended;
+		IList<ThreadMirror> GetThreads();
+		void SafeResume();
+		void SendStepRequest(StepDepth over);
+		void Break();
+		ThreadMirror GetMainThread();
+		void Start(int debuggerPort);
+		event Action<string> TraceCallback;
+		void Disconnect();
+		void Update();
+	}
+
+	[Export(typeof(IDebuggerSession))]
+	internal class DebuggerSession : IDebuggerSession
 	{
 		private int _debuggerPort;
 		private volatile VirtualMachine _vm;
@@ -16,8 +33,9 @@ namespace CodeEditor.Debugger
 		private readonly Queue<Event> _queuedEvents = new Queue<Event>();
 		private EventRequest _requestWaitingForResponse;
 
-		public Action<Event> VMGotSuspended = delegate { };
-		public Action<string> TraceCallback = delegate { };
+		public event Action<Event> VMGotSuspended;
+
+		public event Action<string> TraceCallback ;
 		private ThreadMirror _mainThread;
 
 		public void Start(int debuggerPort)

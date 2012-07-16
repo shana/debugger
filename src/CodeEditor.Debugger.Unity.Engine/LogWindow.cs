@@ -6,14 +6,14 @@ using UnityEngine;
 namespace CodeEditor.Debugger.Unity.Engine
 {
 	[Export]
-	public class ConsoleWindow
+	public class LogWindow : IDebuggerWindow
 	{
 		private const int MaxLines = 200;
 		private readonly ITextView _textView;
 		private readonly Queue _pendingLines = Queue.Synchronized(new Queue());
 
 		[ImportingConstructor]
-		public ConsoleWindow(ITextViewFactory viewFactory)
+		public LogWindow(ITextViewFactory viewFactory)
 		{
 			_textView = viewFactory.CreateView();
 		}
@@ -32,6 +32,11 @@ namespace CodeEditor.Debugger.Unity.Engine
 		{
 			FlushPendingLines();
 			_textView.OnGUI();
+		}
+
+		public string Title
+		{
+			get { return "Log"; }
 		}
 
 		private void FlushPendingLines()
