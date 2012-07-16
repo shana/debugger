@@ -71,6 +71,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEngine", "..\..\Projec
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEditor", "..\..\Projects\CSharp\UnityEditor.csproj", "{016C8D73-3641-47FB-8D33-7A015A7EC7DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeEditor.Languages.Common.Tests", "src\CodeEditor.Languages.Common.Tests\CodeEditor.Languages.Common.Tests.csproj", "{1318FD98-D715-47F2-B3E7-74E12F042114}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -264,6 +266,12 @@ Global
 		{016C8D73-3641-47FB-8D33-7A015A7EC7DB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{016C8D73-3641-47FB-8D33-7A015A7EC7DB}.Testing|Any CPU.ActiveCfg = Testing|Any CPU
 		{016C8D73-3641-47FB-8D33-7A015A7EC7DB}.Testing|Any CPU.Build.0 = Testing|Any CPU
+		{1318FD98-D715-47F2-B3E7-74E12F042114}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1318FD98-D715-47F2-B3E7-74E12F042114}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1318FD98-D715-47F2-B3E7-74E12F042114}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1318FD98-D715-47F2-B3E7-74E12F042114}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1318FD98-D715-47F2-B3E7-74E12F042114}.Testing|Any CPU.ActiveCfg = Release|Any CPU
+		{1318FD98-D715-47F2-B3E7-74E12F042114}.Testing|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -292,5 +300,6 @@ Global
 		{81C749CC-09BF-4F72-B9C7-93D8446360DF} = {8E77EF12-1E3A-4BF1-A01A-B7E35F68E7F1}
 		{6EBD7F15-9B34-49BA-B50B-1AC51527D085} = {8E77EF12-1E3A-4BF1-A01A-B7E35F68E7F1}
 		{07D07B75-A60C-4063-8A0B-5A2F3C84490F} = {8E77EF12-1E3A-4BF1-A01A-B7E35F68E7F1}
+		{1318FD98-D715-47F2-B3E7-74E12F042114} = {8E77EF12-1E3A-4BF1-A01A-B7E35F68E7F1}
 	EndGlobalSection
 EndGlobal
