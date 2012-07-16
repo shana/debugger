@@ -42,7 +42,6 @@ namespace CodeEditor.Debugger
 					EventType.VMDeath,
 					EventType.VMDisconnect);
 				_methodEntryRequest = _vm.CreateMethodEntryRequest();
-				_methodEntryRequest.Enable();
 				StartEventLoop();
 			});
 		}
@@ -210,13 +209,15 @@ namespace CodeEditor.Debugger
 			Trace("\tHasDebugSymbols: {0}", hasDebugSymbols);
 			
 			if (!hasDebugSymbols || !IsUserCode(assembly)) return;
-			
+
+			var wasEnabled = _methodEntryRequest.Enabled;
 			_methodEntryRequest.Disable();
 			if (_methodEntryRequest.AssemblyFilter != null)
 				_methodEntryRequest.AssemblyFilter.Add(assembly);
 			else
 				_methodEntryRequest.AssemblyFilter = new List<AssemblyMirror> {assembly};
-			_methodEntryRequest.Enable();
+			if (wasEnabled)
+				_methodEntryRequest.Enable();
 		}
 
 		private static bool IsUserCode(AssemblyMirror assembly)
