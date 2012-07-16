@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using CodeEditor.Composition;
@@ -20,6 +21,7 @@ namespace CodeEditor.Debugger.Unity.Standalone
 		private readonly DebuggerSession _debuggingSession;
 		private ThreadsDisplay _threadDisplay;
 		private DebuggerWindowManager _windowManager;
+		private int _debugeeProcessID;
 
 		[ImportingConstructor]
 		public MainWindow(SourceWindow sourceWindow, ConsoleWindow console)
@@ -28,16 +30,21 @@ namespace CodeEditor.Debugger.Unity.Standalone
 			_console = console;
 	
 			Camera.main.backgroundColor = new Color(0.125f,0.125f,0.125f,0);
-
+			Application.runInBackground = true;
+			
 			_debuggingSession = new DebuggerSession();
 			_debuggingSession.TraceCallback += s => Trace(s);
 			_debuggingSession.Start(DebuggerPortFromCommandLine());
 			_debuggingSession.VMGotSuspended += OnVMGotSuspended;
 
+			_debugeeProcessID = DebugeeProcessIDFromCommandLine();
+
 			SetupDebuggingWindows();
 
 			AdjustLayout();
 		}
+
+
 
 		private void SetupDebuggingWindows()
 		{
@@ -69,24 +76,36 @@ namespace CodeEditor.Debugger.Unity.Standalone
 
 		public void OnGUI()
 		{
+			if (!DebugeeProcessAlive())
+				Application.Quit();
+
 			if (UnityEngine.Event.current.type == EventType.Layout)
 				_debuggingSession.Update();
 
-			GUILayout.BeginHorizontal();
-			if (GUILayout.Button(_debuggingSession.IsConnected ? "Detach" : "Attach"))
-				ToggleConnectionState();
-
 			DoExecutionFlowUI();
-			GUILayout.EndHorizontal();
 
 			_windowManager.OnGUI();
 			_sourceWindow.OnGUI();
 		}
 
+		private bool DebugeeProcessAlive()
+		{
+			Process process;
+			try
+			{
+				process = Process.GetProcessById(_debugeeProcessID);
+			}
+			catch (ArgumentException e)
+			{
+				return false;
+			}
+			return !process.HasExited;
+		}
 
 
 		private void DoExecutionFlowUI()
 		{
+			GUILayout.BeginHorizontal();
 			GUI.enabled = _debuggingSession.Suspended;// && !_debuggingSession.WaitingForResponse;
 			if (GUILayout.Button("Continue"))
 				_debuggingSession.SafeResume();
@@ -94,12 +113,15 @@ namespace CodeEditor.Debugger.Unity.Standalone
 				_debuggingSession.SendStepRequest(StepDepth.Over);
 			if (GUILayout.Button("Step In"))
 				_debuggingSession.SendStepRequest(StepDepth.Into);
+			if (GUILayout.Button("Step Out"))
+				_debuggingSession.SendStepRequest(StepDepth.Out);
 
 			GUI.enabled = !_debuggingSession.Suspended;// && !_debuggingSession.WaitingForResponse;
 			if (GUILayout.Button("Break"))
 				_debuggingSession.Break();
 
 			GUI.enabled = true;
+			GUILayout.EndHorizontal();
 		}
 
 		private void AdjustLayout()
@@ -114,26 +136,21 @@ namespace CodeEditor.Debugger.Unity.Standalone
 		const int ToolbarHeight = 20;
 		const int VerticalSpacing = 4;
 
-		private void ToggleConnectionState()
-		{
-			if (_debuggingSession.IsConnected)
-				_debuggingSession.Disconnect();
-			else
-				Connect();
-		}
-
-		void Connect()
-		{
-			_debuggingSession.Start(DebuggerPortFromCommandLine());
-		}
-
 		private int DebuggerPortFromCommandLine()
 		{
-			var args = Environment.GetCommandLineArgs();
-			return int.Parse(args[args.Length - 1]);
+			return ReadIntFromCommandLine(1);
 		}
 
-		
+		private int DebugeeProcessIDFromCommandLine()
+		{
+			return ReadIntFromCommandLine(2);
+		}
+
+		private static int ReadIntFromCommandLine(int index)
+		{
+			var args = Environment.GetCommandLineArgs();
+			return int.Parse(args[index]);
+		}
 
 		private void ShowSourceLocation(Location location)
 		{
