@@ -73,6 +73,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEditor", "..\..\Projec
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeEditor.Languages.Common.Tests", "src\CodeEditor.Languages.Common.Tests\CodeEditor.Languages.Common.Tests.csproj", "{1318FD98-D715-47F2-B3E7-74E12F042114}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeEditor.Debugger.Unity.Standalone.Dependencies", "src\CodeEditor.Debugger.Unity.Standalone.Dependencies\CodeEditor.Debugger.Unity.Standalone.Dependencies.csproj", "{367AD6BB-75DA-4B31-ADD9-E89F5E02BA45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -272,6 +274,12 @@ Global
 		{1318FD98-D715-47F2-B3E7-74E12F042114}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1318FD98-D715-47F2-B3E7-74E12F042114}.Testing|Any CPU.ActiveCfg = Release|Any CPU
 		{1318FD98-D715-47F2-B3E7-74E12F042114}.Testing|Any CPU.Build.0 = Release|Any CPU
+		{367AD6BB-75DA-4B31-ADD9-E89F5E02BA45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{367AD6BB-75DA-4B31-ADD9-E89F5E02BA45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{367AD6BB-75DA-4B31-ADD9-E89F5E02BA45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{367AD6BB-75DA-4B31-ADD9-E89F5E02BA45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{367AD6BB-75DA-4B31-ADD9-E89F5E02BA45}.Testing|Any CPU.ActiveCfg = Release|Any CPU
+		{367AD6BB-75DA-4B31-ADD9-E89F5E02BA45}.Testing|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

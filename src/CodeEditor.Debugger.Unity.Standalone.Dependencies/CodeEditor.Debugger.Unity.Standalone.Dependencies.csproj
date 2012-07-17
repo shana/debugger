@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{367AD6BB-75DA-4B31-ADD9-E89F5E02BA45}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CodeEditor.Debugger.Unity.Standalone.Dependencies</RootNamespace>
+    <AssemblyName>CodeEditor.Debugger.Unity.Standalone.Dependencies</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CodeEditor.Debugger.Unity.Standalone\CodeEditor.Debugger.Unity.Standalone.csproj">
+      <Project>{05848CF0-F1ED-4806-8A06-62B7AD048BE7}</Project>
+      <Name>CodeEditor.Debugger.Unity.Standalone</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeEditor.Languages.Boo\CodeEditor.Languages.Boo.csproj">
+      <Project>{07D07B75-A60C-4063-8A0B-5A2F3C84490F}</Project>
+      <Name>CodeEditor.Languages.Boo</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeEditor.Languages.Common\CodeEditor.Languages.Common.csproj">
+      <Project>{80FD90AA-4188-4D81-AB31-6CDF792A84FA}</Project>
+      <Name>CodeEditor.Languages.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeEditor.Languages.CSharp\CodeEditor.Languages.CSharp.csproj">
+      <Project>{81C749CC-09BF-4F72-B9C7-93D8446360DF}</Project>
+      <Name>CodeEditor.Languages.CSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeEditor.Languages.UnityScript\CodeEditor.Languages.UnityScript.csproj">
+      <Project>{6EBD7F15-9B34-49BA-B50B-1AC51527D085}</Project>
+      <Name>CodeEditor.Languages.UnityScript</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeEditor.Text.UI.Unity.Engine\CodeEditor.Text.UI.Unity.Engine.csproj">
+      <Project>{C290F98D-894E-4878-AE4A-D1E83DA95619}</Project>
+      <Name>CodeEditor.Text.UI.Unity.Engine</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

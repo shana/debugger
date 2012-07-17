@@ -3,9 +3,6 @@ SET PROJECTPATH=UnityProject\Project
 SET BUILDPATH=UnityProject\Build\Windows
 SET BIN=%PROJECTPATH%\Assets\bin
 
-rd /s /q %BIN%
-mkdir %BIN%
-echo copying to %BIN%
 xcopy bin\Debug\*.dll %BIN%
 del %BIN%\UnityEngine.dll
 
