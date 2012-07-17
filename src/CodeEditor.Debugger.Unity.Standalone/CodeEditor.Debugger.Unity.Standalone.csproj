@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BootStrap.cs" />
     <Compile Include="ExecutionFlowControlWindow.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Main.cs" />

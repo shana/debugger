@@ -26,5 +26,9 @@ namespace CodeEditor.Debugger.Unity.Standalone
 		{
 			get { return Path.GetDirectoryName(typeof(Main).Assembly.ManifestModule.FullyQualifiedName); }
 		}
+
+		public static void Update()
+		{
+		}
 	}
 }
