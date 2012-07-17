@@ -59,6 +59,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BreakPointMargin.cs" />
+    <Compile Include="BreakPointMarginProvider.cs" />
     <Compile Include="CallStackDisplay.cs" />
     <Compile Include="ExecutingLineAdornment.cs" />
     <Compile Include="LogWindow.cs" />
@@ -81,6 +83,10 @@
     <ProjectReference Include="..\CodeEditor.Debugger\CodeEditor.Debugger.csproj">
       <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
       <Name>CodeEditor.Debugger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeEditor.IO\CodeEditor.IO.csproj">
+      <Project>{489773FF-92B1-40B0-98EF-3ED337E5448F}</Project>
+      <Name>CodeEditor.IO</Name>
     </ProjectReference>
     <ProjectReference Include="..\CodeEditor.Text.UI.Unity.Engine\CodeEditor.Text.UI.Unity.Engine.csproj">
       <Project>{C290F98D-894E-4878-AE4A-D1E83DA95619}</Project>
