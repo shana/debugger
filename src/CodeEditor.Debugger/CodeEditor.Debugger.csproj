@@ -95,6 +95,7 @@
   <ItemGroup>
     <Compile Include="DebuggerSession.cs" />
     <Compile Include="DebugThreadProvider.cs" />
+    <Compile Include="ExecutingLineProvider.cs" />
     <Compile Include="ThreadsRequest.cs" />
   </ItemGroup>
   <ItemGroup>

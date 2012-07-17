@@ -12,6 +12,7 @@ namespace CodeEditor.Debugger
 		IList<DebugThread> Threads { get; }
 	}
 
+	[Export(typeof(IDebugThreadProvider))]
 	public class DebugThreadProvider : IDebugThreadProvider
 	{
 		readonly IDebuggerSession _debuggingSession;

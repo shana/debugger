@@ -6,6 +6,7 @@ using UnityEngine;
 namespace CodeEditor.Debugger.Unity.Engine
 {
 	[Export]
+	[Export(typeof(IDebuggerWindow))]
 	public class LogWindow : IDebuggerWindow
 	{
 		private const int MaxLines = 200;

@@ -14,7 +14,20 @@ namespace CodeEditor.Debugger.Unity.Engine
 	[Export]
 	public class DebuggerWindowManager
 	{
-		private readonly List<IDebuggerWindow> _windows = new List<IDebuggerWindow>();
+		[Export]
+		public class ImportedWindows
+		{
+			[ImportMany]
+			internal IDebuggerWindow[] _importedWindows;
+		}
+
+		[ImportingConstructor]
+		public DebuggerWindowManager(ImportedWindows windows)
+		{
+			_windows = windows._importedWindows.ToList();
+		}
+
+		private readonly List<IDebuggerWindow> _windows;
 
 		public Rect ViewPort { get; set; }
 
@@ -26,7 +39,6 @@ namespace CodeEditor.Debugger.Unity.Engine
 		public void OnGUI()
 		{
 			GUILayout.BeginArea(ViewPort);
-
 
 			int windowCount = _windows.Count();
 			int gaps = windowCount - 1;

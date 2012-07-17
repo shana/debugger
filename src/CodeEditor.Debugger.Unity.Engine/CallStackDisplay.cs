@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CodeEditor.Composition;
 using Mono.Debugger.Soft;
 using UnityEngine;
 using Event = Mono.Debugger.Soft.Event;
 
 namespace CodeEditor.Debugger.Unity.Engine
 {
+	[Export(typeof(IDebuggerWindow))]
 	public class CallStackDisplay : IDebuggerWindow
 	{
 		private readonly IDebuggerSession _debuggingSession;
 		private readonly ISourceNavigator _sourceNavigator;
 		private IEnumerable<StackFrame> _callFrames = new StackFrame[0];
 
+		[ImportingConstructor]
 		public CallStackDisplay(IDebuggerSession debuggingSession, ISourceNavigator sourceNavigator)
 		{
 			_debuggingSession = debuggingSession;

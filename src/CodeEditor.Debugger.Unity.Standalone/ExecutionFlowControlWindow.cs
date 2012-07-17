@@ -1,13 +1,16 @@
+using CodeEditor.Composition;
 using CodeEditor.Debugger.Unity.Engine;
 using Mono.Debugger.Soft;
 using UnityEngine;
 
 namespace CodeEditor.Debugger.Unity.Standalone
 {
+	[Export(typeof(IDebuggerWindow))]
 	internal class ExecutionFlowControlWindow : IDebuggerWindow
 	{
 		private readonly IDebuggerSession _debuggingSession;
 		
+		[ImportingConstructor]
 		public ExecutionFlowControlWindow(IDebuggerSession debuggingSession)
 		{
 			_debuggingSession = debuggingSession;

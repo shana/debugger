@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CallStackDisplay.cs" />
+    <Compile Include="ExecutingLineAdornment.cs" />
     <Compile Include="LogWindow.cs" />
     <Compile Include="DebuggerWindowManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

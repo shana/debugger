@@ -6,6 +6,7 @@ using Event = Mono.Debugger.Soft.Event;
 
 namespace CodeEditor.Debugger.Unity.Engine
 {
+	[Export(typeof(IDebuggerWindow))]
 	public class ThreadsDisplay : IDebuggerWindow
 	{
 		private readonly IDebuggerSession _debuggerSession;
