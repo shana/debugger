@@ -21,6 +21,7 @@ namespace CodeEditor.Debugger
 		event Action<string> TraceCallback;
 		void Disconnect();
 		void Update();
+		ThreadsRequest GetThreadsAsync();
 	}
 
 	[Export(typeof(IDebuggerSession))]
@@ -301,6 +302,11 @@ namespace CodeEditor.Debugger
 		public void Update()
 		{
 			ProcessQueuedEvents();
+		}
+
+		public ThreadsRequest GetThreadsAsync()
+		{
+			return new ThreadsRequest();
 		}
 
 		private void Trace(string format, params object[] args)

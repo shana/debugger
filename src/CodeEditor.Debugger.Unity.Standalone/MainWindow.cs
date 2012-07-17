@@ -50,7 +50,7 @@ namespace CodeEditor.Debugger.Unity.Standalone
 		{
 			_windowManager.Add(new ExecutionFlowControlWindow(_debuggingSession));
 			_windowManager.Add(new CallStackDisplay(_debuggingSession, _sourceNavigator));
-			_windowManager.Add(new ThreadsDisplay(_debuggingSession));
+			_windowManager.Add(new ThreadsDisplay(_debuggingSession, new DebugThreadProvider(_debuggingSession)));
 
 			_windowManager.Add(_log);
 		}
