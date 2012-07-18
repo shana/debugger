@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using CodeEditor.Composition;
 
-namespace CodeEditor.Debugger
+namespace CodeEditor.Debugger.Implementation
 {
 	[Export(typeof(IDebugTypeProvider))]
 	class DebugTypeProvider : IDebugTypeProvider
@@ -51,12 +51,5 @@ namespace CodeEditor.Debugger
 			if (TypeUnloaded != null)
 				TypeUnloaded(type);
 		}
-	}
-
-	public interface IDebugTypeProvider
-	{
-		event Action<IDebugType> TypeLoaded;
-		event Action<IDebugType> TypeUnloaded;
-		IDebugType[] LoadedTypes { get; }
 	}
 }

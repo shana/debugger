@@ -1,14 +1,9 @@
 ﻿using CodeEditor.Composition;
 
-namespace CodeEditor.Debugger
+namespace CodeEditor.Debugger.Implementation
 {
-	public interface IDebuggerSessionAssembler
-	{
-		void Assemble();
-	}
-
 	[Export(typeof(IDebuggerSessionAssembler))]
-	public class DebuggerSessionAssembler : IDebuggerSessionAssembler
+	class DebuggerSessionAssembler : IDebuggerSessionAssembler
 	{
 		[Import] private IDebuggerSession _session;
 		[ImportMany]  private IDebuggerSessionCreationListener[] _listeners;

@@ -3,16 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using CodeEditor.Composition;
 
-namespace CodeEditor.Debugger
+namespace CodeEditor.Debugger.Implementation
 {
-	public interface IDebugBreakPointProvider
-	{
-		IBreakPoint GetBreakPointAt(string file, int lineNumber);
-		void ToggleBreakPointAt(string fileName, int lineNumber);
-		event Action<IBreakPoint> BreakPointAdded;
-		event Action<IBreakPoint> BreakPointRemoved;
-	}
-
 	[Export(typeof(IDebugBreakPointProvider))]
 	class DebugBreakPointProvider : IDebugBreakPointProvider
 	{

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Mono.Debugger.Soft;
+﻿using Mono.Debugger.Soft;
 
-namespace CodeEditor.Debugger
+namespace CodeEditor.Debugger.Implementation
 {
 	class DebugAssembly : IDebugAssembly
 	{
@@ -14,9 +10,5 @@ namespace CodeEditor.Debugger
 		}
 
 		public AssemblyMirror Mirror { get; private set; }
-	}
-
-	public interface IDebugAssembly
-	{
 	}
 }

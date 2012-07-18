@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using CodeEditor.Composition;
 using Mono.Debugger.Soft;
 
-namespace CodeEditor.Debugger
+namespace CodeEditor.Debugger.Implementation
 {
-	public interface IDebugThreadProvider
-	{
-		IList<DebugThread> Threads { get; }
-	}
-
 	[Export(typeof(IDebugThreadProvider))]
-	public class DebugThreadProvider : IDebugThreadProvider
+	class DebugThreadProvider : IDebugThreadProvider
 	{
 		readonly IDebuggerSession _debuggingSession;
 

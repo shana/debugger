@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using CodeEditor.Debugger.Implementation;
+using Moq;
 using NUnit.Framework;
 
 namespace CodeEditor.Debugger.Tests

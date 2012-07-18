@@ -1,7 +1,6 @@
-﻿using System.Text;
-using CodeEditor.Composition;
+﻿using CodeEditor.Composition;
 
-namespace CodeEditor.Debugger
+namespace CodeEditor.Debugger.Implementation
 {
 	[Export(typeof(IDebuggerSessionCreationListener))]
 	class BreakPointMediatorFactory : IDebuggerSessionCreationListener

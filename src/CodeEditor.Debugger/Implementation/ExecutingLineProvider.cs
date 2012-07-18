@@ -1,7 +1,7 @@
 using CodeEditor.Composition;
 using Mono.Debugger.Soft;
 
-namespace CodeEditor.Debugger
+namespace CodeEditor.Debugger.Implementation
 {
 	[Export]
 	public class ExecutingLineProvider

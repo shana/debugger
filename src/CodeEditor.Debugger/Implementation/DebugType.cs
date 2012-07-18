@@ -1,10 +1,5 @@
-﻿namespace CodeEditor.Debugger
+﻿namespace CodeEditor.Debugger.Implementation
 {
-	public interface IDebugType
-	{
-		IDebugAssembly Assembly { get; }
-	}
-
 	class DebugType : IDebugType
 	{
 		public IDebugAssembly Assembly { get; private set; }

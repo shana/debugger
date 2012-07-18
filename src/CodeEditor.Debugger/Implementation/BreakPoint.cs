@@ -1,11 +1,5 @@
-namespace CodeEditor.Debugger
+namespace CodeEditor.Debugger.Implementation
 {
-	public interface IBreakPoint
-	{
-		string File { get; }
-		int LineNumber { get; }
-	}
-
 	class BreakPoint : IBreakPoint
 	{
 		public string File { get; private set; }

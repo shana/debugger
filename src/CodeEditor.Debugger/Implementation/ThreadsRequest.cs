@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Mono.Debugger.Soft;
 
-namespace CodeEditor.Debugger
+namespace CodeEditor.Debugger.Implementation
 {
 	public class ThreadsRequest
 	{

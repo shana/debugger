@@ -1,4 +1,5 @@
 ﻿using CodeEditor.Composition;
+using CodeEditor.Debugger.Implementation;
 using CodeEditor.Text.UI.Unity.Engine;
 using UnityEngine;
 
