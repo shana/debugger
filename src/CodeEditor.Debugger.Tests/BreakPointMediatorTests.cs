@@ -31,7 +31,7 @@ namespace CodeEditor.Debugger.Tests
 		{
 			AddBreakpoint(MockBreakPointFor("myfile.cs"));
 			RaiseTypeLoad(MockTypeFor("myfile.cs"));
-			VerifyCreateBreakpointRequest();
+			VerifyCreateBreakpointRequest("myfile.cs");
 		}
 
 		[Test]
@@ -39,12 +39,12 @@ namespace CodeEditor.Debugger.Tests
 		{
 			RaiseTypeLoad(MockTypeFor("myfile.cs"));
 			AddBreakpoint(MockBreakPointFor("myfile.cs"));
-			VerifyCreateBreakpointRequest();
+			VerifyCreateBreakpointRequest("myfile.cs");
 		}
 
-		private void VerifyCreateBreakpointRequest()
+		private void VerifyCreateBreakpointRequest(string expectedFile)
 		{
-			_session.Verify(s => s.CreateBreakpointRequest(It.Is<IDebugLocation>(location => true)));
+			_session.Verify(s => s.CreateBreakpointRequest(It.Is<IDebugLocation>(location => location.File==expectedFile)));
 		}
 
 		private void AddBreakpoint(Mock<IBreakPoint> breakpoint)

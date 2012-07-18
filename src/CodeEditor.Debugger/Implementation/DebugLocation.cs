@@ -7,5 +7,16 @@ namespace CodeEditor.Debugger.Implementation
 {
 	class DebugLocation : IDebugLocation
 	{
+		private readonly string _file;
+
+		public DebugLocation(string file)
+		{
+			_file = file;
+		}
+
+		public string File
+		{
+			get { return _file; }
+		}
 	}
 }
