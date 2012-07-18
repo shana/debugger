@@ -1,4 +1,6 @@
-﻿using CodeEditor.Composition;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CodeEditor.Composition;
 
 namespace CodeEditor.Debugger.Implementation
 {
@@ -11,16 +13,15 @@ namespace CodeEditor.Debugger.Implementation
 		[Import]
 		private IDebugTypeProvider DebugTypeProvider { get; set; }
 		
-		//[Import]
-		//private ISourceToTypeMapper SourceToTypeMapper { get; set; }
+		[Import]
+		private ISourceToTypeMapper SourceToTypeMapper { get; set; }
 
-		//[Import]
+		[Import]
 		private ILogProvider LogProvider { get; set; }
 
 		public void OnCreate(IDebuggerSession session)
 		{
-
-			//new BreakpointMediator(session,DebugBreakPointProvider, DebugTypeProvider, SourceToTypeMapper, LogProvider);
+			new BreakpointMediator(session,DebugBreakPointProvider, DebugTypeProvider, SourceToTypeMapper, LogProvider);
 		}
 	}
 	
@@ -29,28 +30,36 @@ namespace CodeEditor.Debugger.Implementation
 		private readonly IDebuggerSession _session;
 		private readonly IDebugBreakPointProvider _debugBreakPointProvider;
 		private readonly IDebugTypeProvider _debugTypeProvider;
-		//private readonly ISourceToTypeMapper _sourceToTypeMapper;
+		private readonly ISourceToTypeMapper _sourceToTypeMapper;
 		private readonly ILogProvider _logProvider;
+		private readonly List<IBreakPoint> _breakPoints = new List<IBreakPoint>();
 
-		public BreakpointMediator(IDebuggerSession session, IDebugBreakPointProvider debugBreakPointProvider, IDebugTypeProvider debugTypeProvider, /*ISourceToTypeMapper sourceToTypeMapper,*/ ILogProvider logProvider)
+		public BreakpointMediator(IDebuggerSession session, IDebugBreakPointProvider debugBreakPointProvider, IDebugTypeProvider debugTypeProvider, ISourceToTypeMapper sourceToTypeMapper, ILogProvider logProvider)
 		{
 			_session = session;
 			_debugBreakPointProvider = debugBreakPointProvider;
 			_debugTypeProvider = debugTypeProvider;
-			//_sourceToTypeMapper = sourceToTypeMapper;
+			_sourceToTypeMapper = sourceToTypeMapper;
 			_logProvider = logProvider;
-			_debugBreakPointProvider.BreakPointAdded += BreakPointAdded;
+			_debugBreakPointProvider.BreakpointAdded += BreakpointAdded;
+			_debugTypeProvider.TypeLoaded += TypeLoaded;
 		}
 
-		private void BreakPointAdded(IBreakPoint breakpoint)
+		private void TypeLoaded(IDebugType type)
 		{
-			/*
-			var types = _sourceToTypeMapper.TypesFor(breakpoint.File);
-
-			var sb = new StringBuilder("Types for " + breakpoint.File + " are ");
-			foreach (var type in types)
-				sb.Append(type.Name + " ");
-			_logProvider.Log(sb.ToString());*/
+			var l = _breakPoints.Where(bp => type.SourceFiles.Contains(bp.File));
+			foreach (var bp in l)
+				_session.CreateBreakpointRequest(new DebugLocation());
 		}
+
+		private void BreakpointAdded(IBreakPoint breakpoint)
+		{
+			_breakPoints.Add(breakpoint);
+
+			foreach (var type in _debugTypeProvider.LoadedTypes.Where(t => t.SourceFiles.Contains(breakpoint.File)))
+				_session.CreateBreakpointRequest(new DebugLocation());
+		}
+
+
 	}
 }

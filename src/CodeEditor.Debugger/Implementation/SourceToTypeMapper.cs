@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using CodeEditor.Composition;
-using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
 {

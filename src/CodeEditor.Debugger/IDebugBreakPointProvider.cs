@@ -6,7 +6,7 @@ namespace CodeEditor.Debugger
 	{
 		IBreakPoint GetBreakPointAt(string file, int lineNumber);
 		void ToggleBreakPointAt(string fileName, int lineNumber);
-		event Action<IBreakPoint> BreakPointAdded;
+		event Action<IBreakPoint> BreakpointAdded;
 		event Action<IBreakPoint> BreakPointRemoved;
 	}
 }

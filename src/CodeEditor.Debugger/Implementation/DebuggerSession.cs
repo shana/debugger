@@ -329,6 +329,11 @@ namespace CodeEditor.Debugger.Implementation
 			return request;
 		}
 
+		public IDebugBreakpointEventRequest CreateBreakpointRequest(IDebugLocation location)
+		{
+			throw new NotImplementedException();
+		}
+
 		public event Action<IDebugType> TypeLoaded;
 		public event Action<IDebugAssembly> AssemblyLoaded;
 		public event Action<IDebugAssembly> AssemblyUnloaded;

@@ -21,6 +21,7 @@ namespace CodeEditor.Debugger
 		void Update();
 		ThreadsRequest GetThreadsAsync();
 		BreakpointEventRequest CreateBreakpointRequest(Location location);
+		IDebugBreakpointEventRequest CreateBreakpointRequest(IDebugLocation location);
 		event Action<IDebugType> TypeLoaded;
 		event Action<IDebugAssembly> AssemblyLoaded;
 		event Action<IDebugAssembly> AssemblyUnloaded;

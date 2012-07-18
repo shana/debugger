@@ -10,7 +10,7 @@ namespace CodeEditor.Debugger.Implementation
 	{
 		readonly List<IBreakPoint> _breakPoints = new List<IBreakPoint>();
 
-		public event Action<IBreakPoint> BreakPointAdded;
+		public event Action<IBreakPoint> BreakpointAdded;
 		public event Action<IBreakPoint> BreakPointRemoved;
 
 		public IBreakPoint GetBreakPointAt(string file, int lineNumber)
@@ -30,7 +30,7 @@ namespace CodeEditor.Debugger.Implementation
 		private void AddBreakPoint(BreakPoint point)
 		{
 			_breakPoints.Add(point);
-			BreakPointAdded(point);
+			BreakpointAdded(point);
 		}
 
 		private void RemoveBreakPoint(IBreakPoint breakPoint)
