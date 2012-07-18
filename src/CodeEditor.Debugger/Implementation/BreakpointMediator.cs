@@ -61,7 +61,7 @@ namespace CodeEditor.Debugger.Implementation
 			_breakPoints.Add(breakpoint);
 
 			foreach (var type in _debugTypeProvider.LoadedTypes.Where(t => IsBreakpointInSameFileAs(breakpoint, t)))
-				_session.CreateBreakpointRequest(new DebugLocation(breakpoint.File));
+				_session.CreateBreakpointRequest(new DebugLocation(breakpoint.File,breakpoint.LineNumber));
 		}
 	}
 }
