@@ -7,7 +7,8 @@ namespace CodeEditor.Debugger.Unity.Engine
 {
 	[Export]
 	[Export(typeof(IDebuggerWindow))]
-	public class LogWindow : IDebuggerWindow
+	[Export(typeof(ILogProvider))]
+	public class LogWindow : IDebuggerWindow, ILogProvider
 	{
 		private const int MaxLines = 200;
 		private readonly ITextView _textView;
@@ -54,6 +55,11 @@ namespace CodeEditor.Debugger.Unity.Engine
 		private int LineCount()
 		{
 			return _textView.Document.LineCount;
+		}
+
+		public void Log(string msg)
+		{
+			_textView.Document.AppendLine(msg);
 		}
 	}
 }

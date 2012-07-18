@@ -9,7 +9,9 @@ namespace CodeEditor.Debugger.Unity.Standalone
 
 		public static void Start()
 		{
-			view = new CompositionContainer(new DirectoryCatalog(AssemblyPath)).GetExportedValue<MainWindow>();
+			var compositionContainer = new CompositionContainer(new DirectoryCatalog(AssemblyPath));
+			compositionContainer.GetExportedValue<IDebuggerSessionAssembler>().Assemble();
+			view = compositionContainer.GetExportedValue<MainWindow>();
 		}
 
 		public static void OnGUI()

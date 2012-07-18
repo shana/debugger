@@ -13,7 +13,6 @@ namespace CodeEditor.Debugger
 	{
 		bool Suspended { get; }
 		IEnumerable<AssemblyMirror> LoadedAssemblies { get; }
-		IEnumerable<TypeMirror> LoadedTypes { get; }
 		event Action<Event> VMGotSuspended;
 		IList<ThreadMirror> GetThreads();
 		void SafeResume();
@@ -26,6 +25,9 @@ namespace CodeEditor.Debugger
 		void Update();
 		ThreadsRequest GetThreadsAsync();
 		BreakpointEventRequest CreateBreakpointRequest(Location location);
+		event Action<IDebugType> TypeLoaded;
+		event Action<IDebugAssembly> AssemblyLoaded;
+		event Action<IDebugAssembly> AssemblyUnloaded;
 	}
 
 	[Export(typeof(IDebuggerSession))]
@@ -37,12 +39,6 @@ namespace CodeEditor.Debugger
 		private bool _vmSuspended;
 		private readonly Queue<Event> _queuedEvents = new Queue<Event>();
 		private EventRequest _requestWaitingForResponse;
-		private readonly List<TypeMirror> _loadedTypes = new List<TypeMirror>(); 
-
-		public IEnumerable<TypeMirror> LoadedTypes
-		{
-			get { return _loadedTypes; }
-		}
 
 		public event Action<Event> VMGotSuspended;
 
@@ -50,16 +46,11 @@ namespace CodeEditor.Debugger
 		private ThreadMirror _mainThread;
 		private readonly List<AssemblyMirror> _loadedAssemblies = new List<AssemblyMirror>();
 		private Dictionary<Location,BreakpointEventRequest> _breakpointEventRequests = new Dictionary<Location, BreakpointEventRequest>();
-			
-		[ImportMany]
-		private IDebuggerSessionCreationListener[] _debuggerSessionCreationListeners;
+		private readonly List<DebugAssembly> _debugAssemblies = new List<DebugAssembly>();
 
 		public void Start(int debuggerPort)
 		{
 			_debuggerPort = debuggerPort;
-			foreach(var dscl in _debuggerSessionCreationListeners)
-				dscl.OnCreate(this);
-
 			QueueUserWorkItem(Connect);
 		}
 
@@ -239,6 +230,9 @@ namespace CodeEditor.Debugger
 		{
 			var assembly = e.Assembly;
 			ProcessLoadedAssembly(assembly);
+			var debugAssembly = DebugAssemblyFor(assembly);
+
+			AssemblyUnloaded(debugAssembly);
 		}
 
 		private void ProcessLoadedAssembly(AssemblyMirror assembly)
@@ -281,11 +275,29 @@ namespace CodeEditor.Debugger
 			_breakpointEventRequests = _breakpointEventRequests.Where(kvp => kvp.Key.Method.DeclaringType.Assembly != e.Assembly).ToDictionary(kvp=>kvp.Key,kvp=>kvp.Value);
 
 			Trace("AssemblyUnload: {0}", e.Assembly.GetName().FullName);
+
+			AssemblyUnloaded(DebugAssemblyFor(e.Assembly));
+		}
+
+		private IDebugAssembly DebugAssemblyFor(AssemblyMirror assemblyMirror)
+		{
+			var debugAssembly = _debugAssemblies.SingleOrDefault(da => da.Mirror == assemblyMirror);
+			if (debugAssembly != null)
+				return debugAssembly;
+
+			debugAssembly = new DebugAssembly(assemblyMirror);
+			_debugAssemblies.Add(debugAssembly);
+			return debugAssembly;
 		}
 
 		private void OnTypeLoad(TypeLoadEvent e)
 		{
 			Trace("TypeLoad: {0}", e.Type.FullName);
+
+			var debugAssembly = DebugAssemblyFor(e.Type.Assembly);
+			var debugType = new DebugType(debugAssembly);
+
+			TypeLoaded(debugType);
 		}
 
 		public void SafeResume()
@@ -337,6 +349,10 @@ namespace CodeEditor.Debugger
 			_breakpointEventRequests[location] = request;
 			return request;
 		}
+
+		public event Action<IDebugType> TypeLoaded;
+		public event Action<IDebugAssembly> AssemblyLoaded;
+		public event Action<IDebugAssembly> AssemblyUnloaded;
 
 		private void Trace(string format, params object[] args)
 		{
