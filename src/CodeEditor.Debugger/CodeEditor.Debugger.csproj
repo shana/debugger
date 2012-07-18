@@ -113,6 +113,7 @@
     <Compile Include="IDebuggerSessionCreationListener.cs" />
     <Compile Include="ILogProvider.cs" />
     <Compile Include="IDebugTypeProvider.cs" />
+    <Compile Include="ISourceToTypeMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Implementation\SourceToTypeMapper.cs" />
     <Compile Include="Implementation\ThreadsRequest.cs" />

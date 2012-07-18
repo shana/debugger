@@ -1,48 +1,46 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using CodeEditor.Composition;
 using Mono.Debugger.Soft;
 
-/*
-namespace CodeEditor.Debugger
+namespace CodeEditor.Debugger.Implementation
 {
 	[Export(typeof(ISourceToTypeMapper))]
 	class SourceToTypeMapper : ISourceToTypeMapper
 	{
 		private readonly IDebuggerSession _session;
 		private readonly IDebugTypeProvider _debugTypeProvider;
-		private Dictionary<TypeMirror, List<string>> _typeToSourceFiles = new Dictionary<TypeMirror, List<string>>();
+
+		//private Dictionary<IDebugType, string[]> _sourceToTypes = new Dictionary<IDebugType, string[]>();
+		private readonly Dictionary<string, List<IDebugType>> _sourceToTypes = new Dictionary<string, List<IDebugType>>();
 
 		[ImportingConstructor]
 		public SourceToTypeMapper(IDebuggerSession session, IDebugTypeProvider debugTypeProvider)
 		{
 			_session = session;
 			_debugTypeProvider = debugTypeProvider;
-			_debugTypeProvider.TypeUnloaded += typeMirror => _typeToSourceFiles.Remove(typeMirror);
+			_debugTypeProvider.TypeLoaded += TypeLoaded;
 		}
 
-		public IEnumerable<TypeMirror> TypesFor(string file)
+		private void TypeLoaded(IDebugType type)
 		{
-			return _debugTypeProvider.LoadedTypes.Where(type => SourcesFor(type).Contains(file));
+			var sourceFiles = type.SourceFiles;
+			foreach(var file in sourceFiles)
+			{
+				if (!_sourceToTypes.ContainsKey(file))
+					_sourceToTypes.Add(file, new List<IDebugType>());
+
+				_sourceToTypes[file].Add(type);
+			}
 		}
 
-		private IEnumerable<string> SourcesFor(TypeMirror type)
+		public IEnumerable<IDebugType> TypesFor(string file)
 		{
-			List<string> files;
-			if (_typeToSourceFiles.TryGetValue(type, out files))
-				return files;
+			if (!_sourceToTypes.ContainsKey(file))
+				return new IDebugType[0];
 
-			files = new List<string>(type.GetSourceFiles(true));
-			_typeToSourceFiles[type] = files;
-
-			return files;
+			return _sourceToTypes[file];
 		}
 	}
-
-	public interface ISourceToTypeMapper
-	{
-		IEnumerable<TypeMirror> TypesFor(string file);
-	}
-}*/
+}

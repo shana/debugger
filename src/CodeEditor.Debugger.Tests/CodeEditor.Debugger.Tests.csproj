@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DebugTypeProviderTests.cs" />
+    <Compile Include="SourceToTypeMapperTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Moq">
