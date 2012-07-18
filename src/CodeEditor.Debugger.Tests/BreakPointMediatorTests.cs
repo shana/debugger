@@ -23,7 +23,7 @@ namespace CodeEditor.Debugger.Tests
 			_breakPointProvider = new Mock<IDebugBreakPointProvider>();
 			_typeProvider = new DebugTypeProvider(_session.Object);
 			_sourceToTypeMapper = new SourceToTypeMapper(_typeProvider);
-			new BreakpointMediator(_session.Object, _breakPointProvider.Object, _typeProvider, _sourceToTypeMapper, new Mock<ILogProvider>().Object);
+			new BreakpointMediator(_session.Object, _breakPointProvider.Object, _typeProvider);
 		}
 
 		[Test]
@@ -61,6 +61,13 @@ namespace CodeEditor.Debugger.Tests
 		{
 			var debugType = new Mock<IDebugType>();
 			debugType.SetupGet(t => t.SourceFiles).Returns(new[] {sourceFile});
+
+			var debugMethod = new Mock<IDebugMethod>();
+			var debugLocation = new Mock<IDebugLocation>();
+			debugLocation.SetupGet(l => l.File).Returns(sourceFile);
+			debugMethod.SetupGet(m => m.Locations).Returns(new[] {debugLocation.Object});
+			debugType.SetupGet(t => t.Methods).Returns(new[] {debugMethod.Object});
+
 			return debugType;
 		}
 

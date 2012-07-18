@@ -37,12 +37,21 @@ namespace CodeEditor.Debugger.Implementation
 
 		private void TypeLoaded(IDebugType type)
 		{
-			var l = _breakPoints.Where(bp => BreakpointMatchesType(bp, type));
-			foreach (var bp in l)
-				_session.CreateBreakpointRequest(new DebugLocation(bp.File));
+			foreach (var breakpoint in _breakPoints.Where(bp => IsBreakpointInSameFileAs(bp,type)))
+			{
+				IBreakPoint breakpoint1 = breakpoint;
+				var locations = type.Methods.SelectMany(m => m.Locations).Where(l => LocationsMatch(l, breakpoint1));
+				foreach(var location in locations)
+					_session.CreateBreakpointRequest(location);
+			}
 		}
 
-		private static bool BreakpointMatchesType(IBreakPoint bp, IDebugType type)
+		private bool LocationsMatch(IDebugLocation location, IBreakPoint breakpoint)
+		{
+			return breakpoint.File == location.File;
+		}
+
+		private static bool IsBreakpointInSameFileAs(IBreakPoint bp, IDebugType type)
 		{
 			return type.SourceFiles.Contains(bp.File);
 		}
@@ -51,7 +60,7 @@ namespace CodeEditor.Debugger.Implementation
 		{
 			_breakPoints.Add(breakpoint);
 
-			foreach (var type in _debugTypeProvider.LoadedTypes.Where(t => BreakpointMatchesType(breakpoint, t)))
+			foreach (var type in _debugTypeProvider.LoadedTypes.Where(t => IsBreakpointInSameFileAs(breakpoint, t)))
 				_session.CreateBreakpointRequest(new DebugLocation(breakpoint.File));
 		}
 	}

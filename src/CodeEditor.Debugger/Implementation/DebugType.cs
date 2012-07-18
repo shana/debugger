@@ -11,6 +11,11 @@ namespace CodeEditor.Debugger.Implementation
 			get { throw new System.NotImplementedException(); }
 		}
 
+		public IEnumerable<IDebugMethod> Methods
+		{
+			get { throw new System.NotImplementedException(); }
+		}
+
 		public DebugType(IDebugAssembly assembly)
 		{
 			Assembly = assembly;

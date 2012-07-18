@@ -6,5 +6,6 @@ namespace CodeEditor.Debugger
 	{
 		IDebugAssembly Assembly { get; }
 		IEnumerable<string> SourceFiles { get; }
+		IEnumerable<IDebugMethod> Methods { get; }
 	}
 }
