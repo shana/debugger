@@ -20,7 +20,7 @@ namespace CodeEditor.Debugger.Tests
 		{
 			_session = new Mock<IDebuggerSession>();
 			_typeProvider = new Mock<IDebugTypeProvider>();
-			_mapper = new SourceToTypeMapper(_session.Object, _typeProvider.Object);			
+			_mapper = new SourceToTypeMapper(_typeProvider.Object);			
 		}
 
 		[Test]
@@ -31,7 +31,7 @@ namespace CodeEditor.Debugger.Tests
 		}
 
 		[Test]
-		public void TypeWithMethodInFileIsFound()
+		public void TypeIsFoundByItsSourceFile()
 		{
 			var debugType = new Mock<IDebugType>();
 			debugType.SetupGet(t => t.SourceFiles).Returns(new[] { "myfile.cs" });
