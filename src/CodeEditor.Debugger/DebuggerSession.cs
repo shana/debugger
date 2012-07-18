@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using CodeEditor.Composition;
@@ -11,6 +12,8 @@ namespace CodeEditor.Debugger
 	public interface IDebuggerSession
 	{
 		bool Suspended { get; }
+		IEnumerable<AssemblyMirror> LoadedAssemblies { get; }
+		IEnumerable<TypeMirror> LoadedTypes { get; }
 		event Action<Event> VMGotSuspended;
 		IList<ThreadMirror> GetThreads();
 		void SafeResume();
@@ -22,6 +25,7 @@ namespace CodeEditor.Debugger
 		void Disconnect();
 		void Update();
 		ThreadsRequest GetThreadsAsync();
+		BreakpointEventRequest CreateBreakpointRequest(Location location);
 	}
 
 	[Export(typeof(IDebuggerSession))]
@@ -33,18 +37,33 @@ namespace CodeEditor.Debugger
 		private bool _vmSuspended;
 		private readonly Queue<Event> _queuedEvents = new Queue<Event>();
 		private EventRequest _requestWaitingForResponse;
+		private readonly List<TypeMirror> _loadedTypes = new List<TypeMirror>(); 
+
+		public IEnumerable<TypeMirror> LoadedTypes
+		{
+			get { return _loadedTypes; }
+		}
 
 		public event Action<Event> VMGotSuspended;
 
 		public event Action<string> TraceCallback ;
 		private ThreadMirror _mainThread;
-		private List<AssemblyMirror> _loadedAssemblies = new List<AssemblyMirror>();
+		private readonly List<AssemblyMirror> _loadedAssemblies = new List<AssemblyMirror>();
+		private Dictionary<Location,BreakpointEventRequest> _breakpointEventRequests = new Dictionary<Location, BreakpointEventRequest>();
+			
+		[ImportMany]
+		private IDebuggerSessionCreationListener[] _debuggerSessionCreationListeners;
 
 		public void Start(int debuggerPort)
 		{
 			_debuggerPort = debuggerPort;
+			foreach(var dscl in _debuggerSessionCreationListeners)
+				dscl.OnCreate(this);
+
 			QueueUserWorkItem(Connect);
 		}
+
+		public IEnumerable<AssemblyMirror> LoadedAssemblies { get { return _loadedAssemblies; } } 
 
 		public void Connect()
 		{
@@ -258,6 +277,9 @@ namespace CodeEditor.Debugger
 			_methodEntryRequest.AssemblyFilter = _loadedAssemblies;
 			if (wasEnabled)
 				_methodEntryRequest.Enable();
+
+			_breakpointEventRequests = _breakpointEventRequests.Where(kvp => kvp.Key.Method.DeclaringType.Assembly != e.Assembly).ToDictionary(kvp=>kvp.Key,kvp=>kvp.Value);
+
 			Trace("AssemblyUnload: {0}", e.Assembly.GetName().FullName);
 		}
 
@@ -307,6 +329,13 @@ namespace CodeEditor.Debugger
 		public ThreadsRequest GetThreadsAsync()
 		{
 			return new ThreadsRequest();
+		}
+
+		public BreakpointEventRequest CreateBreakpointRequest(Location location)
+		{
+			var request = _vm.CreateBreakpointRequest(location);
+			_breakpointEventRequests[location] = request;
+			return request;
 		}
 
 		private void Trace(string format, params object[] args)

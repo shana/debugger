@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using CodeEditor.Composition;
-using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger
 {
@@ -11,12 +9,17 @@ namespace CodeEditor.Debugger
 	{
 		IBreakPoint GetBreakPointAt(string file, int lineNumber);
 		void ToggleBreakPointAt(string fileName, int lineNumber);
+		event Action<IBreakPoint> BreakPointAdded;
+		event Action<IBreakPoint> BreakPointRemoved;
 	}
 
 	[Export(typeof(IDebugBreakPointProvider))]
 	class DebugBreakPointProvider : IDebugBreakPointProvider
 	{
 		readonly List<IBreakPoint> _breakPoints = new List<IBreakPoint>();
+
+		public event Action<IBreakPoint> BreakPointAdded;
+		public event Action<IBreakPoint> BreakPointRemoved;
 
 		public IBreakPoint GetBreakPointAt(string file, int lineNumber)
 		{
@@ -27,9 +30,21 @@ namespace CodeEditor.Debugger
 		{
 			var breakPoint = GetBreakPointAt(fileName, lineNumber);
 			if (breakPoint == null)
-				_breakPoints.Add(new BreakPoint(fileName, lineNumber));
+				AddBreakPoint(new BreakPoint(fileName, lineNumber));
 			else
-				_breakPoints.Remove(breakPoint);
+				RemoveBreakPoint(breakPoint);
+		}
+
+		private void AddBreakPoint(BreakPoint point)
+		{
+			_breakPoints.Add(point);
+			BreakPointAdded(point);
+		}
+
+		private void RemoveBreakPoint(IBreakPoint breakPoint)
+		{
+			_breakPoints.Remove(breakPoint);
+			BreakPointRemoved(breakPoint);
 		}
 	}
 }
