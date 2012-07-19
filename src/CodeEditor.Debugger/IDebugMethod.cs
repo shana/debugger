@@ -4,6 +4,6 @@ namespace CodeEditor.Debugger
 {
 	public interface IDebugMethod
 	{
-		IEnumerable<IDebugLocation> Locations { get; }
+		IDebugLocation[] Locations { get; }
 	}
 }

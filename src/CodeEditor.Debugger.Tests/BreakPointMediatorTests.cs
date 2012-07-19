@@ -41,6 +41,7 @@ namespace CodeEditor.Debugger.Tests
 			SetupBreakEventRequestFactory("myfile.cs", 5, _breakRequest.Object);
 			RaiseTypeLoad(MockTypeWithMethodFrom("myfile.cs",5));
 			AddBreakpoint(MockBreakPointFor("myfile.cs",5));
+
 			_breakRequest.Verify(r => r.Enable());
 			VerifyMocks();
 		}

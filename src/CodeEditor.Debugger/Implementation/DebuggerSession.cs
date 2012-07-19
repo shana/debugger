@@ -274,7 +274,7 @@ namespace CodeEditor.Debugger.Implementation
 			Trace("TypeLoad: {0}", e.Type.FullName);
 
 			var debugAssembly = DebugAssemblyFor(e.Type.Assembly);
-			var debugType = new DebugType(debugAssembly);
+			var debugType = new DebugType(e.Type,debugAssembly);
 
 			TypeLoaded(debugType);
 		}

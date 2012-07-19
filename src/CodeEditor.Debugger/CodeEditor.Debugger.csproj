@@ -110,6 +110,7 @@
     <Compile Include="Implementation\DebuggerSession.cs" />
     <Compile Include="Implementation\DebuggerSessionAssembler.cs" />
     <Compile Include="Implementation\DebugLocation.cs" />
+    <Compile Include="Implementation\DebugMethod.cs" />
     <Compile Include="Implementation\DebugThreadProvider.cs" />
     <Compile Include="Implementation\DebugType.cs" />
     <Compile Include="Implementation\DebugTypeProvider.cs" />

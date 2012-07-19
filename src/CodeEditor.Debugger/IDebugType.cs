@@ -5,7 +5,7 @@ namespace CodeEditor.Debugger
 	public interface IDebugType
 	{
 		IDebugAssembly Assembly { get; }
-		IEnumerable<string> SourceFiles { get; }
+		string[] SourceFiles { get; }
 		IEnumerable<IDebugMethod> Methods { get; }
 	}
 }
