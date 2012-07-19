@@ -2,28 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
 {
 	class DebugLocation : IDebugLocation
 	{
-		private readonly string _file;
-		private int _line;
+		public Location MDSLocation { get; private set; }
 
-		public DebugLocation(string file, int line)
+		public DebugLocation(Location location)
 		{
-			_file = file;
-			_line = line;
+			MDSLocation = location;
 		}
 
 		public string File
 		{
-			get { return _file; }
+			get { return MDSLocation.SourceFile; }
 		}
 
 		public int LineNumber
 		{
-			get { return _line; }
+			get { return MDSLocation.LineNumber; }
 		}
+
 	}
 }

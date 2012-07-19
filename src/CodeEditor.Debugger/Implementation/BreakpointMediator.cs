@@ -37,13 +37,18 @@ namespace CodeEditor.Debugger.Implementation
 
 		private void TypeLoaded(IDebugType type)
 		{
-			foreach (var breakpoint in _breakPoints.Where(bp => IsBreakpointInSameFileAs(bp,type)))
+			foreach (var breakpoint in type.SourceFiles.SelectMany(BreakPointsIn))
 			{
 				IBreakPoint breakpoint1 = breakpoint;
 				var locations = type.Methods.SelectMany(m => m.Locations).Where(l => LocationsMatch(l, breakpoint1));
 				foreach(var location in locations)
-					_session.CreateBreakpointRequest(location);
+					CreateEventRequest(location);
 			}
+		}
+
+		private IEnumerable<IBreakPoint> BreakPointsIn(string file)
+		{
+			return _breakPoints.Where(b => b.File == file);
 		}
 
 		private bool LocationsMatch(IDebugLocation location, IBreakPoint breakpoint)
@@ -51,17 +56,32 @@ namespace CodeEditor.Debugger.Implementation
 			return breakpoint.File == location.File;
 		}
 
-		private static bool IsBreakpointInSameFileAs(IBreakPoint bp, IDebugType type)
+		private static bool DoesTypeHaveCodeIn(IDebugType type, string sourceFile)
 		{
-			return type.SourceFiles.Contains(bp.File);
+			return type.SourceFiles.Contains(sourceFile);
 		}
 
 		private void BreakpointAdded(IBreakPoint breakpoint)
 		{
 			_breakPoints.Add(breakpoint);
 
-			foreach (var type in _debugTypeProvider.LoadedTypes.Where(t => IsBreakpointInSameFileAs(breakpoint, t)))
-				_session.CreateBreakpointRequest(new DebugLocation(breakpoint.File,breakpoint.LineNumber));
+			foreach (var type in TypesWithCodeIn(breakpoint.File))
+			{
+				var locationInMethod = type.Methods.SelectMany(m => m.Locations).FirstOrDefault(l => LocationsMatch(l, breakpoint));
+				if (locationInMethod == null)
+					continue;
+				CreateEventRequest(locationInMethod);
+			}
+		}
+
+		private IEnumerable<IDebugType> TypesWithCodeIn(string sourceFile)
+		{
+			return _debugTypeProvider.LoadedTypes.Where(t => DoesTypeHaveCodeIn(t, sourceFile));
+		}
+
+		private void CreateEventRequest(IDebugLocation locationInMethod)
+		{
+			_session.CreateBreakpointRequest(locationInMethod);
 		}
 	}
 }
