@@ -2,6 +2,7 @@ namespace CodeEditor.Debugger
 {
 	public interface IBreakPoint
 	{
-		ILocation Location { get; }
+		string File { get; }
+		int LineNumber { get; }
 	}
 }

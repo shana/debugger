@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace CodeEditor.Debugger.Backend
 {
 	public interface ITypeMirror

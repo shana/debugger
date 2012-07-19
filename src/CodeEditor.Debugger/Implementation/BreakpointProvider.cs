@@ -20,7 +20,7 @@ namespace CodeEditor.Debugger.Implementation
 
 		public IBreakPoint GetBreakPointAt(string file, int lineNumber)
 		{
-			return _breakPoints.FirstOrDefault(bp => bp.Location.SourceFile == file && bp.Location.LineNumber == lineNumber);
+			return _breakPoints.FirstOrDefault(bp => bp.File == file && bp.LineNumber == lineNumber);
 		}
 
 		public void ToggleBreakPointAt(string fileName, int lineNumber)
@@ -28,7 +28,7 @@ namespace CodeEditor.Debugger.Implementation
 			Console.WriteLine("Toggling breakpoint at line: "+lineNumber);
 			var breakPoint = GetBreakPointAt(fileName, lineNumber);
 			if (breakPoint == null)
-				AddBreakPoint(new BreakPoint(new Location(lineNumber,fileName)));
+				AddBreakPoint(new BreakPoint(fileName, lineNumber));
 			else
 				RemoveBreakPoint(breakPoint);
 		}

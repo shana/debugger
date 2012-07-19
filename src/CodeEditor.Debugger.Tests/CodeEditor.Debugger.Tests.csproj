@@ -70,6 +70,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BreakPointMediatorTests.cs" />
     <Compile Include="TypeProviderTests.cs" />
     <Compile Include="SourceToTypeMapperTests.cs" />
   </ItemGroup>

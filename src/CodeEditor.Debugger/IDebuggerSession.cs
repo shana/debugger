@@ -22,7 +22,7 @@ namespace CodeEditor.Debugger
 		void Disconnect();
 		void Update();
 		ThreadsRequest GetThreadsAsync();
-		BreakpointEventRequest CreateBreakpointRequest(Mono.Debugger.Soft.Location location);
+		BreakpointEventRequest CreateBreakpointRequest(Location location);
 		event Action<ITypeMirror> TypeLoaded;
 		event Action<IAssemblyMirror> AssemblyLoaded;
 		event Action<IAssemblyMirror> AssemblyUnloaded;
