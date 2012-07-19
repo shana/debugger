@@ -60,11 +60,121 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
   </Target>
   -->
+
+  <PropertyGroup>
+    <UnityDebuggerDir>\Data\Tools\Debugger\Debugger_Data\Managed\</UnityDebuggerDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(OS)' == 'Unix' ">
+    <UnityBuildDir>..\..\..\..\build\MacEditor\</UnityBuildDir>
+    <UnityCmd>$(UnityBuildDir)Unity.app\Contents\MacOS\Unity</UnityCmd>
+    <UnityDebuggerProjectBuildDir>Build\Mac</UnityDebuggerProjectBuildDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(OS)' != 'Unix' ">
+    <UnityBuildDir>..\..\..\..\build\WindowsEditor\</UnityBuildDir>
+    <UnityCmd>$(UnityBuildDir)Unity.exe</UnityCmd>
+    <UnityDebuggerProjectBuildDir>Build\Windows</UnityDebuggerProjectBuildDir>
+  </PropertyGroup>
+
+
+  <!-- Since xbuild invokes the compiler even when the project has no source files,
+      make sure the build step is skipped by touching the project output assembly here -->
+  <Target Name="BeforeBuild">
+    <MakeDir Directories="$(IntermediateOutputPath)" />
+    <Touch Files="@(IntermediateAssembly)" AlwaysCreate="true" />
+  </Target>
+
+  <Target Name="AfterBuild" DependsOnTargets="_CopyDependenciesToDebuggerDir" />
+
+  <!-- Make sure all the assemblies are cleaned from the debugger dir as well -->
+  <Target Name="AfterClean" DependsOnTargets="_ResolveOutputs">
+    <Delete Files="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <!-- This target resolves all the assemblies that this project references directly or
+        indirectly, excluding the UnityEngine.dll and UnityEditor.dll -->
+  <Target Name="_ResolveOutputs">
+     <CreateItem Include="$(OutDir)\*.dll" Exclude="$(OutDir)\UnityEngine*;$(OutDir)\UnityEditor*;$(OutDir)$(TargetFilename)">
+      <Output TaskParameter="Include" ItemName="_Files"/>
+    </CreateItem>
+    <Message Text="@(_Files)" />
+  </Target>
+
+  <!-- This target resolves full project and tool paths for the _BuildDebuggerProject target -->
+  <Target Name="_ResolvePaths">
+      <!-- This allows us to later get the full path by doing %(UnityDebuggerProjectDir.FullPath) -->
+    <CreateItem Include="..\CodeEditor.Debugger.Unity.Standalone\UnityProject\">
+      <Output TaskParameter="Include" ItemName="UnityDebuggerProjectDir" />
+    </CreateItem>
+
+    <CreateProperty Value="%(UnityDebuggerProjectDir.FullPath)">
+      <Output TaskParameter="Value" PropertyName="_ProjectAbsPath" />
+    </CreateProperty>
+
+    <CreateProperty Value="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)\Debugger.app"  Condition="'$(OS)'=='Unix'">
+      <Output TaskParameter="Value" PropertyName="_DebuggerExe"/>
+    </CreateProperty>
+
+    <CreateProperty Value="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)\Debugger.exe"  Condition="'$(OS)'!='Unix'">
+      <Output TaskParameter="Value" PropertyName="_DebuggerExe"/>
+    </CreateProperty>
+
+    <CreateProperty Value='$(UnityCmd) -buildOSXPlayer "$(_DebuggerExe)"' Condition="'$(OS)'=='Unix'">
+      <Output TaskParameter="Value" PropertyName="_UnityCmd"/>
+    </CreateProperty>
+
+    <CreateProperty Value='$(UnityCmd) -buildWindowsPlayer "$(_DebuggerExe)"' Condition="'$(OS)'!='Unix'">
+      <Output TaskParameter="Value" PropertyName="_UnityCmd"/>
+    </CreateProperty>
+  </Target>
+
+  <!-- Take all the assemblies and copy them to the debugger dir,
+        with dependency checks (only copies what's changed) -->
+  <Target Name="_CopyDependenciesToDebuggerDir"
+    DependsOnTargets="_ResolveOutputs;_ResolvePaths"
+    Inputs="@(_Files)"
+    Outputs="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDir)%(Filename)%(Extension)')">
+
+    <MakeDir Directories="$(UnityBuildDir)$(UnityDebuggerDir)" />
+    <Copy
+      SourceFiles="@(_Files)"
+      DestinationFolder="$(UnityBuildDir)$(UnityDebuggerDir)"
+      SkipUnchangedFiles="true" />
+  </Target>
+
+
+  <!-- This target is called by the BuildDebuggerProject target. It builds the unity debugger
+       project and deploys the result to the proper directories -->
+  <Target Name="_BuildDebuggerProject"
+    DependsOnTargets="_ResolveOutputs"
+    Inputs="@(_Files)"
+    Outputs="$(_DebuggerExe)">
+
+    <MakeDir Directories="$(_ProjectAbsPath)\Project\Assets\bin" />
+    <MakeDir Directories="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)" />
+
+    <Copy
+      SourceFiles="@(_Files)"
+      DestinationFolder="$(_ProjectAbsPath)\Project\Assets\bin"
+    />
+
+    <Exec Command='$(_UnityCmd) -batchmode -projectpath "$(_ProjectAbsPath)\Project" -quit' />
+
+    <!-- Clean out files that aren't needed anymore -->
+    <Delete Files="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)\Debugger_Data\Managed\CodeEditor.*" />
+    <Delete Files="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)\Debugger_Data\Managed\Mono.Debugger.Soft.dll" />
+    <Delete Files="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)\Debugger_Data\Managed\Mono.Cecil.dll" />
+    <Delete Files="$(_ProjectAbsPath)\Project\Assets\bin" />
+  </Target>
+
+  <Target Name="Deploy" DependsOnTargets="Build" />
+  <Target Name="BuildDebuggerProject" DependsOnTargets="_BuildDebuggerProject" />
 </Project>
