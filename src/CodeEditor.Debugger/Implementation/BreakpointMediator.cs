@@ -28,7 +28,6 @@ namespace CodeEditor.Debugger.Implementation
 		private readonly IBreakpointProvider _breakpointProvider;
 		private readonly ITypeMirrorProvider _typeMirrorProvider;
 		private readonly IBreakpointEventRequestFactory _breakpointEventRequestFactory;
-		private readonly List<IBreakPoint> _breakPoints = new List<IBreakPoint>();
 
 		public BreakpointMediator(IBreakpointProvider breakpointProvider, ITypeMirrorProvider typeMirrorProvider, IBreakpointEventRequestFactory breakpointEventRequestFactory)
 		{
@@ -52,7 +51,7 @@ namespace CodeEditor.Debugger.Implementation
 
 		private IEnumerable<IBreakPoint> BreakPointsIn(string file)
 		{
-			return _breakPoints.Where(b => b.File == file);
+			return _breakpointProvider.Breakpoints.Where(b => b.File == file);
 		}
 
 		private bool LocationsMatch(ILocation location, IBreakPoint breakpoint)
@@ -67,8 +66,6 @@ namespace CodeEditor.Debugger.Implementation
 
 		private void BreakpointAdded(IBreakPoint breakpoint)
 		{
-			_breakPoints.Add(breakpoint);
-
 			foreach (var type in TypesWithCodeIn(breakpoint.File))
 			{
 				var locationInMethod = type.Methods.SelectMany(m => m.Locations).FirstOrDefault(l => LocationsMatch(l, breakpoint));

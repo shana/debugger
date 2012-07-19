@@ -71,7 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BreakPointMediatorTests.cs" />
-    <Compile Include="DebugTypeProviderTests.cs" />
+    <Compile Include="TypeProviderTests.cs" />
     <Compile Include="SourceToTypeMapperTests.cs" />
   </ItemGroup>
   <ItemGroup>

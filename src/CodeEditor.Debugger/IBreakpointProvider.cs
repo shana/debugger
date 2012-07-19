@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace CodeEditor.Debugger
 {
@@ -8,5 +9,6 @@ namespace CodeEditor.Debugger
 		void ToggleBreakPointAt(string fileName, int lineNumber);
 		event Action<IBreakPoint> BreakpointAdded;
 		event Action<IBreakPoint> BreakPointRemoved;
+		IEnumerable<IBreakPoint> Breakpoints { get; }
 	}
 }

@@ -9,7 +9,7 @@ namespace CodeEditor.Debugger.Tests
 	public class BreakPointMediatorTests
 	{
 		private Mock<IDebuggerSession> _session;
-		private Mock<IBreakpointProvider> _breakPointProvider;
+		private BreakpointProvider _breakPointProvider;
 		private ITypeMirrorProvider _typeMirrorProvider;
 		private Mock<IBreakpointEventRequestFactory> _breakpointEventRequestFactory;
 		private Mock<IBreakpointEventRequest> _breakRequest;
@@ -18,18 +18,18 @@ namespace CodeEditor.Debugger.Tests
 		public void SetUp()
 		{
 			_session = new Mock<IDebuggerSession>();
-			_breakPointProvider = new Mock<IBreakpointProvider>();
+			_breakPointProvider = new BreakpointProvider();
 			_typeMirrorProvider = new TypeMirrorProvider(_session.Object);
 			_breakpointEventRequestFactory = new Mock<IBreakpointEventRequestFactory>();
 			_breakRequest = new Mock<IBreakpointEventRequest>();
-			new BreakpointMediator(_breakPointProvider.Object, _typeMirrorProvider, _breakpointEventRequestFactory.Object);
+			new BreakpointMediator(_breakPointProvider, _typeMirrorProvider, _breakpointEventRequestFactory.Object);
 		}
 
 		[Test]
 		public void WhenTypeLoadsMatchingExistingBreakPoint_CreatesBreakRequest()
 		{
 			SetupBreakEventRequestFactory("myfile.cs", 3, _breakRequest.Object);
-			AddBreakpoint(MockBreakPointFor("myfile.cs",3));
+			AddBreakpoint("myfile.cs",3);
 			RaiseTypeLoad(MockTypeWithMethodFrom("myfile.cs", 3));
 
 			_breakRequest.Verify(r=>r.Enable());
@@ -41,7 +41,7 @@ namespace CodeEditor.Debugger.Tests
 		{
 			SetupBreakEventRequestFactory("myfile.cs", 5, _breakRequest.Object);
 			RaiseTypeLoad(MockTypeWithMethodFrom("myfile.cs",5));
-			AddBreakpoint(MockBreakPointFor("myfile.cs",5));
+			AddBreakpoint("myfile.cs",5);
 
 			_breakRequest.Verify(r => r.Enable());
 			VerifyMocks();
@@ -58,13 +58,12 @@ namespace CodeEditor.Debugger.Tests
 		{
 			_breakpointEventRequestFactory.VerifyAll();
 			_session.VerifyAll();
-			_breakPointProvider.VerifyAll();
 			_breakRequest.VerifyAll();
 		}
 
-		private void AddBreakpoint(Mock<IBreakPoint> breakpoint)
+		private void AddBreakpoint(string file, int line)
 		{
-			_breakPointProvider.Raise(bpp => bpp.BreakpointAdded += null, breakpoint.Object);
+			_breakPointProvider.ToggleBreakPointAt(file,line);
 		}
 
 		private void RaiseTypeLoad(Mock<ITypeMirror> debugType)
@@ -85,14 +84,6 @@ namespace CodeEditor.Debugger.Tests
 			debugType.SetupGet(t => t.Methods).Returns(new[] {debugMethod.Object});
 
 			return debugType;
-		}
-
-		private static Mock<IBreakPoint> MockBreakPointFor(string file, int line)
-		{
-			var breakpoint = new Mock<IBreakPoint>();
-			breakpoint.SetupGet(bp => bp.File).Returns(file);
-			breakpoint.SetupGet(bp => bp.LineNumber).Returns(line);
-			return breakpoint;
 		}
 	}
 }

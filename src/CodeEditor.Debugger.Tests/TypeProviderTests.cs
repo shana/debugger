@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace CodeEditor.Debugger.Tests
 {
 	[TestFixture]
-	public class DebugTypeProviderTests
+	public class TypeProviderTests
 	{
 		private Mock<IDebuggerSession> _session;
 		private TypeMirrorProvider _typeMirrorProvider;

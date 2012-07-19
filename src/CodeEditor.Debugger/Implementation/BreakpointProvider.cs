@@ -13,6 +13,11 @@ namespace CodeEditor.Debugger.Implementation
 		public event Action<IBreakPoint> BreakpointAdded;
 		public event Action<IBreakPoint> BreakPointRemoved;
 
+		public IEnumerable<IBreakPoint> Breakpoints
+		{
+			get { return _breakPoints; }
+		}
+
 		public IBreakPoint GetBreakPointAt(string file, int lineNumber)
 		{
 			return _breakPoints.FirstOrDefault(bp => bp.File == file && bp.LineNumber == lineNumber);
