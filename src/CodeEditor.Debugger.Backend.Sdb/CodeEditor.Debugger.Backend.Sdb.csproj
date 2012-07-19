@@ -40,6 +40,10 @@
     <Compile Include="SdbTypeMirror.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CodeEditor.Composition\CodeEditor.Composition.csproj">
+      <Project>{9DB8BFD3-06C8-4A8C-8842-5931B924B56C}</Project>
+      <Name>CodeEditor.Composition</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CodeEditor.Debugger.Backend\CodeEditor.Debugger.Backend.csproj">
       <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
       <Name>CodeEditor.Debugger.Backend</Name>

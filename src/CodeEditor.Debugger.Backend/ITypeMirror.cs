@@ -4,8 +4,8 @@ namespace CodeEditor.Debugger.Backend
 {
 	public interface ITypeMirror
 	{
-		IAssemblyMirror AssemblyMirror { get; }
+		IAssemblyMirror Assembly { get; }
 		string[] SourceFiles { get; }
-		IEnumerable<IMethodMirror> Methods { get; }
+		IMethodMirror[] Methods { get; }
 	}
 }

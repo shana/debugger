@@ -8,11 +8,11 @@ namespace CodeEditor.Debugger.Unity.Engine
 	{
 		private readonly ITextView _textView;
 
-		private readonly IDebugBreakPointProvider _debugBreakPointProvider;
+		private readonly IBreakpointProvider _breakpointProvider;
 
-		public BreakPointMargin(ITextView textView, IDebugBreakPointProvider debugBreakPointProvider)
+		public BreakPointMargin(ITextView textView, IBreakpointProvider breakpointProvider)
 		{
-			_debugBreakPointProvider = debugBreakPointProvider;
+			_breakpointProvider = breakpointProvider;
 			_textView = textView;
 		}
 
@@ -40,12 +40,12 @@ namespace CodeEditor.Debugger.Unity.Engine
 
 		private void SetBreakPoint(ITextViewLine line)
 		{
-			_debugBreakPointProvider.ToggleBreakPointAt(File().FullName, line.LineNumber);
+			_breakpointProvider.ToggleBreakPointAt(File().FullName, line.LineNumber);
 		}
 
 		private IBreakPoint GetBreakPoint(ITextViewLine line)
 		{
-			return _debugBreakPointProvider.GetBreakPointAt(File().FullName, line.LineNumber);
+			return _breakpointProvider.GetBreakPointAt(File().FullName, line.LineNumber);
 		}
 
 		private File File()

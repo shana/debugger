@@ -7,7 +7,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 	[Export(typeof(ITextViewMarginProvider))]
 	class BreakPointMarginProvider : ITextViewMarginProvider
 	{
-		[Import] private IDebugBreakPointProvider _debugBreakPointProvider;
+		[Import] private IBreakpointProvider _breakpointProvider;
 
 		public ITextViewMargin MarginFor(ITextView textView)
 		{
@@ -16,7 +16,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 
 		private BreakPointMargin CreateMargin(ITextView textView)
 		{
-			return new BreakPointMargin(textView, _debugBreakPointProvider);
+			return new BreakPointMargin(textView, _breakpointProvider);
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace CodeEditor.Debugger.Implementation
 	class BreakPointMediatorFactory : IDebuggerSessionCreationListener
 	{
 		[Import]
-		private IDebugBreakPointProvider DebugBreakPointProvider { get; set; }
+		private IBreakpointProvider BreakpointProvider { get; set; }
 		
 		[Import]
 		private ITypeMirrorProvider TypeMirrorProvider { get; set; }
@@ -19,23 +19,23 @@ namespace CodeEditor.Debugger.Implementation
 
 		public void OnCreate(IDebuggerSession session)
 		{
-			new BreakpointMediator(DebugBreakPointProvider, TypeMirrorProvider, BreakpointEventRequestFactory);
+			new BreakpointMediator(BreakpointProvider, TypeMirrorProvider, BreakpointEventRequestFactory);
 		}
 	}
 	
 	class BreakpointMediator
 	{
-		private readonly IDebugBreakPointProvider _debugBreakPointProvider;
+		private readonly IBreakpointProvider _breakpointProvider;
 		private readonly ITypeMirrorProvider _typeMirrorProvider;
 		private readonly IBreakpointEventRequestFactory _breakpointEventRequestFactory;
 		private readonly List<IBreakPoint> _breakPoints = new List<IBreakPoint>();
 
-		public BreakpointMediator(IDebugBreakPointProvider debugBreakPointProvider, ITypeMirrorProvider typeMirrorProvider, IBreakpointEventRequestFactory breakpointEventRequestFactory)
+		public BreakpointMediator(IBreakpointProvider breakpointProvider, ITypeMirrorProvider typeMirrorProvider, IBreakpointEventRequestFactory breakpointEventRequestFactory)
 		{
-			_debugBreakPointProvider = debugBreakPointProvider;
+			_breakpointProvider = breakpointProvider;
 			_typeMirrorProvider = typeMirrorProvider;
 			_breakpointEventRequestFactory = breakpointEventRequestFactory;
-			_debugBreakPointProvider.BreakpointAdded += BreakpointAdded;
+			_breakpointProvider.BreakpointAdded += BreakpointAdded;
 			_typeMirrorProvider.TypeLoaded += TypeMirrorLoaded;
 		}
 

@@ -47,7 +47,7 @@ namespace CodeEditor.Debugger.Tests
 
 		private static void SetAssemblyForType(Mock<ITypeMirror> debugType, Mock<IAssemblyMirror> debugAssembly)
 		{
-			debugType.SetupGet(d => d.AssemblyMirror).Returns(debugAssembly.Object);
+			debugType.SetupGet(d => d.Assembly).Returns(debugAssembly.Object);
 		}
 
 		[Test]

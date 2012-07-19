@@ -3,7 +3,7 @@ using CodeEditor.Debugger.Implementation;
 
 namespace CodeEditor.Debugger
 {
-	public interface IDebugThreadProvider
+	public interface IThreadProvider
 	{
 		IList<DebugThread> Threads { get; }
 	}

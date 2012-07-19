@@ -5,15 +5,15 @@ using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
 {
-	[Export(typeof(IDebugThreadProvider))]
-	class DebugThreadProvider : IDebugThreadProvider
+	[Export(typeof(IThreadProvider))]
+	class ThreadProvider : IThreadProvider
 	{
 		readonly IDebuggerSession _debuggingSession;
 
 		private IList<DebugThread> _threads = new List<DebugThread>();
 
 		[ImportingConstructor]
-		public DebugThreadProvider(IDebuggerSession debuggingSession)
+		public ThreadProvider(IDebuggerSession debuggingSession)
 		{
 			_debuggingSession = debuggingSession;
 			_debuggingSession.VMGotSuspended += VMGotSuspended;

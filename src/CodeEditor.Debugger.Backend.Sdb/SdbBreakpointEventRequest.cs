@@ -5,16 +5,16 @@ namespace CodeEditor.Debugger.Implementation
 {
 	public class SdbBreakpointEventRequest : IBreakpointEventRequest
 	{
-		private readonly BreakpointEventRequest _mdsRequest;
+		private readonly BreakpointEventRequest _sdbRequest;
 
-		public SdbBreakpointEventRequest(BreakpointEventRequest mdsRequest)
+		public SdbBreakpointEventRequest(BreakpointEventRequest sdbRequest)
 		{
-			_mdsRequest = mdsRequest;
+			_sdbRequest = sdbRequest;
 		}
 
 		public void Enable()
 		{
-			_mdsRequest.Enable();
+			_sdbRequest.Enable();
 		}
 	}
 }

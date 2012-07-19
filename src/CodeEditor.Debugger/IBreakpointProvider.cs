@@ -2,7 +2,7 @@ using System;
 
 namespace CodeEditor.Debugger
 {
-	public interface IDebugBreakPointProvider
+	public interface IBreakpointProvider
 	{
 		IBreakPoint GetBreakPointAt(string file, int lineNumber);
 		void ToggleBreakPointAt(string fileName, int lineNumber);

@@ -9,7 +9,7 @@ namespace CodeEditor.Debugger.Tests
 	public class BreakPointMediatorTests
 	{
 		private Mock<IDebuggerSession> _session;
-		private Mock<IDebugBreakPointProvider> _breakPointProvider;
+		private Mock<IBreakpointProvider> _breakPointProvider;
 		private ITypeMirrorProvider _typeMirrorProvider;
 		private Mock<IBreakpointEventRequestFactory> _breakpointEventRequestFactory;
 		private Mock<IBreakpointEventRequest> _breakRequest;
@@ -18,7 +18,7 @@ namespace CodeEditor.Debugger.Tests
 		public void SetUp()
 		{
 			_session = new Mock<IDebuggerSession>();
-			_breakPointProvider = new Mock<IDebugBreakPointProvider>();
+			_breakPointProvider = new Mock<IBreakpointProvider>();
 			_typeMirrorProvider = new TypeMirrorProvider(_session.Object);
 			_breakpointEventRequestFactory = new Mock<IBreakpointEventRequestFactory>();
 			_breakRequest = new Mock<IBreakpointEventRequest>();

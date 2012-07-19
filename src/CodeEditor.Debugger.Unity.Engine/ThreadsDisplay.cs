@@ -10,19 +10,19 @@ namespace CodeEditor.Debugger.Unity.Engine
 	public class ThreadsDisplay : IDebuggerWindow
 	{
 		private readonly IDebuggerSession _debuggerSession;
-		private IDebugThreadProvider _debugThreadProvider;
+		private IThreadProvider _threadProvider;
 			
 		[ImportingConstructor]
-		public ThreadsDisplay(IDebuggerSession debuggerSession, IDebugThreadProvider debugThreadProvider)
+		public ThreadsDisplay(IDebuggerSession debuggerSession, IThreadProvider threadProvider)
 		{
 			_debuggerSession = debuggerSession;
-			_debugThreadProvider = debugThreadProvider;
+			_threadProvider = threadProvider;
 		}
 
 		public void OnGUI()
 		{
 			GUI.enabled = _debuggerSession.Suspended;
-			foreach(var thread in _debugThreadProvider.Threads)
+			foreach(var thread in _threadProvider.Threads)
 			{
 				GUILayout.Label("Thread id: "+thread.Id);
 			}

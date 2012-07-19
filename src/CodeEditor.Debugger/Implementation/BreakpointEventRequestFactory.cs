@@ -15,8 +15,8 @@ namespace CodeEditor.Debugger.Implementation
 
 		public IBreakpointEventRequest Create(ILocation location)
 		{
-			var debugLocation = (SdbLocation) location;
-			var request = _session.CreateBreakpointRequest(debugLocation.MDSLocation);
+			var sdbLocation = (SdbLocation) location;
+			var request = _session.CreateBreakpointRequest(sdbLocation.MDSLocation);
 			return new SdbBreakpointEventRequest(request);
 		}
 	}

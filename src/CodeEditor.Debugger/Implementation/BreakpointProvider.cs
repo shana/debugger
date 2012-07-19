@@ -5,8 +5,8 @@ using CodeEditor.Composition;
 
 namespace CodeEditor.Debugger.Implementation
 {
-	[Export(typeof(IDebugBreakPointProvider))]
-	class DebugBreakPointProvider : IDebugBreakPointProvider
+	[Export(typeof(IBreakpointProvider))]
+	class BreakpointProvider : IBreakpointProvider
 	{
 		readonly List<IBreakPoint> _breakPoints = new List<IBreakPoint>();
 

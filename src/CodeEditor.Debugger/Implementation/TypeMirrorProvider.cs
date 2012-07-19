@@ -38,7 +38,7 @@ namespace CodeEditor.Debugger.Implementation
 
 		private void AssemblyUnloaded(IAssemblyMirror assemblyMirror)
 		{
-			var unloadedTypes = _types.Where(t => t.AssemblyMirror == assemblyMirror).ToArray();
+			var unloadedTypes = _types.Where(t => t.Assembly == assemblyMirror).ToArray();
 			foreach (var type in unloadedTypes)
 				OnTypeUnloaded(type);
 		}
