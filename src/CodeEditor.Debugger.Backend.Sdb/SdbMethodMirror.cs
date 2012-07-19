@@ -1,31 +1,26 @@
 using System.Linq;
-using CodeEditor.Debugger.Backend;
+using CodeEditor.Composition;
 using Mono.Debugger.Soft;
 
-namespace CodeEditor.Debugger.Implementation
+namespace CodeEditor.Debugger.Backend.Sdb
 {
 	internal class SdbMethodMirror : IMethodMirror
 	{
 		private readonly MethodMirror _methodMirror;
-		private ILocation[] _locations;
+		private readonly Lazy<ILocation[]> _locations;
 
 		public SdbMethodMirror(MethodMirror methodMirror)
 		{
 			_methodMirror = methodMirror;
+			_locations = new Lazy<ILocation[]>(() => _methodMirror.Locations.Select(SdbLocationFor).ToArray());
 		}
 
 		public ILocation[] Locations
 		{
-			get
-			{
-				if (_locations != null)
-					return _locations;
-				_locations = _methodMirror.Locations.Select(DebugLocationFor).ToArray();
-				return _locations;
-			}
+			get { return _locations.Value; }
 		}
 
-		private ILocation DebugLocationFor(Location l)
+		private static ILocation SdbLocationFor(Location l)
 		{
 			return new SdbLocation(l);
 		}

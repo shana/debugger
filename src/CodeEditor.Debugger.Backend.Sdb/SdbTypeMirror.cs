@@ -1,9 +1,8 @@
 ﻿using System.Linq;
 using CodeEditor.Composition;
-using CodeEditor.Debugger.Backend;
 using Mono.Debugger.Soft;
 
-namespace CodeEditor.Debugger.Implementation
+namespace CodeEditor.Debugger.Backend.Sdb
 {
 	public class SdbTypeMirror : ITypeMirror
 	{

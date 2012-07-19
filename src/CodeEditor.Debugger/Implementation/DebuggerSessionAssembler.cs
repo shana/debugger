@@ -10,7 +10,7 @@ namespace CodeEditor.Debugger.Implementation
 
 		public void Assemble()
 		{
-			foreach(var listener in _listeners)
+			foreach (var listener in _listeners)
 				listener.OnCreate(_session);
 		}
 	}

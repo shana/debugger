@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading;
 using CodeEditor.Composition;
 using CodeEditor.Debugger.Backend;
+using CodeEditor.Debugger.Backend.Sdb;
 using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation

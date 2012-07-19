@@ -1,9 +1,11 @@
 ﻿using CodeEditor.Composition;
 using CodeEditor.Debugger.Backend;
+using CodeEditor.Debugger.Backend.Sdb;
 
 namespace CodeEditor.Debugger.Implementation
 {
 	[Export(typeof(IBreakpointEventRequestFactory))]
+	[Export(typeof(IDebuggerSessionCreationListener))]
 	class BreakpointEventRequestFactory : IDebuggerSessionCreationListener, IBreakpointEventRequestFactory
 	{
 		private IDebuggerSession _session;

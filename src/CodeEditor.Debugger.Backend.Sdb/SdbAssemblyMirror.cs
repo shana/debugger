@@ -1,7 +1,6 @@
-﻿using CodeEditor.Debugger.Backend;
-using Mono.Debugger.Soft;
+﻿using Mono.Debugger.Soft;
 
-namespace CodeEditor.Debugger.Implementation
+namespace CodeEditor.Debugger.Backend.Sdb
 {
 	public class SdbAssemblyMirror : IAssemblyMirror
 	{
