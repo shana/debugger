@@ -329,19 +329,6 @@ namespace CodeEditor.Debugger.Implementation
 			return request;
 		}
 
-		public IDebugBreakpointEventRequest CreateBreakpointRequest(IDebugLocation location)
-		{
-			var debugLocation = (DebugLocation) location;
-			var request = _vm.CreateBreakpointRequest(debugLocation.MDSLocation);
-			var debugrequest = new DebugBreakpointEventRequest();
-			return debugrequest;
-		}
-
-		private Location MDSLocationFor(IDebugLocation location)
-		{
-			throw new NotImplementedException();
-		}
-
 		public event Action<IDebugType> TypeLoaded;
 		public event Action<IDebugAssembly> AssemblyLoaded;
 		public event Action<IDebugAssembly> AssemblyUnloaded;

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CodeEditor.Debugger.Implementation;
+﻿using CodeEditor.Debugger.Implementation;
 using Moq;
 using NUnit.Framework;
 
@@ -14,6 +10,8 @@ namespace CodeEditor.Debugger.Tests
 		private Mock<IDebuggerSession> _session;
 		private Mock<IDebugBreakPointProvider> _breakPointProvider;
 		private IDebugTypeProvider _typeProvider;
+		private Mock<IBreakpointEventRequestFactory> _breakpointEventRequestFactory;
+		private Mock<IDebugBreakpointEventRequest> _breakRequest;
 
 		[SetUp]
 		public void SetUp()
@@ -21,28 +19,45 @@ namespace CodeEditor.Debugger.Tests
 			_session = new Mock<IDebuggerSession>();
 			_breakPointProvider = new Mock<IDebugBreakPointProvider>();
 			_typeProvider = new DebugTypeProvider(_session.Object);
-			new BreakpointMediator(_session.Object, _breakPointProvider.Object, _typeProvider);
+			_breakpointEventRequestFactory = new Mock<IBreakpointEventRequestFactory>();
+			_breakRequest = new Mock<IDebugBreakpointEventRequest>();
+			new BreakpointMediator(_breakPointProvider.Object, _typeProvider, _breakpointEventRequestFactory.Object);
 		}
 
 		[Test]
 		public void WhenTypeLoadsMatchingExistingBreakPoint_CreatesBreakRequest()
 		{
+			SetupBreakEventRequestFactory("myfile.cs", 3, _breakRequest.Object);
 			AddBreakpoint(MockBreakPointFor("myfile.cs",3));
 			RaiseTypeLoad(MockTypeWithMethodFrom("myfile.cs", 3));
-			VerifyCreateBreakpointRequest("myfile.cs",3);
+
+			_breakRequest.Verify(r=>r.Enable());
+			VerifyMocks();
 		}
 
 		[Test]
 		public void BreakPointGetsAddedMatchingAlreadyLoadedType_CreatesBreakRequest()
 		{
+			SetupBreakEventRequestFactory("myfile.cs", 5, _breakRequest.Object);
 			RaiseTypeLoad(MockTypeWithMethodFrom("myfile.cs",5));
 			AddBreakpoint(MockBreakPointFor("myfile.cs",5));
-			VerifyCreateBreakpointRequest("myfile.cs",5);
+			_breakRequest.Verify(r => r.Enable());
+			VerifyMocks();
 		}
 
-		private void VerifyCreateBreakpointRequest(string expectedFile, int line)
+		private void SetupBreakEventRequestFactory(string file, int lineNumber, IDebugBreakpointEventRequest breakRequestToCreate)
 		{
-			_session.Verify(s => s.CreateBreakpointRequest(It.Is<IDebugLocation>(location => location.File==expectedFile && location.LineNumber == line)));
+			_breakpointEventRequestFactory
+				.Setup(f => f.Create(It.Is<IDebugLocation>(location => location.File == file && location.LineNumber == lineNumber)))
+				.Returns(breakRequestToCreate);
+		}
+
+		private void VerifyMocks()
+		{
+			_breakpointEventRequestFactory.VerifyAll();
+			_session.VerifyAll();
+			_breakPointProvider.VerifyAll();
+			_breakRequest.VerifyAll();
 		}
 
 		private void AddBreakpoint(Mock<IBreakPoint> breakpoint)

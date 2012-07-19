@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IDebugMethod.cs" />
+    <Compile Include="Implementation\BreakpointEventRequestFactory.cs" />
     <Compile Include="Implementation\DebugBreakpointEventRequest.cs" />
     <Compile Include="IDebugBreakpointEventRequest.cs" />
     <Compile Include="IDebugBreakPointProvider.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="ILogProvider.cs" />
     <Compile Include="IDebugTypeProvider.cs" />
     <Compile Include="IDebugLocation.cs" />
+    <Compile Include="IBreakpointEventRequestFactory.cs" />
     <Compile Include="ISourceToTypeMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Implementation\SourceToTypeMapper.cs" />

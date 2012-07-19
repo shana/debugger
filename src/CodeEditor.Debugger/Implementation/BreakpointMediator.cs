@@ -13,24 +13,27 @@ namespace CodeEditor.Debugger.Implementation
 		[Import]
 		private IDebugTypeProvider DebugTypeProvider { get; set; }
 
+		[Import]
+		private BreakpointEventRequestFactory BreakpointEventRequestFactory { get; set; }
+
 		public void OnCreate(IDebuggerSession session)
 		{
-			new BreakpointMediator(session,DebugBreakPointProvider, DebugTypeProvider);
+			new BreakpointMediator(DebugBreakPointProvider, DebugTypeProvider, BreakpointEventRequestFactory);
 		}
 	}
 	
 	class BreakpointMediator
 	{
-		private readonly IDebuggerSession _session;
 		private readonly IDebugBreakPointProvider _debugBreakPointProvider;
 		private readonly IDebugTypeProvider _debugTypeProvider;
+		private readonly IBreakpointEventRequestFactory _breakpointEventRequestFactory;
 		private readonly List<IBreakPoint> _breakPoints = new List<IBreakPoint>();
 
-		public BreakpointMediator(IDebuggerSession session, IDebugBreakPointProvider debugBreakPointProvider, IDebugTypeProvider debugTypeProvider)
+		public BreakpointMediator(IDebugBreakPointProvider debugBreakPointProvider, IDebugTypeProvider debugTypeProvider, IBreakpointEventRequestFactory breakpointEventRequestFactory)
 		{
-			_session = session;
 			_debugBreakPointProvider = debugBreakPointProvider;
 			_debugTypeProvider = debugTypeProvider;
+			_breakpointEventRequestFactory = breakpointEventRequestFactory;
 			_debugBreakPointProvider.BreakpointAdded += BreakpointAdded;
 			_debugTypeProvider.TypeLoaded += TypeLoaded;
 		}
@@ -81,7 +84,8 @@ namespace CodeEditor.Debugger.Implementation
 
 		private void CreateEventRequest(IDebugLocation locationInMethod)
 		{
-			_session.CreateBreakpointRequest(locationInMethod);
+			var request = _breakpointEventRequestFactory.Create(locationInMethod);
+			request.Enable();
 		}
 	}
 }
