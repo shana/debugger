@@ -1,12 +1,13 @@
+using CodeEditor.Debugger.Backend;
 using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
 {
-	class DebugBreakpointEventRequest : IDebugBreakpointEventRequest
+	public class SdbBreakpointEventRequest : IBreakpointEventRequest
 	{
 		private readonly BreakpointEventRequest _mdsRequest;
 
-		public DebugBreakpointEventRequest(BreakpointEventRequest mdsRequest)
+		public SdbBreakpointEventRequest(BreakpointEventRequest mdsRequest)
 		{
 			_mdsRequest = mdsRequest;
 		}

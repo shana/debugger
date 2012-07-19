@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using CodeEditor.Composition;
+using CodeEditor.Debugger.Backend;
 using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
@@ -25,7 +26,7 @@ namespace CodeEditor.Debugger.Implementation
 		private ThreadMirror _mainThread;
 		private readonly List<AssemblyMirror> _loadedAssemblies = new List<AssemblyMirror>();
 		private Dictionary<Location,BreakpointEventRequest> _breakpointEventRequests = new Dictionary<Location, BreakpointEventRequest>();
-		private readonly List<DebugAssembly> _debugAssemblies = new List<DebugAssembly>();
+		private readonly List<SdbAssemblyMirror> _debugAssemblies = new List<SdbAssemblyMirror>();
 
 		public void Start(int debuggerPort)
 		{
@@ -33,7 +34,7 @@ namespace CodeEditor.Debugger.Implementation
 			QueueUserWorkItem(Connect);
 		}
 
-		public IEnumerable<AssemblyMirror> LoadedAssemblies { get { return _loadedAssemblies; } } 
+		public IEnumerable<Mono.Debugger.Soft.AssemblyMirror> LoadedAssemblies { get { return _loadedAssemblies; } } 
 
 		public void Connect()
 		{
@@ -49,7 +50,9 @@ namespace CodeEditor.Debugger.Implementation
 					EventType.AppDomainUnload,
 					EventType.AppDomainCreate,
 					EventType.VMDeath,
-					EventType.VMDisconnect);
+					EventType.VMDisconnect,
+					EventType.TypeLoad
+					);
 				_methodEntryRequest = _vm.CreateMethodEntryRequest();
 				StartEventLoop();
 			});
@@ -214,7 +217,7 @@ namespace CodeEditor.Debugger.Implementation
 			AssemblyUnloaded(debugAssembly);
 		}
 
-		private void ProcessLoadedAssembly(AssemblyMirror assembly)
+		private void ProcessLoadedAssembly(Mono.Debugger.Soft.AssemblyMirror assembly)
 		{
 			var hasDebugSymbols = HasDebugSymbols(assembly);
 			Trace("AssemblyLoad: {0}", assembly.GetName().FullName);
@@ -231,12 +234,12 @@ namespace CodeEditor.Debugger.Implementation
 				_methodEntryRequest.Enable();
 		}
 
-		private static bool IsUserCode(AssemblyMirror assembly)
+		private static bool IsUserCode(Mono.Debugger.Soft.AssemblyMirror assembly)
 		{
-			return assembly.GetName().Name.StartsWith("Assembly-");
+			return assembly.GetName().Name.StartsWith("SdbAssemblyMirror-");
 		}
 
-		private static bool HasDebugSymbols(AssemblyMirror assembly)
+		private static bool HasDebugSymbols(Mono.Debugger.Soft.AssemblyMirror assembly)
 		{
 			return File.Exists(assembly.ManifestModule.FullyQualifiedName + ".mdb");
 		}
@@ -258,23 +261,21 @@ namespace CodeEditor.Debugger.Implementation
 			AssemblyUnloaded(DebugAssemblyFor(e.Assembly));
 		}
 
-		private IDebugAssembly DebugAssemblyFor(AssemblyMirror assemblyMirror)
+		private IAssemblyMirror DebugAssemblyFor(Mono.Debugger.Soft.AssemblyMirror assemblyMirror)
 		{
 			var debugAssembly = _debugAssemblies.SingleOrDefault(da => da.Mirror == assemblyMirror);
 			if (debugAssembly != null)
 				return debugAssembly;
 
-			debugAssembly = new DebugAssembly(assemblyMirror);
+			debugAssembly = new SdbAssemblyMirror(assemblyMirror);
 			_debugAssemblies.Add(debugAssembly);
 			return debugAssembly;
 		}
 
 		private void OnTypeLoad(TypeLoadEvent e)
 		{
-			Trace("TypeLoad: {0}", e.Type.FullName);
-
 			var debugAssembly = DebugAssemblyFor(e.Type.Assembly);
-			var debugType = new DebugType(e.Type,debugAssembly);
+			var debugType = new SdbTypeMirror(e.Type,debugAssembly);
 
 			TypeLoaded(debugType);
 		}
@@ -329,9 +330,9 @@ namespace CodeEditor.Debugger.Implementation
 			return request;
 		}
 
-		public event Action<IDebugType> TypeLoaded;
-		public event Action<IDebugAssembly> AssemblyLoaded;
-		public event Action<IDebugAssembly> AssemblyUnloaded;
+		public event Action<ITypeMirror> TypeLoaded;
+		public event Action<IAssemblyMirror> AssemblyLoaded;
+		public event Action<IAssemblyMirror> AssemblyUnloaded;
 
 		private void Trace(string format, params object[] args)
 		{

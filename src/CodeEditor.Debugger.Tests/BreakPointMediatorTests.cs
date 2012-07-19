@@ -1,4 +1,5 @@
-﻿using CodeEditor.Debugger.Implementation;
+﻿using CodeEditor.Debugger.Backend;
+using CodeEditor.Debugger.Implementation;
 using Moq;
 using NUnit.Framework;
 
@@ -9,19 +10,19 @@ namespace CodeEditor.Debugger.Tests
 	{
 		private Mock<IDebuggerSession> _session;
 		private Mock<IDebugBreakPointProvider> _breakPointProvider;
-		private IDebugTypeProvider _typeProvider;
+		private ITypeMirrorProvider _typeMirrorProvider;
 		private Mock<IBreakpointEventRequestFactory> _breakpointEventRequestFactory;
-		private Mock<IDebugBreakpointEventRequest> _breakRequest;
+		private Mock<IBreakpointEventRequest> _breakRequest;
 
 		[SetUp]
 		public void SetUp()
 		{
 			_session = new Mock<IDebuggerSession>();
 			_breakPointProvider = new Mock<IDebugBreakPointProvider>();
-			_typeProvider = new DebugTypeProvider(_session.Object);
+			_typeMirrorProvider = new TypeMirrorProvider(_session.Object);
 			_breakpointEventRequestFactory = new Mock<IBreakpointEventRequestFactory>();
-			_breakRequest = new Mock<IDebugBreakpointEventRequest>();
-			new BreakpointMediator(_breakPointProvider.Object, _typeProvider, _breakpointEventRequestFactory.Object);
+			_breakRequest = new Mock<IBreakpointEventRequest>();
+			new BreakpointMediator(_breakPointProvider.Object, _typeMirrorProvider, _breakpointEventRequestFactory.Object);
 		}
 
 		[Test]
@@ -46,10 +47,10 @@ namespace CodeEditor.Debugger.Tests
 			VerifyMocks();
 		}
 
-		private void SetupBreakEventRequestFactory(string file, int lineNumber, IDebugBreakpointEventRequest breakRequestToCreate)
+		private void SetupBreakEventRequestFactory(string file, int lineNumber, IBreakpointEventRequest breakRequestToCreate)
 		{
 			_breakpointEventRequestFactory
-				.Setup(f => f.Create(It.Is<IDebugLocation>(location => location.File == file && location.LineNumber == lineNumber)))
+				.Setup(f => f.Create(It.Is<ILocation>(location => location.File == file && location.LineNumber == lineNumber)))
 				.Returns(breakRequestToCreate);
 		}
 
@@ -66,18 +67,18 @@ namespace CodeEditor.Debugger.Tests
 			_breakPointProvider.Raise(bpp => bpp.BreakpointAdded += null, breakpoint.Object);
 		}
 
-		private void RaiseTypeLoad(Mock<IDebugType> debugType)
+		private void RaiseTypeLoad(Mock<ITypeMirror> debugType)
 		{
 			_session.Raise(tp => tp.TypeLoaded += null, debugType.Object);
 		}
 
-		private static Mock<IDebugType> MockTypeWithMethodFrom(string sourceFile, int line)
+		private static Mock<ITypeMirror> MockTypeWithMethodFrom(string sourceFile, int line)
 		{
-			var debugType = new Mock<IDebugType>();
+			var debugType = new Mock<ITypeMirror>();
 			debugType.SetupGet(t => t.SourceFiles).Returns(new[] {sourceFile});
 
-			var debugMethod = new Mock<IDebugMethod>();
-			var debugLocation = new Mock<IDebugLocation>();
+			var debugMethod = new Mock<IMethodMirror>();
+			var debugLocation = new Mock<ILocation>();
 			debugLocation.SetupGet(l => l.File).Returns(sourceFile);
 			debugLocation.SetupGet(l => l.LineNumber).Returns(line);
 			debugMethod.SetupGet(m => m.Locations).Returns(new[] {debugLocation.Object});

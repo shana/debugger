@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using CodeEditor.Debugger.Backend;
 using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
 {
-	class DebugLocation : IDebugLocation
+	public class SdbLocation : ILocation
 	{
 		public Location MDSLocation { get; private set; }
 
-		public DebugLocation(Location location)
+		public SdbLocation(Location location)
 		{
 			MDSLocation = location;
 		}

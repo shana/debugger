@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CodeEditor.Debugger.Backend;
 using CodeEditor.Debugger.Implementation;
 using Moq;
 using NUnit.Framework;
@@ -12,14 +13,14 @@ namespace CodeEditor.Debugger.Tests
 	public class SourceToTypeMapperTests
 	{
 		private Mock<IDebuggerSession> _session;
-		private Mock<IDebugTypeProvider> _typeProvider;
+		private Mock<ITypeMirrorProvider> _typeProvider;
 		private SourceToTypeMapper _mapper;
 
 		[SetUp]
 		public void Setup()
 		{
 			_session = new Mock<IDebuggerSession>();
-			_typeProvider = new Mock<IDebugTypeProvider>();
+			_typeProvider = new Mock<ITypeMirrorProvider>();
 			_mapper = new SourceToTypeMapper(_typeProvider.Object);			
 		}
 
@@ -33,7 +34,7 @@ namespace CodeEditor.Debugger.Tests
 		[Test]
 		public void TypeIsFoundByItsSourceFile()
 		{
-			var debugType = new Mock<IDebugType>();
+			var debugType = new Mock<ITypeMirror>();
 			debugType.SetupGet(t => t.SourceFiles).Returns(new[] { "myfile.cs" });
 
 			_typeProvider.Raise(tp => tp.TypeLoaded += null, debugType.Object);

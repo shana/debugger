@@ -1,41 +1,42 @@
 ﻿using System.Collections.Generic;
 using CodeEditor.Composition;
+using CodeEditor.Debugger.Backend;
 
 namespace CodeEditor.Debugger.Implementation
 {
 	[Export(typeof(ISourceToTypeMapper))]
 	class SourceToTypeMapper : ISourceToTypeMapper
 	{
-		private readonly IDebugTypeProvider _debugTypeProvider;
+		private readonly ITypeMirrorProvider _typeMirrorProvider;
 
-		private readonly Dictionary<string, List<IDebugType>> _sourceToTypes = new Dictionary<string, List<IDebugType>>();
+		private readonly Dictionary<string, List<ITypeMirror>> _sourceToTypes = new Dictionary<string, List<ITypeMirror>>();
 
 		[ImportingConstructor]
-		public SourceToTypeMapper(IDebugTypeProvider debugTypeProvider)
+		public SourceToTypeMapper(ITypeMirrorProvider typeMirrorProvider)
 		{
-			_debugTypeProvider = debugTypeProvider;
-			_debugTypeProvider.TypeLoaded += TypeLoaded;
+			_typeMirrorProvider = typeMirrorProvider;
+			_typeMirrorProvider.TypeLoaded += TypeMirrorLoaded;
 		}
 
-		private void TypeLoaded(IDebugType type)
+		private void TypeMirrorLoaded(ITypeMirror typeMirror)
 		{
-			var sourceFiles = type.SourceFiles;
+			var sourceFiles = typeMirror.SourceFiles;
 			foreach (var file in sourceFiles)
-				AddTypeToSourceToTypes(type, file);
+				AddTypeToSourceToTypes(typeMirror, file);
 		}
 
-		private void AddTypeToSourceToTypes(IDebugType type, string file)
+		private void AddTypeToSourceToTypes(ITypeMirror typeMirror, string file)
 		{
 			if (!_sourceToTypes.ContainsKey(file))
-				_sourceToTypes.Add(file, new List<IDebugType>());
+				_sourceToTypes.Add(file, new List<ITypeMirror>());
 
-			_sourceToTypes[file].Add(type);
+			_sourceToTypes[file].Add(typeMirror);
 		}
 
-		public IEnumerable<IDebugType> TypesFor(string file)
+		public IEnumerable<ITypeMirror> TypesFor(string file)
 		{
 			if (!_sourceToTypes.ContainsKey(file))
-				return new IDebugType[0];
+				return new ITypeMirror[0];
 
 			return _sourceToTypes[file];
 		}

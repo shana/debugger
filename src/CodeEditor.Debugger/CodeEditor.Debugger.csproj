@@ -64,6 +64,14 @@
       <Project>{9DB8BFD3-06C8-4A8C-8842-5931B924B56C}</Project>
       <Name>CodeEditor.Composition</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CodeEditor.Debugger.Backend.Sdb\CodeEditor.Debugger.Backend.Sdb.csproj">
+      <Project>{796B13D9-48B9-4EBA-B274-BBF297AFBD66}</Project>
+      <Name>CodeEditor.Debugger.Backend.Sdb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeEditor.Debugger.Backend\CodeEditor.Debugger.Backend.csproj">
+      <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
+      <Name>CodeEditor.Debugger.Backend</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CodeEditor.IO\CodeEditor.IO.csproj">
       <Project>{489773FF-92B1-40B0-98EF-3ED337E5448F}</Project>
       <Name>CodeEditor.IO</Name>
@@ -93,33 +101,23 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IDebugMethod.cs" />
     <Compile Include="Implementation\BreakpointEventRequestFactory.cs" />
-    <Compile Include="Implementation\DebugBreakpointEventRequest.cs" />
-    <Compile Include="IDebugBreakpointEventRequest.cs" />
     <Compile Include="IDebugBreakPointProvider.cs" />
     <Compile Include="IDebuggerSession.cs" />
     <Compile Include="IDebuggerSessionAssembler.cs" />
     <Compile Include="IDebugThreadProvider.cs" />
-    <Compile Include="IDebugType.cs" />
     <Compile Include="Implementation\BreakpointMediator.cs" />
-    <Compile Include="IDebugAssembly.cs" />
     <Compile Include="Implementation\BreakPoint.cs" />
-    <Compile Include="Implementation\DebugAssembly.cs" />
     <Compile Include="Implementation\DebugBreakPointProvider.cs" />
     <Compile Include="Implementation\DebuggerSession.cs" />
     <Compile Include="Implementation\DebuggerSessionAssembler.cs" />
-    <Compile Include="Implementation\DebugLocation.cs" />
-    <Compile Include="Implementation\DebugMethod.cs" />
     <Compile Include="Implementation\DebugThreadProvider.cs" />
-    <Compile Include="Implementation\DebugType.cs" />
-    <Compile Include="Implementation\DebugTypeProvider.cs" />
+    <Compile Include="Implementation\TypeMirrorProvider.cs" />
     <Compile Include="Implementation\ExecutingLineProvider.cs" />
     <Compile Include="IBreakPoint.cs" />
     <Compile Include="IDebuggerSessionCreationListener.cs" />
     <Compile Include="ILogProvider.cs" />
-    <Compile Include="IDebugTypeProvider.cs" />
-    <Compile Include="IDebugLocation.cs" />
+    <Compile Include="ITypeMirrorProvider.cs" />
     <Compile Include="IBreakpointEventRequestFactory.cs" />
     <Compile Include="ISourceToTypeMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

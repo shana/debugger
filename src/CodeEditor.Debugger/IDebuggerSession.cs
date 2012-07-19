@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using CodeEditor.Debugger.Backend;
 using CodeEditor.Debugger.Implementation;
 using Mono.Debugger.Soft;
+using AssemblyMirror = Mono.Debugger.Soft.AssemblyMirror;
 
 namespace CodeEditor.Debugger
 {
@@ -21,8 +23,8 @@ namespace CodeEditor.Debugger
 		void Update();
 		ThreadsRequest GetThreadsAsync();
 		BreakpointEventRequest CreateBreakpointRequest(Location location);
-		event Action<IDebugType> TypeLoaded;
-		event Action<IDebugAssembly> AssemblyLoaded;
-		event Action<IDebugAssembly> AssemblyUnloaded;
+		event Action<ITypeMirror> TypeLoaded;
+		event Action<IAssemblyMirror> AssemblyLoaded;
+		event Action<IAssemblyMirror> AssemblyUnloaded;
 	}
 }

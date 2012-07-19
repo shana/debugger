@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CodeEditor.Composition;
+using CodeEditor.Debugger.Backend;
 
 namespace CodeEditor.Debugger.Implementation
 {
@@ -11,39 +12,39 @@ namespace CodeEditor.Debugger.Implementation
 		private IDebugBreakPointProvider DebugBreakPointProvider { get; set; }
 		
 		[Import]
-		private IDebugTypeProvider DebugTypeProvider { get; set; }
+		private ITypeMirrorProvider TypeMirrorProvider { get; set; }
 
 		[Import]
-		private BreakpointEventRequestFactory BreakpointEventRequestFactory { get; set; }
+		private IBreakpointEventRequestFactory BreakpointEventRequestFactory { get; set; }
 
 		public void OnCreate(IDebuggerSession session)
 		{
-			new BreakpointMediator(DebugBreakPointProvider, DebugTypeProvider, BreakpointEventRequestFactory);
+			new BreakpointMediator(DebugBreakPointProvider, TypeMirrorProvider, BreakpointEventRequestFactory);
 		}
 	}
 	
 	class BreakpointMediator
 	{
 		private readonly IDebugBreakPointProvider _debugBreakPointProvider;
-		private readonly IDebugTypeProvider _debugTypeProvider;
+		private readonly ITypeMirrorProvider _typeMirrorProvider;
 		private readonly IBreakpointEventRequestFactory _breakpointEventRequestFactory;
 		private readonly List<IBreakPoint> _breakPoints = new List<IBreakPoint>();
 
-		public BreakpointMediator(IDebugBreakPointProvider debugBreakPointProvider, IDebugTypeProvider debugTypeProvider, IBreakpointEventRequestFactory breakpointEventRequestFactory)
+		public BreakpointMediator(IDebugBreakPointProvider debugBreakPointProvider, ITypeMirrorProvider typeMirrorProvider, IBreakpointEventRequestFactory breakpointEventRequestFactory)
 		{
 			_debugBreakPointProvider = debugBreakPointProvider;
-			_debugTypeProvider = debugTypeProvider;
+			_typeMirrorProvider = typeMirrorProvider;
 			_breakpointEventRequestFactory = breakpointEventRequestFactory;
 			_debugBreakPointProvider.BreakpointAdded += BreakpointAdded;
-			_debugTypeProvider.TypeLoaded += TypeLoaded;
+			_typeMirrorProvider.TypeLoaded += TypeMirrorLoaded;
 		}
 
-		private void TypeLoaded(IDebugType type)
+		private void TypeMirrorLoaded(ITypeMirror typeMirror)
 		{
-			foreach (var breakpoint in type.SourceFiles.SelectMany(BreakPointsIn))
+			foreach (var breakpoint in typeMirror.SourceFiles.SelectMany(BreakPointsIn))
 			{
 				IBreakPoint breakpoint1 = breakpoint;
-				var locations = type.Methods.SelectMany(m => m.Locations).Where(l => LocationsMatch(l, breakpoint1));
+				var locations = typeMirror.Methods.SelectMany(m => m.Locations).Where(l => LocationsMatch(l, breakpoint1));
 				foreach(var location in locations)
 					CreateEventRequest(location);
 			}
@@ -54,14 +55,14 @@ namespace CodeEditor.Debugger.Implementation
 			return _breakPoints.Where(b => b.File == file);
 		}
 
-		private bool LocationsMatch(IDebugLocation location, IBreakPoint breakpoint)
+		private bool LocationsMatch(ILocation location, IBreakPoint breakpoint)
 		{
 			return breakpoint.File == location.File;
 		}
 
-		private static bool DoesTypeHaveCodeIn(IDebugType type, string sourceFile)
+		private static bool DoesTypeHaveCodeIn(ITypeMirror typeMirror, string sourceFile)
 		{
-			return type.SourceFiles.Contains(sourceFile);
+			return typeMirror.SourceFiles.Contains(sourceFile);
 		}
 
 		private void BreakpointAdded(IBreakPoint breakpoint)
@@ -77,12 +78,12 @@ namespace CodeEditor.Debugger.Implementation
 			}
 		}
 
-		private IEnumerable<IDebugType> TypesWithCodeIn(string sourceFile)
+		private IEnumerable<ITypeMirror> TypesWithCodeIn(string sourceFile)
 		{
-			return _debugTypeProvider.LoadedTypes.Where(t => DoesTypeHaveCodeIn(t, sourceFile));
+			return _typeMirrorProvider.LoadedTypesMirror.Where(t => DoesTypeHaveCodeIn(t, sourceFile));
 		}
 
-		private void CreateEventRequest(IDebugLocation locationInMethod)
+		private void CreateEventRequest(ILocation locationInMethod)
 		{
 			var request = _breakpointEventRequestFactory.Create(locationInMethod);
 			request.Enable();

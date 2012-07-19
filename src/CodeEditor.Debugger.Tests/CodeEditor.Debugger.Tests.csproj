@@ -60,6 +60,10 @@
   </Target>
   -->
   <ItemGroup>
+    <ProjectReference Include="..\CodeEditor.Debugger.Backend\CodeEditor.Debugger.Backend.csproj">
+      <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
+      <Name>CodeEditor.Debugger.Backend</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CodeEditor.Debugger\CodeEditor.Debugger.csproj">
       <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
       <Name>CodeEditor.Debugger</Name>

@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using CodeEditor.Debugger.Backend;
 using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger
 {
 	public interface ISourceToTypeMapper
 	{
-		IEnumerable<IDebugType> TypesFor(string file);
+		IEnumerable<ITypeMirror> TypesFor(string file);
 	}
 }

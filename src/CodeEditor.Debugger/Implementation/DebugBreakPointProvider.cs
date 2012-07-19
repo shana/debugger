@@ -27,16 +27,18 @@ namespace CodeEditor.Debugger.Implementation
 				RemoveBreakPoint(breakPoint);
 		}
 
-		private void AddBreakPoint(BreakPoint point)
+		private void AddBreakPoint(IBreakPoint point)
 		{
 			_breakPoints.Add(point);
-			BreakpointAdded(point);
+			if (BreakpointAdded != null)
+				BreakpointAdded(point);
 		}
 
 		private void RemoveBreakPoint(IBreakPoint breakPoint)
 		{
 			_breakPoints.Remove(breakPoint);
-			BreakPointRemoved(breakPoint);
+			if (BreakPointRemoved != null)
+				BreakPointRemoved(breakPoint);
 		}
 	}
 }

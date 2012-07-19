@@ -1,4 +1,5 @@
 ﻿using CodeEditor.Composition;
+using CodeEditor.Debugger.Backend;
 
 namespace CodeEditor.Debugger.Implementation
 {
@@ -12,11 +13,11 @@ namespace CodeEditor.Debugger.Implementation
 			_session = session;
 		}
 
-		public IDebugBreakpointEventRequest Create(IDebugLocation location)
+		public IBreakpointEventRequest Create(ILocation location)
 		{
-			var debugLocation = (DebugLocation) location;
+			var debugLocation = (SdbLocation) location;
 			var request = _session.CreateBreakpointRequest(debugLocation.MDSLocation);
-			return new DebugBreakpointEventRequest(request);
+			return new SdbBreakpointEventRequest(request);
 		}
 	}
 }

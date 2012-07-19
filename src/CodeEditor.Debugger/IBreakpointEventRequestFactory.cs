@@ -1,7 +1,9 @@
+using CodeEditor.Debugger.Backend;
+
 namespace CodeEditor.Debugger
 {
 	public interface IBreakpointEventRequestFactory
 	{
-		IDebugBreakpointEventRequest Create(IDebugLocation location);
+		IBreakpointEventRequest Create(ILocation location);
 	}
 }

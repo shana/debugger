@@ -1,19 +1,20 @@
 using System.Linq;
+using CodeEditor.Debugger.Backend;
 using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
 {
-	internal class DebugMethod : IDebugMethod
+	internal class SdbMethodMirror : IMethodMirror
 	{
 		private readonly MethodMirror _methodMirror;
-		private IDebugLocation[] _locations;
+		private ILocation[] _locations;
 
-		public DebugMethod(MethodMirror methodMirror)
+		public SdbMethodMirror(MethodMirror methodMirror)
 		{
 			_methodMirror = methodMirror;
 		}
 
-		public IDebugLocation[] Locations
+		public ILocation[] Locations
 		{
 			get
 			{
@@ -24,9 +25,9 @@ namespace CodeEditor.Debugger.Implementation
 			}
 		}
 
-		private IDebugLocation DebugLocationFor(Location l)
+		private ILocation DebugLocationFor(Location l)
 		{
-			return new DebugLocation(l);
+			return new SdbLocation(l);
 		}
 	}
 }
