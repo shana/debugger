@@ -1,4 +1,5 @@
-﻿using CodeEditor.Composition;
+﻿using System;
+using CodeEditor.Composition;
 using CodeEditor.Debugger.Backend;
 using CodeEditor.Debugger.Backend.Sdb;
 
@@ -18,7 +19,9 @@ namespace CodeEditor.Debugger.Implementation
 		public IBreakpointEventRequest Create(ILocation location)
 		{
 			var sdbLocation = (SdbLocation) location;
-			var request = _session.CreateBreakpointRequest(sdbLocation.MDSLocation);
+			var mdsLocation = sdbLocation.MDSLocation;
+			Console.WriteLine("creating breakeventrequest for location: " + mdsLocation.LineNumber + " and method: " + mdsLocation.Method.FullName);
+			var request = _session.CreateBreakpointRequest(mdsLocation);
 			return new SdbBreakpointEventRequest(request);
 		}
 	}

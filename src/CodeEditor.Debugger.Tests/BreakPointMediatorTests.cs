@@ -20,7 +20,7 @@ namespace CodeEditor.Debugger.Tests
 			_session = new Mock<IDebuggerSession>();
 			_breakPointProvider = new BreakpointProvider();
 			_typeMirrorProvider = new TypeMirrorProvider(_session.Object);
-			_breakpointEventRequestFactory = new Mock<IBreakpointEventRequestFactory>();
+			_breakpointEventRequestFactory = new Mock<IBreakpointEventRequestFactory>(MockBehavior.Strict);
 			_breakRequest = new Mock<IBreakpointEventRequest>();
 			new BreakpointMediator(_breakPointProvider, _typeMirrorProvider, _breakpointEventRequestFactory.Object);
 		}
@@ -45,6 +45,13 @@ namespace CodeEditor.Debugger.Tests
 
 			_breakRequest.Verify(r => r.Enable());
 			VerifyMocks();
+		}
+
+		[Test]
+		public void TypeLoadWithMethodInSameFileButDifferentLine_DoesNotCreateBreakRequest()
+		{
+			AddBreakpoint("myfile.cs", 5);
+			RaiseTypeLoad(MockTypeWithMethodFrom("myfile.cs", 10));
 		}
 
 		private void SetupBreakEventRequestFactory(string file, int lineNumber, IBreakpointEventRequest breakRequestToCreate)

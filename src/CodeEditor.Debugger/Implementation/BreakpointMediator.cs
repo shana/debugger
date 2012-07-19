@@ -56,7 +56,7 @@ namespace CodeEditor.Debugger.Implementation
 
 		private bool LocationsMatch(ILocation location, IBreakPoint breakpoint)
 		{
-			return breakpoint.File == location.File;
+			return breakpoint.File == location.File && breakpoint.LineNumber == location.LineNumber;
 		}
 
 		private static bool DoesTypeHaveCodeIn(ITypeMirror typeMirror, string sourceFile)

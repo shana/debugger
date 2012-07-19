@@ -25,6 +25,7 @@ namespace CodeEditor.Debugger.Implementation
 
 		public void ToggleBreakPointAt(string fileName, int lineNumber)
 		{
+			Console.WriteLine("Toggling breakpoint at line: "+lineNumber);
 			var breakPoint = GetBreakPointAt(fileName, lineNumber);
 			if (breakPoint == null)
 				AddBreakPoint(new BreakPoint(fileName, lineNumber));
