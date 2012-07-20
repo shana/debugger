@@ -11,27 +11,64 @@ namespace CodeEditor.Debugger.IntegrationTests
 	[TestFixture]
 	public class VirtualMachineTests
 	{
-		[Test]
-		public void CanRunAssembly()
+		private VirtualMachine _vm;
+		private bool _finished = false;
+
+		[SetUp]
+		public void SetUp()
 		{
-			var csharp = @"
-class Test
-{
-	static void Main()
-	{
-		System.Console.WriteLine(""Hello"");
-	}
-}
-";
-			var exe = Compile(csharp);
-			RunWithDebugger(exe);
+			_vm = SetupVirtualMachineRunning(CompileSimpleProgram());
 		}
 
-		private void RunWithDebugger(string exe)
+		//[TearDown]
+		public void TearDown()
+		{
+			var process = _vm.Process;
+			_vm.Exit();
+			
+			Console.WriteLine("stdout:" + (process.HasExited ? process.StandardOutput.ReadToEnd() : "process still running"));			
+		}
+
+		[Test]
+		public void PublishesVMStartEventOnStartup()
+		{
+			_vm.OnVMStart += e =>
+			                	{
+			                		Assert.IsNotNull(e);
+			                		_vm.Resume();
+									Finish(); 
+								};
+
+			WaitUntilFinished();
+		}
+
+		[Test]
+		public void PublishesVMDeathOnEndOfProgram()
+		{
+			_vm.OnVMStart += e => _vm.Resume();
+			_vm.OnVMDeath += e =>
+			                 	{
+			                 		Assert.NotNull(e);
+			                 		_vm.Resume();
+			                 		Finish();
+			                 	};
+		}
+
+		private void WaitUntilFinished()
+		{
+			WaitFor(() => _finished);
+		}
+
+		private void Finish()
+		{
+			_finished = true;
+		}
+
+		private static VirtualMachine SetupVirtualMachineRunning(string exe)
 		{
 			var psi = new ProcessStartInfo()
 			          	{
-							Arguments = exe,
+			          		Arguments = exe,
 			          		CreateNoWindow = true,
 			          		UseShellExecute = false,
 			          		RedirectStandardOutput = true,
@@ -42,16 +79,7 @@ class Test
 
 			var sdb = VirtualMachineManager.Launch(psi, new LaunchOptions());
 			var vm = new VirtualMachine(sdb);
-
-			bool ready = false;
-			vm.OnVMStart += delegate
-			                          	{
-			                          		ready = true;
-			                          	};
-
-			WaitFor(() => ready);
-
-			Console.WriteLine("stdout:" + (sdb.Process.HasExited ? sdb.Process.StandardOutput.ReadToEnd() : "process still running"));
+			return vm;
 		}
 
 		private static void WaitFor(Func<bool> condition)
@@ -70,8 +98,17 @@ class Test
 			}
 		}
 
-		private string Compile(string csharp)
+		private string CompileSimpleProgram()
 		{
+			var csharp = @"
+class Test
+{
+	static void Main()
+	{
+		System.Console.WriteLine(""Hello"");
+	}
+}
+";
 			var tmp = Path.Combine(Path.GetTempPath(), "source.cs");
 			File.WriteAllText(tmp,csharp);
 			CSharpCompiler.Compile("test.exe", new[] {tmp}, true);

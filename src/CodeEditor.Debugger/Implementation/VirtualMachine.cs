@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -17,6 +18,7 @@ namespace CodeEditor.Debugger.Implementation
 		private bool _running = true;
 
 		public event Action<VMStartEvent> OnVMStart;
+		public event Action<VMDeathEvent> OnVMDeath;
 
 		public VirtualMachine(MDS.VirtualMachine vm)
 		{
@@ -28,12 +30,17 @@ namespace CodeEditor.Debugger.Implementation
 				//EventType.AssemblyUnload,
 				//EventType.AppDomainUnload,
 				//EventType.AppDomainCreate,
-				//EventType.VMDeath,
+				EventType.VMDeath,
 				//EventType.VMDisconnect,
 				//EventType.TypeLoad
 				EventType.VMStart
 				);
 			QueueUserWorkItem(EventLoop);
+		}
+
+		public Process Process
+		{
+			get { return _vm.Process; }
 		}
 
 		public void Resume()
@@ -48,11 +55,9 @@ namespace CodeEditor.Debugger.Implementation
 
 		private void EventLoop()
 		{
-			int cycle = 0;
 			while(_running)
 			{
 				var e = _vm.GetNextEvent();
-				Console.WriteLine("Eventloop cycle " + (cycle++)+" e="+ ((e==null) ? "null" : e.GetType().ToString()));
 				if (e == null)
 					return;
 				HandleEvent(e);
@@ -64,9 +69,10 @@ namespace CodeEditor.Debugger.Implementation
 			switch (e.EventType)
 			{
 				case EventType.VMStart:
-					if (OnVMStart!=null) OnVMStart((VMStartEvent) e);
+					if (OnVMStart !=null) OnVMStart((VMStartEvent) e);
 					return;
 				case EventType.VMDeath:
+					if (OnVMDeath != null) OnVMDeath((VMDeathEvent) e);
 					_running = false;
 					return;
 			}
@@ -87,6 +93,11 @@ namespace CodeEditor.Debugger.Implementation
 		private void TraceError(string error)
 		{
 			Console.WriteLine(error);
+		}
+
+		public void Exit()
+		{
+			_vm.Exit(0);
 		}
 	}
 }
