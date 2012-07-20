@@ -49,7 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyCache.cs" />
-    <Compile Include="Tests.cs" />
+    <Compile Include="VirtualMachineTests.cs" />
     <Compile Include="CSharpCompiler.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

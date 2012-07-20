@@ -15,7 +15,7 @@ namespace CodeEditor.Debugger.Implementation
 	internal class DebuggerSession : IDebuggerSession
 	{
 		private int _debuggerPort;
-		private volatile VirtualMachine _vm;
+		private volatile Mono.Debugger.Soft.VirtualMachine _vm;
 		private MethodEntryEventRequest _methodEntryRequest;
 		private bool _vmSuspended;
 		private readonly Queue<Event> _queuedEvents = new Queue<Event>();
