@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -14,21 +15,14 @@ namespace CodeEditor.Debugger.IntegrationTests
 		private VirtualMachine _vm;
 		private bool _finished = false;
 
+		private const bool DebugMono = false;
+
 		[SetUp]
 		public void SetUp()
 		{
 			_vm = SetupVirtualMachineRunning(CompileSimpleProgram());
 		}
-
-		//[TearDown]
-		public void TearDown()
-		{
-			var process = _vm.Process;
-			_vm.Exit();
-			
-			Console.WriteLine("stdout:" + (process.HasExited ? process.StandardOutput.ReadToEnd() : "process still running"));			
-		}
-
+		
 		[Test]
 		public void PublishesVMStartEventOnStartup()
 		{
@@ -36,8 +30,8 @@ namespace CodeEditor.Debugger.IntegrationTests
 			                	{
 			                		Assert.IsNotNull(e);
 			                		_vm.Resume();
-									Finish(); 
-								};
+			                		Finish();
+			                	};
 
 			WaitUntilFinished();
 		}
@@ -46,17 +40,39 @@ namespace CodeEditor.Debugger.IntegrationTests
 		public void PublishesVMDeathOnEndOfProgram()
 		{
 			_vm.OnVMStart += e => _vm.Resume();
+			_vm.OnTypeLoad += e => _vm.Resume();
 			_vm.OnVMDeath += e =>
 			                 	{
 			                 		Assert.NotNull(e);
-			                 		_vm.Resume();
 			                 		Finish();
 			                 	};
+
+			WaitUntilFinished();
+		}
+
+		[Test]
+		[Ignore("WIP")]
+		public void PublishesTypeLoadEventOnStartup()
+		{
+			_vm.OnVMStart += e => _vm.Resume();
+			_vm.OnTypeLoad += e =>
+			                      	{
+										Assert.AreEqual("Test", e.Type.FullName);
+			                      		Finish();
+			                      	};
+			WaitUntilFinished();
 		}
 
 		private void WaitUntilFinished()
 		{
-			WaitFor(() => _finished);
+			WaitFor(() => _finished, "Waiting for _finished");
+			try
+			{
+				_vm.Exit();
+			}catch (ObjectDisposedException)
+			{
+			}
+			WaitFor(() => _vm.Process.HasExited, "Waiting for process to exit");
 		}
 
 		private void Finish()
@@ -69,6 +85,7 @@ namespace CodeEditor.Debugger.IntegrationTests
 			var psi = new ProcessStartInfo()
 			          	{
 			          		Arguments = exe,
+							WorkingDirectory = "c:\\as3",
 			          		CreateNoWindow = true,
 			          		UseShellExecute = false,
 			          		RedirectStandardOutput = true,
@@ -76,13 +93,16 @@ namespace CodeEditor.Debugger.IntegrationTests
 			          		RedirectStandardError = true,
 			          		FileName = Paths.MonoExecutable("bin/cli")
 			          	};
+			if (DebugMono)
+				psi.EnvironmentVariables.Add("UNITY_GIVE_CHANCE_TO_ATTACH_DEBUGGER","1");
 
-			var sdb = VirtualMachineManager.Launch(psi, new LaunchOptions());
+			Console.WriteLine(psi.FileName);
+			var sdb = VirtualMachineManager.Launch(psi, new LaunchOptions() {AgentArgs = "loglevel=1,logfile=sdblog"});
 			var vm = new VirtualMachine(sdb);
 			return vm;
 		}
 
-		private static void WaitFor(Func<bool> condition)
+		private static void WaitFor(Func<bool> condition, string msg)
 		{
 			var stopWatch = new Stopwatch();
 			stopWatch.Start();
@@ -91,11 +111,16 @@ namespace CodeEditor.Debugger.IntegrationTests
 				if (condition())
 					return;
 
-				if (stopWatch.Elapsed > TimeSpan.FromSeconds(3))
-					throw new TimeoutException();
+				if (stopWatch.Elapsed > TimeSpan.FromSeconds(DebugMono ? 10000 : 5))
+					throw new TimeoutException(msg);
 
 				Thread.Sleep(100);
 			}
+		}
+
+		private void WaitFor(Func<bool> condition)
+		{
+			WaitFor(condition,"No msg");
 		}
 
 		private string CompileSimpleProgram()
@@ -106,6 +131,14 @@ class Test
 	static void Main()
 	{
 		System.Console.WriteLine(""Hello"");
+		AnotherClass.Hello();
+	}
+}
+
+class AnotherClass
+{
+	public static void Hello()
+	{
 	}
 }
 ";

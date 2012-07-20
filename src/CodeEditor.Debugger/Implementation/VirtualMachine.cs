@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using CodeEditor.Composition;
 using Mono.Debugger.Soft;
@@ -19,21 +16,23 @@ namespace CodeEditor.Debugger.Implementation
 
 		public event Action<VMStartEvent> OnVMStart;
 		public event Action<VMDeathEvent> OnVMDeath;
+		public event Action<TypeLoadEvent> OnTypeLoad;
+		public event Action<VMDisconnectEvent> OnVMDisconnect;
+		public event Action<ThreadStartEvent> OnThreadStart;
 
 		public VirtualMachine(MDS.VirtualMachine vm)
 		{
 			_vm = vm;
-
-			_vm.Suspend();
 			_vm.EnableEvents(
-				//EventType.AssemblyLoad,
+				EventType.AssemblyLoad,
 				//EventType.AssemblyUnload,
 				//EventType.AppDomainUnload,
 				//EventType.AppDomainCreate,
 				EventType.VMDeath,
-				//EventType.VMDisconnect,
-				//EventType.TypeLoad
+				EventType.VMDisconnect,
+				//EventType.TypeLoad,
 				EventType.VMStart
+				//EventType.ThreadStart
 				);
 			QueueUserWorkItem(EventLoop);
 		}
@@ -71,9 +70,22 @@ namespace CodeEditor.Debugger.Implementation
 				case EventType.VMStart:
 					if (OnVMStart !=null) OnVMStart((VMStartEvent) e);
 					return;
+				case EventType.ThreadStart:
+					if (OnThreadStart != null) OnThreadStart((ThreadStartEvent) e);
+					return;
+				case EventType.TypeLoad:
+					if (OnTypeLoad != null) OnTypeLoad((TypeLoadEvent)e);
+					return;
 				case EventType.VMDeath:
 					if (OnVMDeath != null) OnVMDeath((VMDeathEvent) e);
 					_running = false;
+					return;
+				case EventType.VMDisconnect:
+					if (OnVMDisconnect != null) OnVMDisconnect((VMDisconnectEvent)e);
+					_running = false;
+					return;
+				default:
+					Console.WriteLine("Unknown event: "+e.GetType());
 					return;
 			}
 		}
