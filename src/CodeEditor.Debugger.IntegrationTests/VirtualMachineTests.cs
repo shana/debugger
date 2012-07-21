@@ -2,6 +2,8 @@
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using Mono.Debugger.Soft;
 using NUnit.Framework;
@@ -15,12 +17,10 @@ namespace CodeEditor.Debugger.IntegrationTests
 		private VirtualMachine _vm;
 		private bool _finished = false;
 
-		private const bool DebugMono = false;
-
 		[SetUp]
 		public void SetUp()
 		{
-			_vm = SetupVirtualMachineRunning(CompileSimpleProgram());
+			_vm = SetupVirtualMachineRunning(DebugeeProgram.CompileSimpleProgram());
 		}
 		
 		[Test]
@@ -63,16 +63,18 @@ namespace CodeEditor.Debugger.IntegrationTests
 			WaitUntilFinished();
 		}
 
+
+
 		private void WaitUntilFinished()
 		{
-			WaitFor(() => _finished, "Waiting for _finished");
+			Synchronization.WaitFor(() => _finished, "Waiting for _finished");
 			try
 			{
 				_vm.Exit();
 			}catch (ObjectDisposedException)
 			{
 			}
-			WaitFor(() => _vm.Process.HasExited, "Waiting for process to exit");
+			Synchronization.WaitFor(() => _vm.Process.HasExited, "Waiting for process to exit");
 		}
 
 		private void Finish()
@@ -82,70 +84,12 @@ namespace CodeEditor.Debugger.IntegrationTests
 
 		private static VirtualMachine SetupVirtualMachineRunning(string exe)
 		{
-			var psi = new ProcessStartInfo()
-			          	{
-			          		Arguments = exe,
-							WorkingDirectory = "c:\\as3",
-			          		CreateNoWindow = true,
-			          		UseShellExecute = false,
-			          		RedirectStandardOutput = true,
-			          		RedirectStandardInput = true,
-			          		RedirectStandardError = true,
-			          		FileName = Paths.MonoExecutable("bin/cli")
-			          	};
-			if (DebugMono)
-				psi.EnvironmentVariables.Add("UNITY_GIVE_CHANCE_TO_ATTACH_DEBUGGER","1");
+			var psi = DebugeeProgram.ProcessStartInfoFor(exe);
 
 			Console.WriteLine(psi.FileName);
-			var sdb = VirtualMachineManager.Launch(psi, new LaunchOptions() {AgentArgs = "loglevel=1,logfile=sdblog"});
+			var sdb = VirtualMachineManager.Launch(psi, new LaunchOptions() {AgentArgs = "loglevel=4,logfile=sdblog"});
 			var vm = new VirtualMachine(sdb);
 			return vm;
-		}
-
-		private static void WaitFor(Func<bool> condition, string msg)
-		{
-			var stopWatch = new Stopwatch();
-			stopWatch.Start();
-			while(true)
-			{
-				if (condition())
-					return;
-
-				if (stopWatch.Elapsed > TimeSpan.FromSeconds(DebugMono ? 10000 : 5))
-					throw new TimeoutException(msg);
-
-				Thread.Sleep(100);
-			}
-		}
-
-		private void WaitFor(Func<bool> condition)
-		{
-			WaitFor(condition,"No msg");
-		}
-
-		private string CompileSimpleProgram()
-		{
-			var csharp = @"
-class Test
-{
-	static void Main()
-	{
-		System.Console.WriteLine(""Hello"");
-		AnotherClass.Hello();
-	}
-}
-
-class AnotherClass
-{
-	public static void Hello()
-	{
-	}
-}
-";
-			var tmp = Path.Combine(Path.GetTempPath(), "source.cs");
-			File.WriteAllText(tmp,csharp);
-			CSharpCompiler.Compile("test.exe", new[] {tmp}, true);
-			return "test.exe";
 		}
 	}
 }

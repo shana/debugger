@@ -49,6 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyCache.cs" />
+    <Compile Include="DebugeeProgram.cs" />
+    <Compile Include="DebugeeProgramTest.cs" />
+    <Compile Include="Synchronization.cs" />
     <Compile Include="VirtualMachineTests.cs" />
     <Compile Include="CSharpCompiler.cs" />
     <Compile Include="Paths.cs" />

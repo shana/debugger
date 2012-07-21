@@ -25,7 +25,7 @@ namespace CodeEditor.Debugger.Implementation
 			_vm = vm;
 			_vm.EnableEvents(
 				EventType.AssemblyLoad,
-				//EventType.AssemblyUnload,
+				EventType.AssemblyUnload,
 				//EventType.AppDomainUnload,
 				//EventType.AppDomainCreate,
 				EventType.VMDeath,
@@ -34,6 +34,9 @@ namespace CodeEditor.Debugger.Implementation
 				EventType.VMStart
 				//EventType.ThreadStart
 				);
+
+			var req = _vm.CreateMethodEntryRequest();
+			req.Enable();
 			QueueUserWorkItem(EventLoop);
 		}
 
@@ -65,6 +68,7 @@ namespace CodeEditor.Debugger.Implementation
 
 		private void HandleEvent(Event e)
 		{
+			Console.WriteLine("Event: "+e.GetType());
 			switch (e.EventType)
 			{
 				case EventType.VMStart:
@@ -83,6 +87,9 @@ namespace CodeEditor.Debugger.Implementation
 				case EventType.VMDisconnect:
 					if (OnVMDisconnect != null) OnVMDisconnect((VMDisconnectEvent)e);
 					_running = false;
+					return;
+				case EventType.MethodEntry:
+					Console.WriteLine(((MethodEntryEvent)e).Method.FullName);
 					return;
 				default:
 					Console.WriteLine("Unknown event: "+e.GetType());
