@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using CodeEditor.Composition;
@@ -8,14 +9,15 @@ using MDS=Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
 {
-	[Export(typeof(IVirtualMachine))]
-	class VirtualMachine : IVirtualMachine
+	internal class VirtualMachine
 	{
 		private readonly MDS.VirtualMachine _vm;
 		private bool _running = true;
+		private readonly List<Exception> _errors = new List<Exception>();
 
 		public event Action<VMStartEvent> OnVMStart;
 		public event Action<VMDeathEvent> OnVMDeath;
+		public event Action<AssemblyLoadEvent> OnAssemblyLoad;
 		public event Action<TypeLoadEvent> OnTypeLoad;
 		public event Action<VMDisconnectEvent> OnVMDisconnect;
 		public event Action<ThreadStartEvent> OnThreadStart;
@@ -25,18 +27,11 @@ namespace CodeEditor.Debugger.Implementation
 			_vm = vm;
 			_vm.EnableEvents(
 				EventType.AssemblyLoad,
-				EventType.AssemblyUnload,
-				//EventType.AppDomainUnload,
-				//EventType.AppDomainCreate,
 				EventType.VMDeath,
-				EventType.VMDisconnect,
-				//EventType.TypeLoad,
+				EventType.TypeLoad,
 				EventType.VMStart
-				//EventType.ThreadStart
 				);
 
-			var req = _vm.CreateMethodEntryRequest();
-			req.Enable();
 			QueueUserWorkItem(EventLoop);
 		}
 
@@ -48,6 +43,10 @@ namespace CodeEditor.Debugger.Implementation
 		public void Resume()
 		{
 			_vm.Resume();
+		}
+
+		public IEnumerable<Exception> Errors {
+			get { return _errors; }
 		}
 
 		private void QueueUserWorkItem(Action a)
@@ -77,6 +76,9 @@ namespace CodeEditor.Debugger.Implementation
 				case EventType.ThreadStart:
 					if (OnThreadStart != null) OnThreadStart((ThreadStartEvent) e);
 					return;
+				case EventType.AssemblyLoad:
+					if (OnAssemblyLoad != null) OnAssemblyLoad((AssemblyLoadEvent)e);
+					return;
 				case EventType.TypeLoad:
 					if (OnTypeLoad != null) OnTypeLoad((TypeLoadEvent)e);
 					return;
@@ -105,13 +107,14 @@ namespace CodeEditor.Debugger.Implementation
 			}
 			catch (Exception e)
 			{
-				TraceError(e.ToString());
+				TraceError(e);
+				_errors.Add(e);
 			}
 		}
 
-		private void TraceError(string error)
+		private void TraceError(Exception exception)
 		{
-			Console.WriteLine(error);
+			Console.WriteLine(exception.ToString());
 		}
 
 		public void Exit()

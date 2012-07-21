@@ -15,7 +15,7 @@ namespace CodeEditor.Debugger.IntegrationTests
 				if (condition())
 					return;
 
-				if (stopWatch.Elapsed > TimeSpan.FromSeconds(DebugeeProgram.DebugMono ? 10000 : 5))
+				if (stopWatch.Elapsed > TimeSpan.FromSeconds(VirtualMachineTests.DebugMono ? 10000 : 5))
 					throw new TimeoutException(msg);
 
 				Thread.Sleep(100);
