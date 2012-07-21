@@ -15,11 +15,16 @@ namespace CodeEditor.Debugger.IntegrationTests
 				if (condition())
 					return;
 
-				if (stopWatch.Elapsed > TimeSpan.FromSeconds(VirtualMachineTests.DebugMono ? 10000 : 5))
+				if (stopWatch.Elapsed > TimeSpan.FromSeconds(IsHumanDebugging() ? 10000 : 5))
 					throw new TimeoutException(msg);
 
 				Thread.Sleep(100);
 			}
+		}
+
+		private static bool IsHumanDebugging()
+		{
+			return VirtualMachineTests.DebugMono || System.Diagnostics.Debugger.IsAttached;
 		}
 
 		public static void WaitFor(Func<bool> condition)

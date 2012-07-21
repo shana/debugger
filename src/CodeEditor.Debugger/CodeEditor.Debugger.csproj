@@ -60,6 +60,10 @@
   </Target>
   -->
   <ItemGroup>
+    <ProjectReference Include="..\..\external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">
+      <Project>{F2D07F82-9C51-4889-8987-4CEF47490751}</Project>
+      <Name>Mono.Debugger.Soft</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CodeEditor.Composition\CodeEditor.Composition.csproj">
       <Project>{9DB8BFD3-06C8-4A8C-8842-5931B924B56C}</Project>
       <Name>CodeEditor.Composition</Name>
@@ -89,10 +93,6 @@
     <Reference Include="Mono.Cecil, Version=0.6.9.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\External\Mono\builds\monodistribution\lib\mono\2.0\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Debugger.Soft, Version=0.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\External\Mono\builds\monodistribution\lib\mono\2.0\Mono.Debugger.Soft.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">

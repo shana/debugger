@@ -21,6 +21,7 @@ namespace CodeEditor.Debugger.Implementation
 		public event Action<TypeLoadEvent> OnTypeLoad;
 		public event Action<VMDisconnectEvent> OnVMDisconnect;
 		public event Action<ThreadStartEvent> OnThreadStart;
+		public event Action<BreakpointEvent> OnBreakpoint;
 
 		public VirtualMachine(MDS.VirtualMachine vm)
 		{
@@ -82,6 +83,9 @@ namespace CodeEditor.Debugger.Implementation
 				case EventType.TypeLoad:
 					if (OnTypeLoad != null) OnTypeLoad((TypeLoadEvent)e);
 					return;
+				case EventType.Breakpoint:
+					if (OnBreakpoint != null) OnBreakpoint((BreakpointEvent) e);
+					return;
 				case EventType.VMDeath:
 					if (OnVMDeath != null) OnVMDeath((VMDeathEvent) e);
 					_running = false;
@@ -120,6 +124,15 @@ namespace CodeEditor.Debugger.Implementation
 		public void Exit()
 		{
 			_vm.Exit(0);
+		}
+
+		public BreakpointEventRequest CreateBreakpointRequest(Location location)
+		{
+			return _vm.CreateBreakpointRequest(location);
+		}
+
+		public void ResumeIfNeeded()
+		{
 		}
 	}
 }

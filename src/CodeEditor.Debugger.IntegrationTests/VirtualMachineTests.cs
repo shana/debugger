@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Mono.Debugger.Soft;
 using NUnit.Framework;
 using VirtualMachine = CodeEditor.Debugger.Implementation.VirtualMachine;
@@ -47,6 +48,7 @@ namespace CodeEditor.Debugger.IntegrationTests
 		[Test]
 		public void PublishesVMDeathOnEndOfProgram()
 		{
+			_vm.OnVMStart += e => _vm.Resume();
 			_vm.OnTypeLoad += e => _vm.Resume();
 			_vm.OnAssemblyLoad += e => _vm.Resume();
 			_vm.OnVMDeath += e =>
@@ -61,15 +63,44 @@ namespace CodeEditor.Debugger.IntegrationTests
 		[Test]
 		public void PublishesTypeLoadEventOnStartup()
 		{
+			_vm.OnVMStart += e => _vm.Resume();
 			_vm.OnAssemblyLoad += e => _vm.Resume();
 			_vm.OnTypeLoad += e =>
 			                      	{
-										if (ClassName == e.Type.FullName)
+										if (DebugeeProgramClassName == e.Type.FullName)
 				                      		Finish();
 			                      		_vm.Resume();
 			                      	};
 			WaitUntilFinished();
 		}
+
+		[Test]
+		public void BreakPointOnMainWillHit()
+		{
+			_vm.OnVMStart += e => _vm.Resume();
+			_vm.OnAssemblyLoad += e => _vm.Resume();
+
+			BreakpointEventRequest request = null;
+			_vm.OnTypeLoad += e =>
+			                  	{
+									if (DebugeeProgramClassName == e.Type.FullName)
+									{
+										request = _vm.CreateBreakpointRequest(e.Type.GetMethod("Main").Locations.First());
+										request.Enable();
+									}
+			                  		_vm.Resume();
+			                  	};
+
+			_vm.OnBreakpoint += e =>
+			                    	{
+										Assert.AreEqual("Main", e.Method.Name);
+										Assert.AreSame(e.Request,request);
+			                    		Finish();
+			                    	};
+			
+			WaitUntilFinished();
+		}
+
 
 		private void WaitUntilFinished()
 		{
@@ -107,7 +138,7 @@ namespace CodeEditor.Debugger.IntegrationTests
 
 		private static LaunchOptions DebuggerOptions
 		{
-			get { return new LaunchOptions() {/*AgentArgs = "loglevel=2,logfile=c:/as3/sdblog"*/}; }
+			get { return new LaunchOptions() { AgentArgs = "loglevel=2,logfile=c:/as3/sdblog" }; }
 		}
 
 		public const bool DebugMono = false;
@@ -129,7 +160,7 @@ namespace CodeEditor.Debugger.IntegrationTests
 			return psi;
 		}
 
-		public static string ClassName
+		public static string DebugeeProgramClassName
 		{
 			get { return "TestClass"; }
 		}
@@ -146,7 +177,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 
-class "+ClassName + @"
+class "+DebugeeProgramClassName + @"
 {
 	static void Main()
 	{
