@@ -33,6 +33,13 @@ namespace CodeEditor.Debugger.IntegrationTests
 		}
 
 		[Test]
+		public void PublishesVMGotSuspendedOnStartup()
+		{
+			_vm.OnVMGotSuspended += Finish;
+			WaitUntilFinished();
+		}
+
+		[Test]
 		public void PublishesAssemblyLoadEventOnStartup()
 		{
 			_vm.OnVMStart += e => _vm.Resume();

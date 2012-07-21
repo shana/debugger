@@ -22,6 +22,7 @@ namespace CodeEditor.Debugger.Implementation
 		public event Action<VMDisconnectEvent> OnVMDisconnect;
 		public event Action<ThreadStartEvent> OnThreadStart;
 		public event Action<BreakpointEvent> OnBreakpoint;
+		public event Action OnVMGotSuspended;
 
 		public VirtualMachine(MDS.VirtualMachine vm)
 		{
@@ -75,6 +76,9 @@ namespace CodeEditor.Debugger.Implementation
 
 		private void HandleEvent(Event e)
 		{
+			if (EventCausesSuspension(e))
+				if (OnVMGotSuspended != null) OnVMGotSuspended();
+
 			Console.WriteLine("Event: "+e.GetType());
 			switch (e.EventType)
 			{
@@ -108,6 +112,11 @@ namespace CodeEditor.Debugger.Implementation
 					Console.WriteLine("Unknown event: "+e.GetType());
 					return;
 			}
+		}
+
+		private bool EventCausesSuspension(Event @event)
+		{
+			return true;
 		}
 
 		private void WithErrorLogging(Action action)
