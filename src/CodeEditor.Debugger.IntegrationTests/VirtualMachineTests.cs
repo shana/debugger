@@ -85,7 +85,15 @@ namespace CodeEditor.Debugger.IntegrationTests
 			                  	{
 									if (DebugeeProgramClassName == e.Type.FullName)
 									{
-										request = _vm.CreateBreakpointRequest(e.Type.GetMethod("Main").Locations.First());
+										var locations = e.Type.GetMethod("Main").Locations;
+										Assert.AreEqual(4, locations.Count);
+										
+										Assert.AreEqual(7, locations[0].LineNumber);
+										Assert.AreEqual(8, locations[1].LineNumber);
+										Assert.AreEqual(9, locations[2].LineNumber);
+										Assert.AreEqual(9, locations[3].LineNumber);
+
+										request = _vm.CreateBreakpointRequest(locations.First());
 										request.Enable();
 									}
 			                  		_vm.Resume();
@@ -174,8 +182,6 @@ namespace CodeEditor.Debugger.IntegrationTests
 		{
 			var csharp = @"
 using System;
-using System.Net;
-using System.Net.Sockets;
 
 class "+DebugeeProgramClassName + @"
 {

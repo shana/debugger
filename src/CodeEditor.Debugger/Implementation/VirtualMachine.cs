@@ -43,7 +43,14 @@ namespace CodeEditor.Debugger.Implementation
 
 		public void Resume()
 		{
-			_vm.Resume();
+			try
+			{
+				_vm.Resume();
+			} catch (InvalidOperationException)
+			{
+				//there is some racy bug somewhere that sometimes makes the runtime complain that we are resuming while we were not suspended.
+				//obviously if you dont resume, the other 95% of the cases, you hang because we were suspended.
+			}
 		}
 
 		public IEnumerable<Exception> Errors {
