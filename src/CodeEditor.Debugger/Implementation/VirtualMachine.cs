@@ -13,7 +13,7 @@ namespace CodeEditor.Debugger.Implementation
 	{
 		private readonly MDS.VirtualMachine _vm;
 		private bool _running = true;
-		private readonly List<Exception> _errors = new List<Exception>();
+		private readonly List<Exception> _errors = new List<Exception> ();
 
 		public event Action<VMStartEvent> OnVMStart;
 		public event Action<VMDeathEvent> OnVMDeath;
@@ -24,18 +24,18 @@ namespace CodeEditor.Debugger.Implementation
 		public event Action<BreakpointEvent> OnBreakpoint;
 		public event Action OnVMGotSuspended;
 
-		public VirtualMachine(MDS.VirtualMachine vm)
+		public VirtualMachine (MDS.VirtualMachine vm)
 		{
 			_vm = vm;
-			_vm.EnableEvents(
+			_vm.EnableEvents (
 				EventType.AssemblyLoad,
 				EventType.VMDeath,
 				EventType.TypeLoad,
 				EventType.VMStart,
 				EventType.Breakpoint
-				);
+			);
 
-			QueueUserWorkItem(EventLoop);
+			QueueUserWorkItem (EventLoop);
 		}
 
 		public Process Process
@@ -43,12 +43,13 @@ namespace CodeEditor.Debugger.Implementation
 			get { return _vm.Process; }
 		}
 
-		public void Resume()
+		public void Resume ()
 		{
 			try
 			{
-				_vm.Resume();
-			} catch (InvalidOperationException)
+				_vm.Resume ();
+			}
+			catch (InvalidOperationException)
 			{
 				//there is some racy bug somewhere that sometimes makes the runtime complain that we are resuming while we were not suspended.
 				//obviously if you dont resume, the other 95% of the cases, you hang because we were suspended.
@@ -59,96 +60,96 @@ namespace CodeEditor.Debugger.Implementation
 			get { return _errors; }
 		}
 
-		private void QueueUserWorkItem(Action a)
+		private void QueueUserWorkItem (Action a)
 		{
-			ThreadPool.QueueUserWorkItem(_ => WithErrorLogging(a));
+			ThreadPool.QueueUserWorkItem (_ => WithErrorLogging (a));
 		}
 
-		private void EventLoop()
+		private void EventLoop ()
 		{
-			while(_running)
+			while (_running)
 			{
-				var e = _vm.GetNextEvent();
+				var e = _vm.GetNextEvent ();
 				if (e == null)
 					return;
-				HandleEvent(e);
+				HandleEvent (e);
 			}
 		}
 
-		private void HandleEvent(Event e)
+		private void HandleEvent (Event e)
 		{
-			if (EventCausesSuspension(e))
-				if (OnVMGotSuspended != null) OnVMGotSuspended();
+			if (EventCausesSuspension (e))
+				if (OnVMGotSuspended != null) OnVMGotSuspended ();
 
-			Console.WriteLine("Event: "+e.GetType());
+			Console.WriteLine ("Event: "+e.GetType ());
 			switch (e.EventType)
 			{
 				case EventType.VMStart:
-					if (OnVMStart !=null) OnVMStart((VMStartEvent) e);
+					if (OnVMStart !=null) OnVMStart ((VMStartEvent) e);
 					return;
 				case EventType.ThreadStart:
-					if (OnThreadStart != null) OnThreadStart((ThreadStartEvent) e);
+					if (OnThreadStart != null) OnThreadStart ((ThreadStartEvent) e);
 					return;
 				case EventType.AssemblyLoad:
-					if (OnAssemblyLoad != null) OnAssemblyLoad((AssemblyLoadEvent)e);
+					if (OnAssemblyLoad != null) OnAssemblyLoad ((AssemblyLoadEvent)e);
 					return;
 				case EventType.TypeLoad:
-					if (OnTypeLoad != null) OnTypeLoad((TypeLoadEvent)e);
+					if (OnTypeLoad != null) OnTypeLoad ((TypeLoadEvent)e);
 					return;
 				case EventType.Breakpoint:
-					if (OnBreakpoint != null) OnBreakpoint((BreakpointEvent) e);
+					if (OnBreakpoint != null) OnBreakpoint ((BreakpointEvent) e);
 					return;
 				case EventType.VMDeath:
-					if (OnVMDeath != null) OnVMDeath((VMDeathEvent) e);
+					if (OnVMDeath != null) OnVMDeath ((VMDeathEvent) e);
 					_running = false;
 					return;
 				case EventType.VMDisconnect:
-					if (OnVMDisconnect != null) OnVMDisconnect((VMDisconnectEvent)e);
+					if (OnVMDisconnect != null) OnVMDisconnect ((VMDisconnectEvent)e);
 					_running = false;
 					return;
 				case EventType.MethodEntry:
-					Console.WriteLine(((MethodEntryEvent)e).Method.FullName);
+					Console.WriteLine (((MethodEntryEvent)e).Method.FullName);
 					return;
 				default:
-					Console.WriteLine("Unknown event: "+e.GetType());
+					Console.WriteLine ("Unknown event: "+e.GetType ());
 					return;
 			}
 		}
 
-		private bool EventCausesSuspension(Event @event)
+		private bool EventCausesSuspension (Event @event)
 		{
 			return true;
 		}
 
-		private void WithErrorLogging(Action action)
+		private void WithErrorLogging (Action action)
 		{
 			try
 			{
-				action();
+				action ();
 			}
 			catch (Exception e)
 			{
-				TraceError(e);
-				_errors.Add(e);
+				TraceError (e);
+				_errors.Add (e);
 			}
 		}
 
-		private void TraceError(Exception exception)
+		private void TraceError (Exception exception)
 		{
-			Console.WriteLine(exception.ToString());
+			Console.WriteLine (exception.ToString ());
 		}
 
-		public void Exit()
+		public void Exit ()
 		{
-			_vm.Exit(0);
+			_vm.Exit (0);
 		}
 
-		public BreakpointEventRequest CreateBreakpointRequest(Location location)
+		public BreakpointEventRequest CreateBreakpointRequest (Location location)
 		{
-			return _vm.CreateBreakpointRequest(location);
+			return _vm.CreateBreakpointRequest (location);
 		}
 
-		public void ResumeIfNeeded()
+		public void ResumeIfNeeded ()
 		{
 		}
 	}

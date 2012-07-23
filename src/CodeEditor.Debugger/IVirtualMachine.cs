@@ -3,10 +3,10 @@ using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger
 {
-    public interface IVirtualMachine
+	public interface IVirtualMachine
 	{
 		event Action OnVMGotSuspended;
-        event Action<TypeLoadEvent> OnTypeLoad;
-        BreakpointEventRequest CreateBreakpointRequest(Location location);
+		event Action<TypeLoadEvent> OnTypeLoad;
+		BreakpointEventRequest CreateBreakpointRequest (Location location);
 	}
 }

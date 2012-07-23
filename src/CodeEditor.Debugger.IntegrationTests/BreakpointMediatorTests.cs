@@ -8,34 +8,33 @@ using NUnit.Framework;
 
 namespace CodeEditor.Debugger.IntegrationTests
 {
-    [TestFixture]
-    class BreakpointMediatorTests : DebuggerTestBase
-    {
-        [Test]
-        [Ignore("WIP")]
-        public void CanSetBreakpointOnLine()
-        {
-            _vm.OnVMStart += e => {
-                Console.WriteLine ("instructing vm to resume...");
-                _vm.Resume ();
-            };
-            _vm.OnTypeLoad += e => {
-                _vm.Resume();
-            //    Finish();
-            };
-            _vm.OnAssemblyLoad += e => _vm.Resume();
+	[TestFixture]
+	class BreakpointMediatorTests : DebuggerTestBase
+	{
+		[Test]
+		[Ignore("WIP")]
+		public void CanSetBreakpointOnLine ()
+		{
+			_vm.OnVMStart += e => {
+				Console.WriteLine ("instructing vm to resume...");
+				_vm.Resume ();
+			};
+			_vm.OnTypeLoad += e => {
+				_vm.Resume();
+			//	  Finish();
+			};
+			_vm.OnAssemblyLoad += e => _vm.Resume ();
 
-            var breakpointProvider = new BreakpointProvider ();
-            breakpointProvider.ToggleBreakPointAt (LocationOfSourceFile, 8);
-            new BreakpointMediator (_vm, breakpointProvider);
-            
-            _vm.OnBreakpoint += e => 
-                {
-                    Assert.AreEqual("Main", e.Method.FullName);
-                    Finish();
-                };
-            
-            WaitUntilFinished();
-        }
-    }
+			var breakpointProvider = new BreakpointProvider ();
+			breakpointProvider.ToggleBreakPointAt (LocationOfSourceFile, 8);
+			new BreakpointMediator (_vm, breakpointProvider);
+
+			_vm.OnBreakpoint += e => {
+				Assert.AreEqual ("Main", e.Method.FullName);
+				Finish ();
+			};
+
+			WaitUntilFinished ();
+		}
+	}
 }
