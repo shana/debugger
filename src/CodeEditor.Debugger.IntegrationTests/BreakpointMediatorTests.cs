@@ -12,6 +12,7 @@ namespace CodeEditor.Debugger.IntegrationTests
     class BreakpointMediatorTests : DebuggerTestBase
     {
         [Test]
+        [Ignore("WIP")]
         public void CanSetBreakpointOnLine()
         {
             _vm.OnVMStart += e => {
