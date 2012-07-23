@@ -31,7 +31,8 @@ namespace CodeEditor.Debugger.Implementation
 				EventType.AssemblyLoad,
 				EventType.VMDeath,
 				EventType.TypeLoad,
-				EventType.VMStart
+				EventType.VMStart,
+				EventType.Breakpoint
 				);
 
 			QueueUserWorkItem(EventLoop);

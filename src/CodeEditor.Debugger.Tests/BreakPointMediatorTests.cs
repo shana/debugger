@@ -22,7 +22,7 @@ namespace CodeEditor.Debugger.Tests
 			_typeMirrorProvider = new TypeMirrorProvider(_session.Object);
 			_breakpointEventRequestFactory = new Mock<IBreakpointEventRequestFactory>(MockBehavior.Strict);
 			_breakRequest = new Mock<IBreakpointEventRequest>();
-			new BreakpointMediator(_breakPointProvider, _typeMirrorProvider, _breakpointEventRequestFactory.Object);
+			new BreakpointMediator_old(_breakPointProvider, _typeMirrorProvider, _breakpointEventRequestFactory.Object);
 		}
 
 		[Test]

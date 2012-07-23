@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Moq">
+      <HintPath>..\..\..\Moq\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\NUnit\bin\nunit.framework.dll</HintPath>
@@ -45,6 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyCache.cs" />
+    <Compile Include="BreakpointMediatorTests.cs" />
+    <Compile Include="DebuggerTestBase.cs" />
     <Compile Include="Synchronization.cs" />
     <Compile Include="VirtualMachineTests.cs" />
     <Compile Include="CSharpCompiler.cs" />

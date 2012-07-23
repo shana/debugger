@@ -106,11 +106,12 @@
     <Compile Include="IDebuggerSession.cs" />
     <Compile Include="IDebuggerSessionAssembler.cs" />
     <Compile Include="IExecutingLineProvider.cs" />
+    <Compile Include="Implementation\BreakpointMediator.cs" />
     <Compile Include="IVirtualMachine.cs" />
     <Compile Include="Implementation\VirtualMachine.cs" />
     <Compile Include="IThreadProvider.cs" />
     <Compile Include="Implementation\BreakpointEventRequestFactory.cs" />
-    <Compile Include="Implementation\BreakpointMediator.cs" />
+    <Compile Include="Implementation\BreakpointMediator_old.cs" />
     <Compile Include="Implementation\BreakPoint.cs" />
     <Compile Include="Implementation\BreakpointProvider.cs" />
     <Compile Include="Implementation\DebuggerSession.cs" />

@@ -1,89 +1,53 @@
-﻿using System.Collections.Generic;
 using System.Linq;
-using CodeEditor.Composition;
-using CodeEditor.Debugger.Backend;
+using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
 {
-	[Export(typeof(IDebuggerSessionCreationListener))]
-	class BreakPointMediatorFactory : IDebuggerSessionCreationListener
-	{
-		[Import]
-		private IBreakpointProvider BreakpointProvider { get; set; }
-		
-		[Import]
-		private ITypeMirrorProvider TypeMirrorProvider { get; set; }
+    public class BreakpointMediator
+    {
+        private readonly IVirtualMachine _vm;
+        private readonly IBreakpointProvider _breakpointProvider;
 
-		[Import]
-		private IBreakpointEventRequestFactory BreakpointEventRequestFactory { get; set; }
+        public BreakpointMediator(IVirtualMachine vm, IBreakpointProvider breakpointProvider)
+        {
+            _vm = vm;
+            _breakpointProvider = breakpointProvider;
 
-		public void OnCreate(IDebuggerSession session)
-		{
-			new BreakpointMediator(BreakpointProvider, TypeMirrorProvider, BreakpointEventRequestFactory);
-		}
-	}
-	
-	class BreakpointMediator
-	{
-		private readonly IBreakpointProvider _breakpointProvider;
-		private readonly ITypeMirrorProvider _typeMirrorProvider;
-		private readonly IBreakpointEventRequestFactory _breakpointEventRequestFactory;
+            _vm.OnTypeLoad += OnTypeLoad;
+        }
 
-		public BreakpointMediator(IBreakpointProvider breakpointProvider, ITypeMirrorProvider typeMirrorProvider, IBreakpointEventRequestFactory breakpointEventRequestFactory)
-		{
-			_breakpointProvider = breakpointProvider;
-			_typeMirrorProvider = typeMirrorProvider;
-			_breakpointEventRequestFactory = breakpointEventRequestFactory;
-			_breakpointProvider.BreakpointAdded += BreakpointAdded;
-			_typeMirrorProvider.TypeLoaded += TypeMirrorLoaded;
-		}
+        private void OnTypeLoad(TypeLoadEvent e)
+        {
+            var sourcefiles = e.Type.GetSourceFiles(true);
 
-		private void TypeMirrorLoaded(ITypeMirror typeMirror)
-		{
-			foreach (var breakpoint in typeMirror.SourceFiles.SelectMany(BreakPointsIn))
-			{
-				IBreakPoint breakpoint1 = breakpoint;
-				var locations = typeMirror.Methods.SelectMany(m => m.Locations).Where(l => LocationsMatch(l, breakpoint1));
-				foreach(var location in locations)
-					CreateEventRequest(location);
-			}
-		}
+            if (e.Type.Name == "TestClass")
+            {
+                int a = 4;
+            }
 
-		private IEnumerable<IBreakPoint> BreakPointsIn(string file)
-		{
-			return _breakpointProvider.Breakpoints.Where(b => b.File == file);
-		}
+            var breakPoints = _breakpointProvider.Breakpoints;
+            var relevantBreakPoints = breakPoints.Where (bp => sourcefiles.Contains (bp.File));
 
-		private bool LocationsMatch(ILocation location, IBreakPoint breakpoint)
-		{
-			return breakpoint.File == location.File && breakpoint.LineNumber == location.LineNumber;
-		}
+            var methodMirrors = e.Type.GetMethods();
+            foreach (var bp in relevantBreakPoints)
+            {
+                foreach (var method in methodMirrors) 
+                {
+                    var bestLocation = BestLocationIn (method, bp);
+                    if (bestLocation == null)
+                        continue;
 
-		private static bool DoesTypeHaveCodeIn(ITypeMirror typeMirror, string sourceFile)
-		{
-			return typeMirror.SourceFiles.Contains(sourceFile);
-		}
+                    _vm.CreateBreakpointRequest (bestLocation).Enable();
+                }
+            }
+        }
 
-		private void BreakpointAdded(IBreakPoint breakpoint)
-		{
-			foreach (var type in TypesWithCodeIn(breakpoint.File))
-			{
-				var locationInMethod = type.Methods.SelectMany(m => m.Locations).FirstOrDefault(l => LocationsMatch(l, breakpoint));
-				if (locationInMethod == null)
-					continue;
-				CreateEventRequest(locationInMethod);
-			}
-		}
+        private Location BestLocationIn(MethodMirror method, IBreakPoint bp)
+        {
+            var locations = method.Locations.ToArray();
+            var name = method.FullName;
 
-		private IEnumerable<ITypeMirror> TypesWithCodeIn(string sourceFile)
-		{
-			return _typeMirrorProvider.LoadedTypesMirror.Where(t => DoesTypeHaveCodeIn(t, sourceFile));
-		}
-
-		private void CreateEventRequest(ILocation locationInMethod)
-		{
-			var request = _breakpointEventRequestFactory.Create(locationInMethod);
-			request.Enable();
-		}
-	}
+            return locations.FirstOrDefault (l => l.SourceFile == bp.File && l.LineNumber == bp.LineNumber);
+        }
+    }
 }
