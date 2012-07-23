@@ -3,8 +3,8 @@ using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
 {
-	[Export]
-	public class ExecutingLineProvider
+	[Export(typeof(IExecutingLineProvider))]
+	public class ExecutingLineProvider : IExecutingLineProvider
 	{
 		private int _currentLocation;
 		private readonly IDebuggerSession _debuggerSession;

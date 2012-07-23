@@ -9,7 +9,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 	class ExecutingLineAdornment : ITextViewAdornment
 	{
 		[Import]
-		ExecutingLineProvider ExecutingLineProvider { get; set; }
+		IExecutingLineProvider ExecutingLineProvider { get; set; }
 
 		public void Draw(ITextViewLine line, Rect lineRect)
 		{

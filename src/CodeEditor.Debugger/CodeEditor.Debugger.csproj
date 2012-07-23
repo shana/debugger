@@ -105,6 +105,8 @@
     <Compile Include="IBreakpointProvider.cs" />
     <Compile Include="IDebuggerSession.cs" />
     <Compile Include="IDebuggerSessionAssembler.cs" />
+    <Compile Include="IExecutingLineProvider.cs" />
+    <Compile Include="IVirtualMachine.cs" />
     <Compile Include="Implementation\VirtualMachine.cs" />
     <Compile Include="IThreadProvider.cs" />
     <Compile Include="Implementation\BreakpointEventRequestFactory.cs" />

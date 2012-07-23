@@ -9,7 +9,7 @@ using MDS=Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
 {
-	internal class VirtualMachine
+	internal class VirtualMachine : IVirtualMachine
 	{
 		private readonly MDS.VirtualMachine _vm;
 		private bool _running = true;
