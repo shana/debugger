@@ -18,11 +18,12 @@ namespace CodeEditor.Debugger.Implementation
 		public event Action<VMStartEvent> OnVMStart;
 		public event Action<VMDeathEvent> OnVMDeath;
 		public event Action<AssemblyLoadEvent> OnAssemblyLoad;
+		
 		public event Action<TypeLoadEvent> OnTypeLoad;
 		public event Action<VMDisconnectEvent> OnVMDisconnect;
 		public event Action<ThreadStartEvent> OnThreadStart;
 		public event Action<BreakpointEvent> OnBreakpoint;
-		public event Action OnVMGotSuspended;
+		public event Action<Event> OnVMGotSuspended;
 
 		public VirtualMachine (MDS.VirtualMachine vm)
 		{
@@ -31,8 +32,7 @@ namespace CodeEditor.Debugger.Implementation
 				EventType.AssemblyLoad,
 				EventType.VMDeath,
 				EventType.TypeLoad,
-				EventType.VMStart,
-				EventType.Breakpoint
+				EventType.VMStart
 			);
 
 			QueueUserWorkItem (EventLoop);
@@ -78,10 +78,10 @@ namespace CodeEditor.Debugger.Implementation
 
 		private void HandleEvent (Event e)
 		{
+			Console.WriteLine("Event: " + e.GetType());
 			if (EventCausesSuspension (e))
-				if (OnVMGotSuspended != null) OnVMGotSuspended ();
-
-			Console.WriteLine ("Event: "+e.GetType ());
+				if (OnVMGotSuspended != null) OnVMGotSuspended (e);
+			
 			switch (e.EventType)
 			{
 				case EventType.VMStart:
@@ -144,7 +144,7 @@ namespace CodeEditor.Debugger.Implementation
 			_vm.Exit (0);
 		}
 
-		public BreakpointEventRequest CreateBreakpointRequest (Location location)
+		public BreakpointEventRequest CreateBreakpointRequest (Mono.Debugger.Soft.Location location)
 		{
 			return _vm.CreateBreakpointRequest (location);
 		}

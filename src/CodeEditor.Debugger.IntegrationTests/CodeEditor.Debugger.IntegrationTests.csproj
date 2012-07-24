@@ -50,6 +50,7 @@
     <Compile Include="AssemblyCache.cs" />
     <Compile Include="BreakpointMediatorTests.cs" />
     <Compile Include="DebuggerTestBase.cs" />
+    <Compile Include="ExecutingLocationProviderTests.cs" />
     <Compile Include="Synchronization.cs" />
     <Compile Include="VirtualMachineTests.cs" />
     <Compile Include="CSharpCompiler.cs" />

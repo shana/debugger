@@ -1,5 +1,4 @@
 ﻿using CodeEditor.Composition;
-using CodeEditor.Debugger.Implementation;
 using CodeEditor.Text.UI.Unity.Engine;
 using UnityEngine;
 
@@ -9,11 +8,11 @@ namespace CodeEditor.Debugger.Unity.Engine
 	class ExecutingLineAdornment : ITextViewAdornment
 	{
 		[Import]
-		IExecutingLineProvider ExecutingLineProvider { get; set; }
+		IExecutingLocationProvider ExecutingLocationProvider { get; set; }
 
 		public void Draw(ITextViewLine line, Rect lineRect)
 		{
-			if (line.LineNumber == ExecutingLineProvider.LineNumber)
+			if (line.LineNumber == ExecutingLocationProvider.Location.LineNumber)
 				Draw(lineRect);
 		}
 

@@ -1,7 +1,8 @@
 namespace CodeEditor.Debugger
 {
-	public interface IExecutingLineProvider
+	public interface ILocation
 	{
 		int LineNumber { get; }
+		string SourceFile { get; }
 	}
 }

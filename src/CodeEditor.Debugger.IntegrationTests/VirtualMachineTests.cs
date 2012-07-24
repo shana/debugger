@@ -26,7 +26,7 @@ namespace CodeEditor.Debugger.IntegrationTests
 		[Test]
 		public void PublishesVMGotSuspendedOnStartup ()
 		{
-			_vm.OnVMGotSuspended += Finish;
+			_vm.OnVMGotSuspended += e => Finish();
 			WaitUntilFinished ();
 		}
 
@@ -36,7 +36,7 @@ namespace CodeEditor.Debugger.IntegrationTests
 			_vm.OnVMStart += e => _vm.Resume ();
 			_vm.OnAssemblyLoad += e => {
 										Assert.AreEqual (AssemblyName, e.Assembly.GetName ().Name);
-										Finish ();
+										Finish();
 									};
 
 			WaitUntilFinished ();

@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using CodeEditor.Debugger.Implementation;
 using Mono.Debugger.Soft;
 using NUnit.Framework;
 using VirtualMachine = CodeEditor.Debugger.Implementation.VirtualMachine;
@@ -12,6 +13,8 @@ namespace CodeEditor.Debugger.IntegrationTests
 		public const bool DebugMono = false;
 		protected VirtualMachine _vm;
 		private bool _finished;
+		private BreakpointProvider _breakpointProvider;
+		protected IExecutingLocationProvider ExecutingLocationProvider;
 
 		private static LaunchOptions DebuggerOptions
 		{
@@ -118,6 +121,18 @@ class "+DebugeeProgramClassName + @"
 		public static string SourceFileName
 		{
 			get { return "source.cs"; }
+		}
+
+		protected void SetupTestWithBreakpoint()
+		{
+			_vm.OnVMStart += e => _vm.Resume();
+			_vm.OnTypeLoad += e => _vm.Resume();
+			_vm.OnAssemblyLoad += e => _vm.Resume();
+
+			_breakpointProvider = new BreakpointProvider();
+			_breakpointProvider.ToggleBreakPointAt(LocationOfSourceFile, 9);
+			new BreakpointMediator(_vm, _breakpointProvider);
+			ExecutingLocationProvider = new ExecutingLocationProvider(_vm);
 		}
 	}
 }

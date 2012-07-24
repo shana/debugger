@@ -1,4 +1,5 @@
 using System.Linq;
+using MDS = Mono.Debugger.Soft;
 using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
@@ -26,7 +27,7 @@ namespace CodeEditor.Debugger.Implementation
 			}
 
 			var breakPoints = _breakpointProvider.Breakpoints;
-			var relevantBreakPoints = breakPoints.Where (bp => sourcefiles.Contains (bp.File));
+			var relevantBreakPoints = breakPoints.Where (bp => sourcefiles.Contains (bp.Location.SourceFile));
 
 			var methodMirrors = e.Type.GetMethods ();
 			foreach (var bp in relevantBreakPoints)
@@ -42,12 +43,12 @@ namespace CodeEditor.Debugger.Implementation
 			}
 		}
 
-		private Location BestLocationIn (MethodMirror method, IBreakPoint bp)
+		private MDS.Location BestLocationIn (MethodMirror method, IBreakPoint bp)
 		{
 			var locations = method.Locations.ToArray ();
 			var name = method.FullName;
 
-			return locations.FirstOrDefault (l => l.SourceFile == bp.File && l.LineNumber == bp.LineNumber);
+			return locations.FirstOrDefault (l => l.SourceFile == bp.Location.SourceFile && l.LineNumber == bp.Location.LineNumber);
 		}
 	}
 }

@@ -2,13 +2,13 @@ namespace CodeEditor.Debugger.Implementation
 {
 	class BreakPoint : IBreakPoint
 	{
-		public string File { get; private set; }
-		public int LineNumber { get; private set; }
+		private readonly Location _location;
 
-		public BreakPoint(string fileName, int lineNumber)
+		public BreakPoint(Location location)
 		{
-			File = fileName;
-			LineNumber = lineNumber;
+			_location = location;
 		}
+
+		public ILocation Location { get { return _location;  } }
 	}
 }
