@@ -90,7 +90,10 @@ namespace CodeEditor.Debugger.IntegrationTests
 						  };
 
 			if (DebugMono)
-				psi.EnvironmentVariables.Add ("UNITY_GIVE_CHANCE_TO_ATTACH_DEBUGGER", "1");
+				if (!psi.EnvironmentVariables.ContainsKey("UNITY_GIVE_CHANCE_TO_ATTACH_DEBUGGER"))
+					psi.EnvironmentVariables.Add("UNITY_GIVE_CHANCE_TO_ATTACH_DEBUGGER", "1");
+				else
+					psi.EnvironmentVariables["UNITY_GIVE_CHANCE_TO_ATTACH_DEBUGGER"] = "1";
 			return psi;
 		}
 
