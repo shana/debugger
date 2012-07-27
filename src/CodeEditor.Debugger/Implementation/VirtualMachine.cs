@@ -9,6 +9,7 @@ using MDS=Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
 {
+	[Export(typeof(IVirtualMachine))]
 	internal class VirtualMachine : IVirtualMachine
 	{
 		private readonly MDS.VirtualMachine _vm;
@@ -25,7 +26,11 @@ namespace CodeEditor.Debugger.Implementation
 		public event Action<BreakpointEvent> OnBreakpoint;
 		public event Action<Event> OnVMGotSuspended;
 
-		public VirtualMachine (MDS.VirtualMachine vm)
+		public VirtualMachine()
+		{
+		}
+
+		public VirtualMachine(MDS.VirtualMachine vm)
 		{
 			_vm = vm;
 			_vm.EnableEvents (

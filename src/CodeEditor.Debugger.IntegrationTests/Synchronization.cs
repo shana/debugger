@@ -8,6 +8,7 @@ namespace CodeEditor.Debugger.IntegrationTests
 	{
 		public static void WaitFor(Func<bool> condition, string msg)
 		{
+			var stopEvent = new ManualResetEvent(false);
 			var stopWatch = new Stopwatch();
 			stopWatch.Start();
 			while(true)
@@ -18,7 +19,7 @@ namespace CodeEditor.Debugger.IntegrationTests
 				if (stopWatch.Elapsed > TimeSpan.FromSeconds(IsHumanDebugging() ? 10000 : 5))
 					throw new TimeoutException(msg);
 
-				Thread.Sleep(100);
+				stopEvent.WaitOne(100);
 			}
 		}
 
