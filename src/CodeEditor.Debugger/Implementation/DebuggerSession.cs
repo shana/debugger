@@ -8,6 +8,7 @@ using CodeEditor.Composition;
 using CodeEditor.Debugger.Backend;
 using CodeEditor.Debugger.Backend.Sdb;
 using Mono.Debugger.Soft;
+using MDS = Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
 {
@@ -15,7 +16,7 @@ namespace CodeEditor.Debugger.Implementation
 	internal class DebuggerSession : IDebuggerSession
 	{
 		private int _debuggerPort;
-		private volatile VirtualMachine _vm;
+		private volatile Mono.Debugger.Soft.VirtualMachine _vm;
 		private MethodEntryEventRequest _methodEntryRequest;
 		private bool _vmSuspended;
 		private readonly Queue<Event> _queuedEvents = new Queue<Event>();
@@ -26,7 +27,7 @@ namespace CodeEditor.Debugger.Implementation
 		public event Action<string> TraceCallback ;
 		private ThreadMirror _mainThread;
 		private readonly List<AssemblyMirror> _loadedAssemblies = new List<AssemblyMirror>();
-		private Dictionary<Location,BreakpointEventRequest> _breakpointEventRequests = new Dictionary<Location, BreakpointEventRequest>();
+		private Dictionary<MDS.Location,BreakpointEventRequest> _breakpointEventRequests = new Dictionary<MDS.Location, BreakpointEventRequest>();
 		private readonly List<SdbAssemblyMirror> _debugAssemblies = new List<SdbAssemblyMirror>();
 
 		public void Start(int debuggerPort)
@@ -324,7 +325,7 @@ namespace CodeEditor.Debugger.Implementation
 			return new ThreadsRequest();
 		}
 
-		public BreakpointEventRequest CreateBreakpointRequest(Location location)
+		public BreakpointEventRequest CreateBreakpointRequest(Mono.Debugger.Soft.Location location)
 		{
 			var request = _vm.CreateBreakpointRequest(location);
 			_breakpointEventRequests[location] = request;

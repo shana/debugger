@@ -12,3 +12,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
 [assembly: InternalsVisibleTo("CodeEditor.Debugger.Tests")]
+[assembly: InternalsVisibleTo("CodeEditor.Debugger.IntegrationTests")]

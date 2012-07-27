@@ -1,89 +1,54 @@
-﻿using System.Collections.Generic;
 using System.Linq;
-using CodeEditor.Composition;
-using CodeEditor.Debugger.Backend;
+using MDS = Mono.Debugger.Soft;
+using Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Implementation
 {
-	[Export(typeof(IDebuggerSessionCreationListener))]
-	class BreakPointMediatorFactory : IDebuggerSessionCreationListener
+	public class BreakpointMediator
 	{
-		[Import]
-		private IBreakpointProvider BreakpointProvider { get; set; }
-		
-		[Import]
-		private ITypeMirrorProvider TypeMirrorProvider { get; set; }
-
-		[Import]
-		private IBreakpointEventRequestFactory BreakpointEventRequestFactory { get; set; }
-
-		public void OnCreate(IDebuggerSession session)
-		{
-			new BreakpointMediator(BreakpointProvider, TypeMirrorProvider, BreakpointEventRequestFactory);
-		}
-	}
-	
-	class BreakpointMediator
-	{
+		private readonly IVirtualMachine _vm;
 		private readonly IBreakpointProvider _breakpointProvider;
-		private readonly ITypeMirrorProvider _typeMirrorProvider;
-		private readonly IBreakpointEventRequestFactory _breakpointEventRequestFactory;
 
-		public BreakpointMediator(IBreakpointProvider breakpointProvider, ITypeMirrorProvider typeMirrorProvider, IBreakpointEventRequestFactory breakpointEventRequestFactory)
+		public BreakpointMediator (IVirtualMachine vm, IBreakpointProvider breakpointProvider)
 		{
+			_vm = vm;
 			_breakpointProvider = breakpointProvider;
-			_typeMirrorProvider = typeMirrorProvider;
-			_breakpointEventRequestFactory = breakpointEventRequestFactory;
-			_breakpointProvider.BreakpointAdded += BreakpointAdded;
-			_typeMirrorProvider.TypeLoaded += TypeMirrorLoaded;
+
+			_vm.OnTypeLoad += OnTypeLoad;
 		}
 
-		private void TypeMirrorLoaded(ITypeMirror typeMirror)
+		private void OnTypeLoad (TypeLoadEvent e)
 		{
-			foreach (var breakpoint in typeMirror.SourceFiles.SelectMany(BreakPointsIn))
+			var sourcefiles = e.Type.GetSourceFiles (true);
+
+			if (e.Type.Name == "TestClass")
 			{
-				IBreakPoint breakpoint1 = breakpoint;
-				var locations = typeMirror.Methods.SelectMany(m => m.Locations).Where(l => LocationsMatch(l, breakpoint1));
-				foreach(var location in locations)
-					CreateEventRequest(location);
+				int a = 4;
+			}
+
+			var breakPoints = _breakpointProvider.Breakpoints;
+			var relevantBreakPoints = breakPoints.Where (bp => sourcefiles.Contains (bp.Location.SourceFile));
+
+			var methodMirrors = e.Type.GetMethods ();
+			foreach (var bp in relevantBreakPoints)
+			{
+				foreach (var method in methodMirrors) 
+				{
+					var bestLocation = BestLocationIn (method, bp);
+					if (bestLocation == null)
+						continue;
+
+					_vm.CreateBreakpointRequest (bestLocation).Enable();
+				}
 			}
 		}
 
-		private IEnumerable<IBreakPoint> BreakPointsIn(string file)
+		private MDS.Location BestLocationIn (MethodMirror method, IBreakPoint bp)
 		{
-			return _breakpointProvider.Breakpoints.Where(b => b.File == file);
-		}
+			var locations = method.Locations.ToArray ();
+			var name = method.FullName;
 
-		private bool LocationsMatch(ILocation location, IBreakPoint breakpoint)
-		{
-			return breakpoint.File == location.File && breakpoint.LineNumber == location.LineNumber;
-		}
-
-		private static bool DoesTypeHaveCodeIn(ITypeMirror typeMirror, string sourceFile)
-		{
-			return typeMirror.SourceFiles.Contains(sourceFile);
-		}
-
-		private void BreakpointAdded(IBreakPoint breakpoint)
-		{
-			foreach (var type in TypesWithCodeIn(breakpoint.File))
-			{
-				var locationInMethod = type.Methods.SelectMany(m => m.Locations).FirstOrDefault(l => LocationsMatch(l, breakpoint));
-				if (locationInMethod == null)
-					continue;
-				CreateEventRequest(locationInMethod);
-			}
-		}
-
-		private IEnumerable<ITypeMirror> TypesWithCodeIn(string sourceFile)
-		{
-			return _typeMirrorProvider.LoadedTypesMirror.Where(t => DoesTypeHaveCodeIn(t, sourceFile));
-		}
-
-		private void CreateEventRequest(ILocation locationInMethod)
-		{
-			var request = _breakpointEventRequestFactory.Create(locationInMethod);
-			request.Enable();
+			return locations.FirstOrDefault (l => l.SourceFile == bp.Location.SourceFile && l.LineNumber == bp.Location.LineNumber);
 		}
 	}
 }
