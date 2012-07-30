@@ -57,6 +57,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Empty.cs" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -68,15 +69,12 @@
   </Target>
   -->
 
-  <PropertyGroup>
-    <UnityDebuggerDataDir>$(UnityDebuggerDir)Debugger_Data\Managed\</UnityDebuggerDataDir>
-  </PropertyGroup>
-
   <PropertyGroup Condition=" '$(OS)' == 'Unix' ">
     <UnityBuildDir>..\..\..\..\build\MacEditor\</UnityBuildDir>
     <UnityCmd>$(UnityBuildDir)Unity.app\Contents\MacOS\Unity</UnityCmd>
     <UnityDebuggerProjectBuildDir>Build\Mac</UnityDebuggerProjectBuildDir>
     <UnityDebuggerDir>Unity.app\Contents\Tools\Debugger\</UnityDebuggerDir>
+    <UnityDebuggerDataDir>$(UnityDebuggerDir)Debugger.app\Contents\Data\Managed\</UnityDebuggerDataDir>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(OS)' != 'Unix' ">
@@ -84,6 +82,7 @@
     <UnityBuildDir>..\..\..\..\build\WindowsEditor\</UnityBuildDir>
     <UnityCmd>$(UnityBuildDir)Unity.exe</UnityCmd>
     <UnityDebuggerProjectBuildDir>Build\Windows</UnityDebuggerProjectBuildDir>
+    <UnityDebuggerDataDir>$(UnityDebuggerDir)Debugger_Data\Managed\</UnityDebuggerDataDir>
   </PropertyGroup>
 
 
