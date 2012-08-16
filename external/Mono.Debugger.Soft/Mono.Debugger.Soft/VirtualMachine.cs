@@ -61,7 +61,10 @@ namespace Mono.Debugger.Soft
 
 		public EndPoint EndPoint {
 			get {
-				return conn.EndPoint;
+				var tcpConn = conn as TcpConnection;
+				if (tcpConn != null)
+					return tcpConn.EndPoint;
+				return null;
 			}
 		}
 
@@ -71,11 +74,23 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		EventSet current_es;
+		int current_es_index;
+
+		/*
+		 * It is impossible to determine when to resume when using this method, since
+		 * the debuggee is suspended only once per event-set, not event.
+		 */
+		[Obsolete ("Use GetNextEventSet () instead")]
 		public Event GetNextEvent () {
 			lock (queue_monitor) {
-				if (queue.Count == 0)
-					Monitor.Wait (queue_monitor);
-				return (Event)queue.Dequeue ();
+				if (current_es == null || current_es_index == current_es.Events.Length) {
+					if (queue.Count == 0)
+						Monitor.Wait (queue_monitor);
+					current_es = (EventSet)queue.Dequeue ();
+					current_es_index = 0;
+				}
+				return current_es.Events [current_es_index ++];
 			}
 		}
 
@@ -83,6 +98,19 @@ namespace Mono.Debugger.Soft
 			throw new NotImplementedException ();
 		}
 
+		public EventSet GetNextEventSet () {
+			lock (queue_monitor) {
+				if (queue.Count == 0)
+					Monitor.Wait (queue_monitor);
+
+				current_es = null;
+				current_es_index = 0;
+
+				return (EventSet)queue.Dequeue ();
+			}
+		}
+
+		[Obsolete ("Use GetNextEventSet () instead")]
 		public T GetNextEvent<T> () where T : Event {
 			return GetNextEvent () as T;
 		}
@@ -106,9 +134,21 @@ namespace Mono.Debugger.Soft
 			conn.VM_Exit (exitCode);
 		}
 
-		public void Dispose () {
+		public void Detach () {
 			conn.VM_Dispose ();
 			conn.Close ();
+			notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, 0, 0, null);
+		}
+
+		[Obsolete ("This method was poorly named; use the Detach() method instead")]
+		public void Dispose ()
+		{
+			Detach ();
+		}
+
+		public void ForceDisconnect ()
+		{
+			conn.ForceDisconnect ();
 		}
 
 		public IList<ThreadMirror> GetThreads () {
@@ -132,6 +172,16 @@ namespace Mono.Debugger.Soft
 
 		public EnumMirror CreateEnumMirror (TypeMirror type, PrimitiveValue value) {
 			return new EnumMirror (this, type, value);
+		}
+
+		//
+		// Enable send and receive timeouts on the connection and send a keepalive event
+		// every 'keepalive_interval' milliseconds.
+		//
+
+		public void SetSocketTimeouts (int send_timeout, int receive_timeout, int keepalive_interval)
+		{
+			conn.SetSocketTimeouts (send_timeout, receive_timeout, keepalive_interval);
 		}
 
 		//
@@ -168,9 +218,20 @@ namespace Mono.Debugger.Soft
 			return new ExceptionEventRequest (this, exc_type, caught, uncaught);
 		}
 
+		public AssemblyLoadEventRequest CreateAssemblyLoadRequest () {
+			return new AssemblyLoadEventRequest (this);
+		}
+
+		public TypeLoadEventRequest CreateTypeLoadRequest () {
+			return new TypeLoadEventRequest (this);
+		}
+
 		public void EnableEvents (params EventType[] events) {
-			foreach (EventType etype in events)
+			foreach (EventType etype in events) {
+				if (etype == EventType.Breakpoint)
+					throw new ArgumentException ("Breakpoint events cannot be requested using EnableEvents", "events");
 				conn.EnableEvent (etype, SuspendPolicy.All, null);
+			}
 		}
 
 		public BreakpointEventRequest SetBreakpoint (MethodMirror method, long il_offset) {
@@ -188,10 +249,36 @@ namespace Mono.Debugger.Soft
 		public void Disconnect () {
 			conn.Close ();
 		}
+
+		//
+		// Return a list of TypeMirror objects for all loaded types which reference the
+		// source file FNAME. Might return false positives.
+		// Since protocol version 2.7.
+		//
+		public IList<TypeMirror> GetTypesForSourceFile (string fname, bool ignoreCase) {
+			long[] ids = conn.VM_GetTypesForSourceFile (fname, ignoreCase);
+			var res = new TypeMirror [ids.Length];
+			for (int i = 0; i < ids.Length; ++i)
+				res [i] = GetType (ids [i]);
+			return res;
+		}
+
+		//
+		// Return a list of TypeMirror objects for all loaded types named 'NAME'.
+		// NAME should be in the the same for as with Assembly.GetType ().
+		// Since protocol version 2.9.
+		//
+		public IList<TypeMirror> GetTypes (string name, bool ignoreCase) {
+			long[] ids = conn.VM_GetTypes (name, ignoreCase);
+			var res = new TypeMirror [ids.Length];
+			for (int i = 0; i < ids.Length; ++i)
+				res [i] = GetType (ids [i]);
+			return res;
+		}
 		
-		internal void queue_event (Event e) {
+		internal void queue_event_set (EventSet es) {
 			lock (queue_monitor) {
-				queue.Enqueue (e);
+				queue.Enqueue (es);
 				Monitor.Pulse (queue_monitor);
 			}
 		}
@@ -208,6 +295,8 @@ namespace Mono.Debugger.Soft
 				throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
 			case ErrorCode.ABSENT_INFORMATION:
 				throw new AbsentInformationException ();
+			case ErrorCode.NO_SEQ_POINT_AT_IL_OFFSET:
+				throw new ArgumentException ("Cannot set breakpoint on the specified IL offset.");
 			default:
 				throw new CommandException (args.ErrorCode);
 			}
@@ -226,7 +315,7 @@ namespace Mono.Debugger.Soft
 			root_domain = GetDomain (root_domain_id);
 		}
 
-		internal void notify_vm_event (EventType evtype, int req_id, long thread_id, string vm_uri) {
+		internal void notify_vm_event (EventType evtype, SuspendPolicy spolicy, int req_id, long thread_id, string vm_uri) {
 			//Console.WriteLine ("Event: " + evtype + "(" + vm_uri + ")");
 
 			switch (evtype) {
@@ -235,13 +324,13 @@ namespace Mono.Debugger.Soft
 				lock (startup_monitor) {
 					Monitor.Pulse (startup_monitor);
 				}
-				queue_event (new VMStartEvent (vm, req_id, thread_id));
+				queue_event_set (new EventSet (this, spolicy, new Event[] { new VMStartEvent (vm, req_id, thread_id) }));
 				break;
 			case EventType.VMDeath:
-				queue_event (new VMDeathEvent (vm, req_id));
+				queue_event_set (new EventSet (this, spolicy, new Event[] { new VMDeathEvent (vm, req_id) }));
 				break;
 			case EventType.VMDisconnect:
-				queue_event (new VMDisconnectEvent (vm, req_id));
+				queue_event_set (new EventSet (this, spolicy, new Event[] { new VMDisconnectEvent (vm, req_id) }));
 				break;
 			default:
 				throw new Exception ();
@@ -367,6 +456,13 @@ namespace Mono.Debugger.Soft
 			}
 	    }
 
+		internal TypeMirror[] GetTypes (long[] ids) {
+			var res = new TypeMirror [ids.Length];
+			for (int i = 0; i < ids.Length; ++i)
+				res [i] = GetType (ids [i]);
+			return res;
+		}
+
 		Dictionary <long, ObjectMirror> objects;
 		object objects_lock = new object ();
 
@@ -380,22 +476,29 @@ namespace Mono.Debugger.Soft
 					 * Obtain the domain/type of the object to determine the type of
 					 * object we need to create.
 					 */
-					if (domain_id == 0)
-						domain_id = conn.Object_GetDomain (id);
+					if (domain_id == 0 || type_id == 0) {
+						if (conn.Version.AtLeast (2, 5)) {
+							var info = conn.Object_GetInfo (id);
+							domain_id = info.domain_id;
+							type_id = info.type_id;
+						} else {
+							if (domain_id == 0)
+								domain_id = conn.Object_GetDomain (id);
+							if (type_id == 0)
+								type_id = conn.Object_GetType (id);
+						}
+					}
 					AppDomainMirror d = GetDomain (domain_id);
-
-					if (type_id == 0)
-						type_id = conn.Object_GetType (id);
 					TypeMirror t = GetType (type_id);
 
 					if (t.Assembly == d.Corlib && t.Namespace == "System.Threading" && t.Name == "Thread")
-						obj = new ThreadMirror (this, id);
+						obj = new ThreadMirror (this, id, t, d);
 					else if (t.Assembly == d.Corlib && t.Namespace == "System" && t.Name == "String")
-						obj = new StringMirror (this, id);
+						obj = new StringMirror (this, id, t, d);
 					else if (typeof (T) == typeof (ArrayMirror))
-						obj = new ArrayMirror (this, id);
+						obj = new ArrayMirror (this, id, t, d);
 					else
-						obj = new ObjectMirror (this, id);
+						obj = new ObjectMirror (this, id, t, d);
 					objects [id] = obj;
 				}
 				return (T)obj;
@@ -490,6 +593,11 @@ namespace Mono.Debugger.Soft
 				res [i] = EncodeValue (values [i]);
 			return res;
 		}
+
+		internal void CheckProtocolVersion (int major, int minor) {
+			if (!conn.Version.AtLeast (major, minor))
+				throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
+		}
     }
 
 	class EventHandler : MarshalByRefObject, IEventHandler
@@ -500,64 +608,76 @@ namespace Mono.Debugger.Soft
 			this.vm = vm;
 		}
 
-		public void VMStart (int req_id, long thread_id, string vm_uri) {
-			vm.notify_vm_event (EventType.VMStart, req_id, thread_id, vm_uri);
-        }
+		public void Events (SuspendPolicy suspend_policy, EventInfo[] events) {
+			var l = new List<Event> ();
 
-		public void VMDeath (int req_id, long thread_id, string vm_uri) {
-			vm.notify_vm_event (EventType.VMDeath, req_id, thread_id, vm_uri);
-        }
+			for (int i = 0; i < events.Length; ++i) {
+				EventInfo ei = events [i];
+				int req_id = ei.ReqId;
+				long thread_id = ei.ThreadId;
+				long id = ei.Id;
+				long loc = ei.Location;
+
+				switch (ei.EventType) {
+				case EventType.VMStart:
+					vm.notify_vm_event (EventType.VMStart, suspend_policy, req_id, thread_id, null);
+					break;
+				case EventType.VMDeath:
+					vm.notify_vm_event (EventType.VMDeath, suspend_policy, req_id, thread_id, null);
+					break;
+				case EventType.ThreadStart:
+					l.Add (new ThreadStartEvent (vm, req_id, id));
+					break;
+				case EventType.ThreadDeath:
+					l.Add (new ThreadDeathEvent (vm, req_id, id));
+					break;
+				case EventType.AssemblyLoad:
+					l.Add (new AssemblyLoadEvent (vm, req_id, thread_id, id));
+					break;
+				case EventType.AssemblyUnload:
+					l.Add (new AssemblyUnloadEvent (vm, req_id, thread_id, id));
+					break;
+				case EventType.TypeLoad:
+					l.Add (new TypeLoadEvent (vm, req_id, thread_id, id));
+					break;
+				case EventType.MethodEntry:
+					l.Add (new MethodEntryEvent (vm, req_id, thread_id, id));
+					break;
+				case EventType.MethodExit:
+					l.Add (new MethodExitEvent (vm, req_id, thread_id, id));
+					break;
+				case EventType.Breakpoint:
+					l.Add (new BreakpointEvent (vm, req_id, thread_id, id, loc));
+					break;
+				case EventType.Step:
+					l.Add (new StepEvent (vm, req_id, thread_id, id, loc));
+					break;
+				case EventType.Exception:
+					l.Add (new ExceptionEvent (vm, req_id, thread_id, id, loc));
+					break;
+				case EventType.AppDomainCreate:
+					l.Add (new AppDomainCreateEvent (vm, req_id, thread_id, id));
+					break;
+				case EventType.AppDomainUnload:
+					l.Add (new AppDomainUnloadEvent (vm, req_id, thread_id, id));
+					break;
+				case EventType.UserBreak:
+					l.Add (new UserBreakEvent (vm, req_id, thread_id));
+					break;
+				case EventType.UserLog:
+					l.Add (new UserLogEvent (vm, req_id, thread_id, ei.Level, ei.Category, ei.Message));
+					break;
+				default:
+					break;
+				}
+			}
+			
+			if (l.Count > 0)
+				vm.queue_event_set (new EventSet (vm, suspend_policy, l.ToArray ()));
+		}
 
 		public void VMDisconnect (int req_id, long thread_id, string vm_uri) {
-			vm.notify_vm_event (EventType.VMDisconnect, req_id, thread_id, vm_uri);
-        }
-
-		public void ThreadStart (int req_id, long thread_id, long id) {
-			vm.queue_event (new ThreadStartEvent (vm, req_id, id));
-        }
-
-		public void ThreadDeath (int req_id, long thread_id, long id) {
-			vm.queue_event (new ThreadDeathEvent (vm, req_id, id));
-        }
-
-		public void AssemblyLoad (int req_id, long thread_id, long id) {
-			vm.queue_event (new AssemblyLoadEvent (vm, req_id, thread_id, id));
-        }
-
-		public void AssemblyUnload (int req_id, long thread_id, long id) {
-			vm.queue_event (new AssemblyUnloadEvent (vm, req_id, thread_id, id));
-        }
-
-		public void TypeLoad (int req_id, long thread_id, long id) {
-			vm.queue_event (new TypeLoadEvent (vm, req_id, thread_id, id));
-        }
-
-		public void MethodEntry (int req_id, long thread_id, long id) {
-			vm.queue_event (new MethodEntryEvent (vm, req_id, thread_id, id));
-        }
-
-		public void MethodExit (int req_id, long thread_id, long id) {
-			vm.queue_event (new MethodExitEvent (vm, req_id, thread_id, id));
-        }
-
-		public void Breakpoint (int req_id, long thread_id, long id, long loc) {
-			vm.queue_event (new BreakpointEvent (vm, req_id, thread_id, id, loc));
-        }
-
-		public void Step (int req_id, long thread_id, long id, long loc) {
-			vm.queue_event (new StepEvent (vm, req_id, thread_id, id, loc));
-        }
-
-		public void Exception (int req_id, long thread_id, long id, long loc) {
-			vm.queue_event (new ExceptionEvent (vm, req_id, thread_id, id, loc));
-        }
-
-		public void AppDomainCreate (int req_id, long thread_id, long id) {
-			vm.queue_event (new AppDomainCreateEvent (vm, req_id, thread_id, id));
-        }
-
-		public void AppDomainUnload (int req_id, long thread_id, long id) {
-			vm.queue_event (new AppDomainUnloadEvent (vm, req_id, thread_id, id));
+			vm.notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, req_id, thread_id, vm_uri);
         }
     }
 
