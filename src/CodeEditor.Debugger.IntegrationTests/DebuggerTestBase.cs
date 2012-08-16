@@ -44,15 +44,33 @@ namespace CodeEditor.Debugger.IntegrationTests
 
 		protected void WaitUntilFinished ()
 		{
-			Synchronization.WaitFor (() => _finished, "Waiting for _finished");
+			try
+			{
+				Synchronization.WaitFor (() => _finished, "Waiting for _finished");
+			}
+			catch (TimeoutException)
+			{
+				// the test timed out, meaning one of the asserts failed and Finish() didn't run
+			}
 			try
 			{
 				_vm.Exit ();
 			}
-			catch (ObjectDisposedException)
+			catch (Exception ex)
 			{
+				// this should never happen
+				Console.WriteLine ("Exception thrown while exiting the VM");
+				Console.WriteLine (ex);
 			}
-			Synchronization.WaitFor (() => _vm.Process.HasExited, "Waiting for process to exit");
+			try
+			{
+				Synchronization.WaitFor (() => _vm.Process.HasExited, "Waiting for process to exit");
+			}
+			catch (TimeoutException)
+			{
+				_vm.Process.Kill ();
+				Console.WriteLine ("VM process did not exit cleanly");
+			}
 
 			foreach (var error in _vm.Errors)
 				Console.WriteLine ("VM had error: "+error);
@@ -126,14 +144,10 @@ class "+DebugeeProgramClassName + @"
 			get { return "source.cs"; }
 		}
 
-		protected void SetupTestWithBreakpoint()
+		protected void SetupTestWithBreakpoint(int line)
 		{
-			_vm.OnVMStart += e => _vm.Resume();
-			_vm.OnTypeLoad += e => _vm.Resume();
-			_vm.OnAssemblyLoad += e => _vm.Resume();
-
 			_breakpointProvider = new BreakpointProvider();
-			_breakpointProvider.ToggleBreakPointAt(LocationOfSourceFile, 9);
+			_breakpointProvider.ToggleBreakPointAt(LocationOfSourceFile, line);
 			new BreakpointMediator(_vm, _breakpointProvider);
 			ExecutingLocationProvider = new ExecutingLocationProvider(_vm);
 		}

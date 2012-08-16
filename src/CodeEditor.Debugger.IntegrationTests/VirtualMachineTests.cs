@@ -33,7 +33,6 @@ namespace CodeEditor.Debugger.IntegrationTests
 		[Test]
 		public void PublishesAssemblyLoadEventOnStartup ()
 		{
-			_vm.OnVMStart += e => _vm.Resume ();
 			_vm.OnAssemblyLoad += e => {
 										Assert.AreEqual (AssemblyName, e.Assembly.GetName ().Name);
 										Finish();
@@ -45,9 +44,6 @@ namespace CodeEditor.Debugger.IntegrationTests
 		[Test]
 		public void PublishesVMDeathOnEndOfProgram ()
 		{
-			_vm.OnVMStart += e => _vm.Resume ();
-			_vm.OnTypeLoad += e => _vm.Resume ();
-			_vm.OnAssemblyLoad += e => _vm.Resume ();
 			_vm.OnVMDeath += e => {
 									Assert.NotNull (e);
 									Finish ();
@@ -59,12 +55,9 @@ namespace CodeEditor.Debugger.IntegrationTests
 		[Test]
 		public void PublishesTypeLoadEventOnStartup ()
 		{
-			_vm.OnVMStart += e => _vm.Resume ();
-			_vm.OnAssemblyLoad += e => _vm.Resume ();
 			_vm.OnTypeLoad += e => {
 										if (DebugeeProgramClassName == e.Type.FullName)
 											Finish ();
-										_vm.Resume ();
 									};
 			WaitUntilFinished ();
 		}
@@ -72,9 +65,6 @@ namespace CodeEditor.Debugger.IntegrationTests
 		[Test]
 		public void BreakPointOnMainWillHit ()
 		{
-			_vm.OnVMStart += e => _vm.Resume ();
-			_vm.OnAssemblyLoad += e => _vm.Resume ();
-
 			BreakpointEventRequest request = null;
 			_vm.OnTypeLoad += e => {
 									if (DebugeeProgramClassName == e.Type.FullName)
@@ -90,7 +80,6 @@ namespace CodeEditor.Debugger.IntegrationTests
 										request = _vm.CreateBreakpointRequest (locations.First ());
 										request.Enable ();
 									}
-									_vm.Resume ();
 								};
 
 			_vm.OnBreakpoint += e => {

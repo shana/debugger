@@ -14,6 +14,7 @@ namespace CodeEditor.Debugger.Implementation
 	{
 		private readonly MDS.VirtualMachine _vm;
 		private bool _running = true;
+		private bool _exited = false;
 		private readonly List<Exception> _errors = new List<Exception> ();
 
 		public event Action<VMStartEvent> OnVMStart;
@@ -74,56 +75,65 @@ namespace CodeEditor.Debugger.Implementation
 		{
 			while (_running)
 			{
-				var e = _vm.GetNextEvent ();
+				var e = _vm.GetNextEventSet ();
 				if (e == null)
 					return;
-				HandleEvent (e);
+				foreach (var evt in e.Events)
+					HandleEvent (evt, e.SuspendPolicy);
 			}
 		}
 
-		private void HandleEvent (Event e)
+		private void HandleEvent (Event e, SuspendPolicy policy)
 		{
 			Console.WriteLine("Event: " + e.GetType());
-			if (EventCausesSuspension (e))
+			bool exit = false;
+			lock (_vm) {
+				exit = _exited;
+			}
+			if (exit)
+				return;
+
+			if (policy !=  SuspendPolicy.None)
 				if (OnVMGotSuspended != null) OnVMGotSuspended (e);
 			
 			switch (e.EventType)
 			{
 				case EventType.VMStart:
 					if (OnVMStart !=null) OnVMStart ((VMStartEvent) e);
-					return;
+					break;
 				case EventType.ThreadStart:
-					if (OnThreadStart != null) OnThreadStart ((ThreadStartEvent) e);
-					return;
+					if (OnThreadStart != null)
+						OnThreadStart ((ThreadStartEvent)e);
+					break;
 				case EventType.AssemblyLoad:
-					if (OnAssemblyLoad != null) OnAssemblyLoad ((AssemblyLoadEvent)e);
-					return;
+					if (OnAssemblyLoad != null)
+						OnAssemblyLoad ((AssemblyLoadEvent)e);
+					break;
 				case EventType.TypeLoad:
-					if (OnTypeLoad != null) OnTypeLoad ((TypeLoadEvent)e);
-					return;
+					if (OnTypeLoad != null)
+						OnTypeLoad ((TypeLoadEvent)e);
+					break;
 				case EventType.Breakpoint:
-					if (OnBreakpoint != null) OnBreakpoint ((BreakpointEvent) e);
-					return;
+					if (OnBreakpoint != null)
+						OnBreakpoint ((BreakpointEvent)e);
+					break;
 				case EventType.VMDeath:
 					if (OnVMDeath != null) OnVMDeath ((VMDeathEvent) e);
 					_running = false;
-					return;
+					break;
 				case EventType.VMDisconnect:
 					if (OnVMDisconnect != null) OnVMDisconnect ((VMDisconnectEvent)e);
 					_running = false;
-					return;
+					break;
 				case EventType.MethodEntry:
 					Console.WriteLine (((MethodEntryEvent)e).Method.FullName);
-					return;
+					break;
 				default:
 					Console.WriteLine ("Unknown event: "+e.GetType ());
-					return;
+					break;
 			}
-		}
-
-		private bool EventCausesSuspension (Event @event)
-		{
-			return true;
+			if (policy != SuspendPolicy.None)
+				_vm.Resume();
 		}
 
 		private void WithErrorLogging (Action action)
@@ -146,7 +156,11 @@ namespace CodeEditor.Debugger.Implementation
 
 		public void Exit ()
 		{
+			lock (_vm) {
+				_exited = true;
+			}
 			_vm.Exit (0);
+			_vm.Detach ();
 		}
 
 		public BreakpointEventRequest CreateBreakpointRequest (Mono.Debugger.Soft.Location location)

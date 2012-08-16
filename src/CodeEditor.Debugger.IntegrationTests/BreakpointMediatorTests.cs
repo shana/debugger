@@ -12,17 +12,16 @@ namespace CodeEditor.Debugger.IntegrationTests
 	class BreakpointMediatorTests : DebuggerTestBase
 	{
 		[Test]
-		[Ignore("WIP")]
-		public void CanSetBreakpointOnLine ()
+		public void CanSetBreakpointOnLine()
 		{
-			SetupTestWithBreakpoint();
+			SetupTestWithBreakpoint(7);
 
 			_vm.OnBreakpoint += e => {
-				Assert.AreEqual ("Main", e.Method.FullName);
-				Finish ();
+				Assert.AreEqual("Void TestClass:Main ()", e.Method.FullName);
+				Finish();
 			};
 
-			WaitUntilFinished ();
+			WaitUntilFinished();
 		}
 	}
 }

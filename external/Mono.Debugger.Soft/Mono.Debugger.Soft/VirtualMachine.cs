@@ -137,7 +137,6 @@ namespace Mono.Debugger.Soft
 		public void Detach () {
 			conn.VM_Dispose ();
 			conn.Close ();
-			notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, 0, 0, null);
 		}
 
 		[Obsolete ("This method was poorly named; use the Detach() method instead")]

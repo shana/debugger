@@ -8,15 +8,16 @@ namespace CodeEditor.Debugger.IntegrationTests
 		[Test]
 		public void ReturnsCorrectLocationOnBreakpoint()
 		{
-			SetupTestWithBreakpoint();
+			SetupTestWithBreakpoint(7);
 
 			_vm.OnBreakpoint += e => {
-				Assert.AreEqual(9, ExecutingLocationProvider.Location.LineNumber);
+				// the actual line number on the breakpoint is 8, since 7 is the {
+				Assert.AreEqual(8, ExecutingLocationProvider.Location.LineNumber);
 				Assert.AreEqual(LocationOfSourceFile, ExecutingLocationProvider.Location.SourceFile);
-				Finish ();
+				Finish();
 			};
 
-			WaitUntilFinished ();
+			WaitUntilFinished();
 		}
 	}
 }
