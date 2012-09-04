@@ -52,7 +52,7 @@ namespace CodeEditor.Debugger.IntegrationTests
 
 		public static string MonoPath(string path)
 		{
-			return Path.Combine(ProjectPath("../../../External/Mono/builds/monodistribution"), path);
+			return Path.Combine(ProjectPath("../../../../External/Mono/builds/monodistribution"), path);
 		}
 
 		public static string PrepareFileName(string file)

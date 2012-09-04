@@ -106,6 +106,14 @@
   <Target Name="_ResolveOutputFiles" DependsOnTargets="_ResolvePaths">
 
     <CreateItem
+      Condition="'$(Configuration)' == 'Debug'"
+      Include="$(OutDir)*.dll;$(OutDir)*.pdb"
+      Exclude="$(OutDir)UnityEngine*;$(OutDir)UnityEditor*;$(OutDir)$(TargetFilename)">
+      <Output TaskParameter="Include" ItemName="_Files" />
+    </CreateItem>
+
+    <CreateItem
+      Condition="'$(Configuration)' != 'Debug'"
       Include="$(OutDir)*.dll"
       Exclude="$(OutDir)UnityEngine*;$(OutDir)UnityEditor*;$(OutDir)$(TargetFilename)">
       <Output TaskParameter="Include" ItemName="_Files" />
@@ -161,6 +169,7 @@
     Inputs="@(_Files)" Outputs="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(Filename)%(Extension)')">
 
     <MakeDir Directories="$(UnityBuildDir)$(UnityDebuggerDataDir)" />
+
     <Copy
       SourceFiles="@(_Files)"
       DestinationFolder="$(UnityBuildDir)$(UnityDebuggerDataDir)"
