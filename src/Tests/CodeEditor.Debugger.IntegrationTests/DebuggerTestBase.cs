@@ -10,7 +10,7 @@ namespace CodeEditor.Debugger.IntegrationTests
 {
 	internal class DebuggerTestBase
 	{
-		public const bool DebugMono = false;
+		public const bool DebugMono = true;
 		protected VirtualMachine _vm;
 		private bool _finished;
 		private BreakpointProvider _breakpointProvider;

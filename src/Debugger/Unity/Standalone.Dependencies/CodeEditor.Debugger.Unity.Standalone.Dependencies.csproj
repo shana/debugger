@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Frameworks\CodeEditor.Remoting\CodeEditor.Remoting.csproj">
+      <Project>{F3B4F98B-CC7D-4E3F-A8B6-FEA8E8C4A078}</Project>
+      <Name>CodeEditor.Remoting</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Standalone\CodeEditor.Debugger.Unity.Standalone.csproj">
       <Project>{05848CF0-F1ED-4806-8A06-62B7AD048BE7}</Project>
       <Name>CodeEditor.Debugger.Unity.Standalone</Name>
@@ -174,9 +178,7 @@
       SourceFiles="@(_Files)"
       DestinationFolder="$(UnityBuildDir)$(UnityDebuggerDataDir)"
       SkipUnchangedFiles="true" />
-
-    <Touch Files="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(Filename)%(Extension)')" />
-
+    <!-- Touch Files="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(Filename)%(Extension)')" /-->
   </Target>
 
   <Target Name="_SetupDebuggerProject" DependsOnTargets="_ResolveOutputFiles"
@@ -192,8 +194,8 @@
   <!-- This target is called by the BuildDebuggerProject target. It builds the unity debugger
        project and deploys the result to the proper directories -->
   <Target Name="_BuildDebuggerProject" DependsOnTargets="_SetupDebuggerProject"
-      Inputs="@(_Files->'$(_ProjectAbsPath)Project\Assets\bin\%(RecursiveDir)%(Filename)%(Extension)')"
-      Outputs="$(_DebuggerExe)">
+    Inputs="@(_Files->'$(_ProjectAbsPath)Project\Assets\bin\%(RecursiveDir)%(Filename)%(Extension)')"
+    Outputs="$(_DebuggerExe)">
 
     <Exec Command="$(_UnityCmd) -batchmode -projectpath &quot;$(_ProjectAbsPath)Project&quot; -quit" />
 

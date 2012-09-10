@@ -75,6 +75,10 @@
       <Project>{9DB8BFD3-06C8-4A8C-8842-5931B924B56C}</Project>
       <Name>CodeEditor.Composition</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Frameworks\CodeEditor.Remoting\CodeEditor.Remoting.csproj">
+      <Project>{F3B4F98B-CC7D-4E3F-A8B6-FEA8E8C4A078}</Project>
+      <Name>CodeEditor.Remoting</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Engine\CodeEditor.Debugger.Unity.Engine.csproj">
       <Project>{0E6DFD1C-426E-4F74-AD5B-D908458B3D7B}</Project>
       <Name>CodeEditor.Debugger.Unity.Engine</Name>
