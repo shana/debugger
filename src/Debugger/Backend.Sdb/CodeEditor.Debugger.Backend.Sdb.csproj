@@ -13,12 +13,13 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <SolutionDir Condition="'$(SolutionDir)' == ''">..\..\..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -43,14 +44,17 @@
     <ProjectReference Include="..\..\..\external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">
       <Project>{F2D07F82-9C51-4889-8987-4CEF47490751}</Project>
       <Name>Mono.Debugger.Soft</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Frameworks\CodeEditor.Composition\CodeEditor.Composition.csproj">
       <Project>{9DB8BFD3-06C8-4A8C-8842-5931B924B56C}</Project>
       <Name>CodeEditor.Composition</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Backend\CodeEditor.Debugger.Backend.csproj">
       <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
       <Name>CodeEditor.Debugger.Backend</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

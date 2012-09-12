@@ -31,12 +31,13 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">..\..\..\..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -44,7 +45,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -72,30 +73,37 @@
     <ProjectReference Include="..\..\..\..\..\..\Projects\CSharp\UnityEngine.csproj">
       <Project>{F0499708-3EB6-4026-8362-97E6FFC4E7C8}</Project>
       <Name>UnityEngine</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">
       <Project>{F2D07F82-9C51-4889-8987-4CEF47490751}</Project>
       <Name>Mono.Debugger.Soft</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Frameworks\CodeEditor.Composition\CodeEditor.Composition.csproj">
       <Project>{9DB8BFD3-06C8-4A8C-8842-5931B924B56C}</Project>
       <Name>CodeEditor.Composition</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Debugger\CodeEditor.Debugger.csproj">
       <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
       <Name>CodeEditor.Debugger</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Frameworks\CodeEditor.IO\CodeEditor.IO.csproj">
       <Project>{489773FF-92B1-40B0-98EF-3ED337E5448F}</Project>
       <Name>CodeEditor.IO</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Text\CodeEditor.Text.UI.Unity.Engine\CodeEditor.Text.UI.Unity.Engine.csproj">
       <Project>{C290F98D-894E-4878-AE4A-D1E83DA95619}</Project>
       <Name>CodeEditor.Text.UI.Unity.Engine</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Text\CodeEditor.Text.UI\CodeEditor.Text.UI.csproj">
       <Project>{6A91E197-9142-40C7-8C24-A75E8709E26D}</Project>
       <Name>CodeEditor.Text.UI</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
