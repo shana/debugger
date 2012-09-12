@@ -98,7 +98,7 @@
     <Touch Files="@(IntermediateAssembly)" AlwaysCreate="true" />
   </Target>
 
-  <Target Name="AfterBuild" DependsOnTargets="DeployDebugger" />
+  <Target Name="AfterBuild" DependsOnTargets="BuildDebugger" />
 
   <!-- Make sure all the assemblies are cleaned from the debugger dir as well -->
   <Target Name="AfterClean" DependsOnTargets="_ResolveOutputFiles">
@@ -194,10 +194,11 @@
   <!-- This target is called by the BuildDebuggerProject target. It builds the unity debugger
        project and deploys the result to the proper directories -->
   <Target Name="_BuildDebuggerProject" DependsOnTargets="_SetupDebuggerProject"
-    Inputs="@(_Files->'$(_ProjectAbsPath)Project\Assets\bin\%(RecursiveDir)%(Filename)%(Extension)')"
+    Inputs="@(_Files)"
     Outputs="$(_DebuggerExe)">
 
     <Exec Command="$(_UnityCmd) -batchmode -projectpath &quot;$(_ProjectAbsPath)Project&quot; -quit" />
+    <Touch Files="$(_DebuggerExe)" />
 
     <!-- Clean out files that aren't needed anymore -->
     <Delete Files="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)Debugger_Data\Managed\CodeEditor.*" />
