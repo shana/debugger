@@ -6,7 +6,7 @@ using UnityEngine;
 namespace CodeEditor.Debugger.Unity.Standalone
 {
 	[Export(typeof(IDebuggerWindow))]
-	internal class ExecutionFlowControlWindow : IDebuggerWindow
+	internal class ExecutionFlowControlWindow : DebuggerWindow
 	{
 		private readonly IDebuggerSession _debuggingSession;
 
@@ -16,7 +16,7 @@ namespace CodeEditor.Debugger.Unity.Standalone
 			_debuggingSession = debuggingSession;
 		}
 
-		public void OnGUI()
+		public override void OnGUI()
 		{
 			GUI.enabled = _debuggingSession.Suspended;// && !_debuggingSession.WaitingForResponse;
 			if (GUILayout.Button("Continue"))

@@ -6,7 +6,8 @@ using UnityEngine;
 namespace CodeEditor.Debugger.Unity.Engine
 {
 	[Export]
-	public class SourceWindow
+	[Export (typeof (IDebuggerWindow))]
+	public class SourceWindow : DebuggerWindow
 	{
 		private readonly ITextViewFactory _viewFactory;
 		private ITextView _textView;
@@ -20,9 +21,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 			_viewFactory = viewFactory;
 		}
 
-		public Rect ViewPort { get; set; }
-
-		public void OnGUI()
+		public override void OnGUI()
 		{
 			if (_pendingSourceLocation != null)
 			{
@@ -50,5 +49,6 @@ namespace CodeEditor.Debugger.Unity.Engine
 			_pendingSourceLocation = sourceFile;
 			_pendingSourceLine = lineNumber;
 		}
+
 	}
 }

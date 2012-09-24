@@ -3,57 +3,69 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using CodeEditor.Composition;
+using CodeEditor.Debugger.Implementation;
 using CodeEditor.Debugger.Unity.Engine;
+using CodeEditor.Remoting;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 using Event = Mono.Debugger.Soft.Event;
 using EventType = UnityEngine.EventType;
 
 namespace CodeEditor.Debugger.Unity.Standalone
 {
 	[Export]
-	class MainWindow
+	public class MainWindow
 	{
 		private readonly SourceWindow _sourceWindow;
 		private readonly LogWindow _log;
+		private readonly SourcesWindow _sourcesWindow;
 
 		private readonly IDebuggerSession _debuggingSession;
 		private readonly DebuggerWindowManager _windowManager;
 		private readonly ISourceNavigator _sourceNavigator;
+		
 		private readonly int _debugeeProcessID;
 
 		[ImportingConstructor]
-		public MainWindow(SourceWindow sourceWindow, LogWindow log, DebuggerWindowManager windowManager, ISourceNavigator sourceNavigator, IDebuggerSession debuggingSession)
-		{
+		public MainWindow(SourceWindow sourceWindow, LogWindow log, DebuggerWindowManager windowManager,
+			ISourceNavigator sourceNavigator, IDebuggerSession debuggingSession,
+			ISourcesProvider provider) {
+
 			_sourceWindow = sourceWindow;
 			_log = log;
 			_windowManager = windowManager;
 			_sourceNavigator = sourceNavigator;
 			_debuggingSession = debuggingSession;
+			_sourcesWindow = windowManager.Get<SourcesWindow>();
 
-			Camera.main.backgroundColor = new Color(0.125f,0.125f,0.125f,0);
+			Camera.main.backgroundColor = new Color(0.125f, 0.125f, 0.125f, 0);
 			Application.runInBackground = true;
-
-			_debuggingSession.TraceCallback += s => Trace(s);
-//			_debuggingSession.Start(DebuggerPortFromCommandLine());
-			_debuggingSession.VMGotSuspended += OnVMGotSuspended;
-
-//			_debugeeProcessID = DebugeeProcessIDFromCommandLine();
 
 			SetupDebuggingWindows();
 
 			AdjustLayout();
+
+			if (!HasArguments())
+				return;
+
+			_debuggingSession.TraceCallback += s => Trace(s);
+			_debuggingSession.VMGotSuspended += OnVMGotSuspended;
+//			_debuggingSession.Start(DebuggerPortFromCommandLine());
+
+			_debugeeProcessID = DebugeeProcessIDFromCommandLine();
+
+			var client = provider as Client;
+			if (client != null)
+				client.Port = ServicePortFromCommandLine();
+
+			provider.StartRefreshingSources(null, null);
 		}
-
-
 
 		private void SetupDebuggingWindows()
 		{
-			/*
-			_windowManager.Add(new ExecutionFlowControlWindow(_debuggingSession));
-			_windowManager.Add(new CallStackDisplay(_debuggingSession, _sourceNavigator));
-			_windowManager.Add(new ThreadsDisplay(_debuggingSession, new DebugThreadProvider(_debuggingSession)));
-
-			_windowManager.Add(_log);*/
+//			_windowManager.Add(new ExecutionFlowControlWindow(_debuggingSession));
+//			_windowManager.Add(new CallStackDisplay(_debuggingSession, _sourceNavigator));
+//			_windowManager.Add(new ThreadsDisplay(_debuggingSession, new DebugThreadProvider(_debuggingSession)));
 		}
 
 
@@ -63,7 +75,7 @@ namespace CodeEditor.Debugger.Unity.Standalone
 			if (!stackFrames.Any()) return;
 
 			var topFrame = stackFrames[0];
-			_sourceNavigator.ShowSourceLocation(topFrame.Location);
+			_sourceNavigator.ShowSourceLocation(Location.FromLocation(topFrame.Location));
 		}
 
 		public void OnGUI()
@@ -75,7 +87,10 @@ namespace CodeEditor.Debugger.Unity.Standalone
 				_debuggingSession.Update();
 
 			_windowManager.OnGUI();
-			_sourceWindow.OnGUI();
+		}
+
+		public void FixedUpdate()
+		{
 		}
 
 		private bool DebugeeProcessAlive()
@@ -94,23 +109,37 @@ namespace CodeEditor.Debugger.Unity.Standalone
 
 		private void AdjustLayout()
 		{
-			var srcViewPort = new Rect(0, 0, Screen.width, Screen.height * .7f);
-			_sourceWindow.ViewPort = srcViewPort;
+			var srcsViewPort = new Rect (0, 0, Screen.width * .2f, Screen.height * .7f);
+			_sourcesWindow.ViewPort = srcsViewPort;
 
+			var srcViewPort = new Rect (Screen.width * .2f, 0, Screen.width - (Screen.width * .2f), Screen.height * .7f);
+			_sourceWindow.ViewPort = srcViewPort;
+			
 			var consoleTop = srcViewPort.yMax + VerticalSpacing;
 			_windowManager.ViewPort = new Rect(0, consoleTop, Screen.width, Screen.height - consoleTop);
+
+			_windowManager.ResetWindows();
 		}
 
 		const int VerticalSpacing = 4;
 
-		private int DebuggerPortFromCommandLine()
+		bool HasArguments() {
+			return Environment.GetCommandLineArgs().Count() > 2;
+		}
+
+		private int SdbPortFromCommandLine ()
 		{
-			return ReadIntFromCommandLine(1);
+			return ReadIntFromCommandLine (1);
+		}
+		
+		private int ServicePortFromCommandLine ()
+		{
+			return ReadIntFromCommandLine(2);
 		}
 
 		private int DebugeeProcessIDFromCommandLine()
 		{
-			return ReadIntFromCommandLine(2);
+			return ReadIntFromCommandLine(3);
 		}
 
 		private static int ReadIntFromCommandLine(int index)

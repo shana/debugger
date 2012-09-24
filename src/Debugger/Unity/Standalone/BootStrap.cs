@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace CodeEditor.Debugger.Unity.Standalone
 {
@@ -17,6 +17,11 @@ namespace CodeEditor.Debugger.Unity.Standalone
 		private void OnGUI()
 		{
 			Main.OnGUI();
+		}
+
+		private void FixedUpdate()
+		{
+			Main.FixedUpdate();
 		}
 
 		private void OnApplicationQuit()

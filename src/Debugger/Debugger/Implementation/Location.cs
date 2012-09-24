@@ -1,6 +1,6 @@
 namespace CodeEditor.Debugger.Implementation
 {
-	class Location : ILocation
+	public class Location : ILocation
 	{
 		private static Location _default;
 		public static Location Default { get { return _default; } }
@@ -27,6 +27,11 @@ namespace CodeEditor.Debugger.Implementation
 		public string SourceFile
 		{
 			get { return _file; }
+		}
+
+		public static ILocation FromLocation (Mono.Debugger.Soft.Location location)
+		{
+			return new Location(location.LineNumber, location.SourceFile);
 		}
 	}
 }

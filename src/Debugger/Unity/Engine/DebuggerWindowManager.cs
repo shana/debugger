@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using CodeEditor.Composition;
 using UnityEngine;
@@ -9,6 +10,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 	{
 		void OnGUI();
 		string Title { get; }
+		Rect ViewPort { get; }
 	}
 
 	[Export]
@@ -24,21 +26,48 @@ namespace CodeEditor.Debugger.Unity.Engine
 		[ImportingConstructor]
 		public DebuggerWindowManager(ImportedWindows windows)
 		{
-			_windows = windows._importedWindows.ToList();
+			_windows = windows._importedWindows.Where (w => w.ViewPort.Equals (DebuggerWindow.Default)).ToList ();
+			_customWindows = windows._importedWindows.Where (w => !w.ViewPort.Equals (DebuggerWindow.Default)).ToList ();
 		}
 
 		private readonly List<IDebuggerWindow> _windows;
+		private readonly List<IDebuggerWindow> _customWindows;
 
 		public Rect ViewPort { get; set; }
 
+		public T Get<T>() where T:class
+		{
+			return (_windows.FirstOrDefault(w => w is T) ?? _customWindows.FirstOrDefault(w => w is T)) as T;
+		}
+
 		public void Add(IDebuggerWindow debuggerWindow)
 		{
-			_windows.Add(debuggerWindow);
+			if (debuggerWindow.ViewPort.Equals(DebuggerWindow.Default))
+				_windows.Add(debuggerWindow);
+			else
+				_customWindows.Add (debuggerWindow);
+		}
+
+		public void ResetWindows ()
+		{
+			_windows.AddRange(_customWindows);
+			_customWindows.Clear();
+			_customWindows.AddRange(_windows.Where (w => !w.ViewPort.Equals (DebuggerWindow.Default)));
+			_windows.RemoveAll(w => !w.ViewPort.Equals(DebuggerWindow.Default));
 		}
 
 		public void OnGUI()
 		{
-			GUILayout.BeginArea(ViewPort);
+			foreach (var window in _customWindows)
+			{
+				GUI.enabled = true;
+				GUILayout.BeginArea (window.ViewPort, window.Title, GUI.skin.window);
+				window.OnGUI ();
+				GUILayout.EndArea ();
+			}
+
+			GUI.enabled = true;
+			GUILayout.BeginArea (ViewPort);
 
 			int windowCount = _windows.Count();
 			int gaps = windowCount - 1;
@@ -50,11 +79,12 @@ namespace CodeEditor.Debugger.Unity.Engine
 			foreach(var window in _windows)
 			{
 				GUI.enabled = true;
-				GUILayout.BeginArea(rect, window.Title, GUI.skin.window);
-				window.OnGUI();
+				GUILayout.BeginArea (rect, window.Title, GUI.skin.window);
+				window.OnGUI ();
 				GUILayout.EndArea();
 				rect.x = rect.x + width + gapwidth;
 			}
+				
 			GUILayout.EndArea();
 		}
 	}

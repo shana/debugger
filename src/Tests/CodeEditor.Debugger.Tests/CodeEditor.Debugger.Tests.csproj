@@ -69,10 +69,15 @@
       <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
       <Name>CodeEditor.Debugger</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Frameworks\CodeEditor.Remoting\CodeEditor.Remoting.csproj">
+      <Project>{F3B4F98B-CC7D-4E3F-A8B6-FEA8E8C4A078}</Project>
+      <Name>CodeEditor.Remoting</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TypeProviderTests.cs" />
     <Compile Include="SourceToTypeMapperTests.cs" />
+    <Compile Include="UnityServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Moq">

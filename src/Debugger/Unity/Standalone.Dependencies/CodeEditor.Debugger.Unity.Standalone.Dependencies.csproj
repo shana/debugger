@@ -44,6 +44,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SolutionDir)libs\CodeEditor.Grammars.dll</HintPath>
     </Reference>
+    <ProjectReference Include="..\..\Debugger\CodeEditor.Debugger.csproj">
+      <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
+      <Name>CodeEditor.Debugger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\CodeEditor.Debugger.Unity.Engine.csproj">
+      <Project>{0E6DFD1C-426E-4F74-AD5B-D908458B3D7B}</Project>
+      <Name>CodeEditor.Debugger.Unity.Engine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Standalone\CodeEditor.Debugger.Unity.Standalone.csproj">
       <Project>{05848CF0-F1ED-4806-8A06-62B7AD048BE7}</Project>
       <Name>CodeEditor.Debugger.Unity.Standalone</Name>
@@ -142,147 +150,84 @@
     <UnityDebuggerDir>Data\Tools\Debugger\</UnityDebuggerDir>
     <UnityDebuggerDataDir>$(UnityDebuggerDir)Debugger_Data\Managed\</UnityDebuggerDataDir>
   </PropertyGroup>
-
   <Target Name="AfterBuild" DependsOnTargets="BuildDebugger" />
-
   <!-- Make sure all the assemblies are cleaned from the debugger dir as well -->
   <Target Name="AfterClean" DependsOnTargets="_ResolveOutputFiles">
     <Delete Files="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(Filename)%(Extension)')" />
   </Target>
-
   <!-- This target resolves all the assemblies that this project references directly or
         indirectly, excluding the UnityEngine.dll and UnityEditor.dll -->
   <Target Name="_ResolveOutputFiles" DependsOnTargets="_ResolvePaths">
-
-    <CreateItem
-      Condition="'$(Configuration)' == 'Debug'"
-      Include="$(OutDir)*.dll;$(OutDir)*.pdb"
-      Exclude="$(OutDir)UnityEngine*;$(OutDir)UnityEditor*;$(OutDir)$(TargetFilename)">
+    <CreateItem Condition="'$(Configuration)' == 'Debug'" Include="$(OutDir)*.dll;$(OutDir)*.pdb" Exclude="$(OutDir)UnityEngine*;$(OutDir)UnityEditor*;$(OutDir)$(TargetFilename)">
       <Output TaskParameter="Include" ItemName="_Files" />
     </CreateItem>
-
-    <CreateItem
-      Condition="'$(Configuration)' != 'Debug'"
-      Include="$(OutDir)*.dll"
-      Exclude="$(OutDir)UnityEngine*;$(OutDir)UnityEditor*;$(OutDir)$(TargetFilename)">
+    <CreateItem Condition="'$(Configuration)' != 'Debug'" Include="$(OutDir)*.dll" Exclude="$(OutDir)UnityEngine*;$(OutDir)UnityEditor*;$(OutDir)$(TargetFilename)">
       <Output TaskParameter="Include" ItemName="_Files" />
     </CreateItem>
-
     <Message Text="@(_Files)" Importance="Low" />
-
   </Target>
-
   <!-- This target resolves all the debugger player files -->
   <Target Name="_ResolveOutputDebugger" DependsOnTargets="_ResolvePaths">
     <CreateItem Include="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)**">
       <Output TaskParameter="Include" ItemName="_DebuggerFiles" />
     </CreateItem>
-
     <Message Text="Debugger Files: @(_DebuggerFiles)" Importance="Low" />
   </Target>
-
   <!-- This target resolves full project and tool paths for the _BuildDebuggerProject target -->
   <Target Name="_ResolvePaths">
-
     <!-- This allows us to later get the full path by doing %(UnityDebuggerProjectDir.FullPath) -->
     <CreateItem Include="..\Standalone\UnityProject\">
       <Output TaskParameter="Include" ItemName="UnityDebuggerProjectDir" />
     </CreateItem>
-
     <CreateProperty Value="%(UnityDebuggerProjectDir.FullPath)">
       <Output TaskParameter="Value" PropertyName="_ProjectAbsPath" />
     </CreateProperty>
-
     <CreateProperty Value="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)Debugger.app" Condition="'$(OS)'=='Unix'">
       <Output TaskParameter="Value" PropertyName="_DebuggerExe" />
     </CreateProperty>
-
     <CreateProperty Value="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)Debugger.exe" Condition="'$(OS)'!='Unix'">
       <Output TaskParameter="Value" PropertyName="_DebuggerExe" />
     </CreateProperty>
-
     <CreateProperty Value="$(UnityCmd) -buildOSXPlayer &quot;$(_DebuggerExe)&quot;" Condition="'$(OS)'=='Unix'">
       <Output TaskParameter="Value" PropertyName="_UnityCmd" />
     </CreateProperty>
-
     <CreateProperty Value="$(UnityCmd) -buildWindowsPlayer &quot;$(_DebuggerExe)&quot;" Condition="'$(OS)'!='Unix'">
       <Output TaskParameter="Value" PropertyName="_UnityCmd" />
     </CreateProperty>
-
   </Target>
-
-
   <!-- Take all the assemblies and copy them to the debugger dir,
         with dependency checks (only copies what's changed) -->
-  <Target Name="_CopyDependenciesToDebuggerDir" DependsOnTargets="_ResolveOutputFiles"
-    Inputs="@(_Files)" Outputs="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(Filename)%(Extension)')">
-
+  <Target Name="_CopyDependenciesToDebuggerDir" DependsOnTargets="_ResolveOutputFiles" Inputs="@(_Files)" Outputs="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(Filename)%(Extension)')">
     <MakeDir Directories="$(UnityBuildDir)$(UnityDebuggerDataDir)" />
-
-    <Copy
-      SourceFiles="@(_Files)"
-      DestinationFolder="$(UnityBuildDir)$(UnityDebuggerDataDir)"
-      SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(_Files)" DestinationFolder="$(UnityBuildDir)$(UnityDebuggerDataDir)" SkipUnchangedFiles="true" />
     <!-- Touch Files="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(Filename)%(Extension)')" /-->
   </Target>
-
   <Target Name="_SetupDebuggerProject" DependsOnTargets="_ResolveOutputFiles">
-
     <!-- MakeDir Directories="$(_ProjectAbsPath)Project\Assets\bin" / -->
     <MakeDir Directories="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)" />
-
     <ItemGroup>
-      <_ToDelete
-        Include="$(_ProjectAbsPath)Project\Assets\bin\*.dll;$(_ProjectAbsPath)Project\Assets\bin\*.pdb"
-        Exclude="@(_Files->'$(_ProjectAbsPath)Project\Assets\bin\%(RecursiveDir)%(Filename)%(Extension)')"
-        />
+      <_ToDelete Include="$(_ProjectAbsPath)Project\Assets\bin\*.dll;$(_ProjectAbsPath)Project\Assets\bin\*.pdb" Exclude="@(_Files->'$(_ProjectAbsPath)Project\Assets\bin\%(RecursiveDir)%(Filename)%(Extension)')" />
     </ItemGroup>
-
-    <Copy
-      SourceFiles="@(_Files)"
-      DestinationFolder="$(_ProjectAbsPath)Project\Assets\bin"
-      SkipUnchangedFiles="true"/>
-
+    <Copy SourceFiles="@(_Files)" DestinationFolder="$(_ProjectAbsPath)Project\Assets\bin" SkipUnchangedFiles="true" />
     <Delete Files="@(_ToDelete)" />
-
   </Target>
-
   <!-- This target is called by the BuildDebuggerProject target. It builds the unity debugger
        project and deploys the result to the proper directories -->
-  <Target Name="_BuildDebuggerProject" DependsOnTargets="_SetupDebuggerProject"
-    Inputs="@(_Files)"
-    Outputs="$(_DebuggerExe)">
-
+  <Target Name="_BuildDebuggerProject" DependsOnTargets="_SetupDebuggerProject" Inputs="@(_Files)" Outputs="$(_DebuggerExe)">
     <Exec Command="$(_UnityCmd) -batchmode -projectpath &quot;$(_ProjectAbsPath)Project&quot; -quit" />
     <Touch Files="$(_DebuggerExe)" />
-
     <!-- Clean out files that aren't needed anymore -->
     <Delete Files="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)Debugger_Data\Managed\CodeEditor.*" />
     <Delete Files="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)Debugger_Data\Managed\Mono.Debugger.Soft.dll" />
     <Delete Files="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)Debugger_Data\Managed\Mono.Cecil.dll" />
     <Delete Files="$(_ProjectAbsPath)Project\Assets\bin" />
   </Target>
-
-  <Target Name="_CopyDebuggerBuild" DependsOnTargets="_ResolveOutputFiles;_ResolveOutputDebugger"
-    Inputs="@(_Files->'$(_ProjectAbsPath)Project\Assets\bin\%(RecursiveDir)%(Filename)%(Extension)');@(_DebuggerFiles)"
-    Outputs="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(RecursiveDir)%(Filename)%(Extension)');@(_DebuggerFiles->'$(UnityBuildDir)$(UnityDebuggerDir)%(RecursiveDir)%(Filename)%(Extension)')">
-
-    <Copy
-      SourceFiles="@(_Files)"
-      DestinationFiles="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(RecursiveDir)%(Filename)%(Extension)')"
-      SkipUnchangedFiles="true" />
-
-    <Copy
-      SourceFiles="@(_DebuggerFiles)"
-      DestinationFiles="@(_DebuggerFiles->'$(UnityBuildDir)$(UnityDebuggerDir)%(RecursiveDir)%(Filename)%(Extension)')"
-      SkipUnchangedFiles="true" />
-
+  <Target Name="_CopyDebuggerBuild" DependsOnTargets="_ResolveOutputFiles;_ResolveOutputDebugger" Inputs="@(_Files->'$(_ProjectAbsPath)Project\Assets\bin\%(RecursiveDir)%(Filename)%(Extension)');@(_DebuggerFiles)" Outputs="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(RecursiveDir)%(Filename)%(Extension)');@(_DebuggerFiles->'$(UnityBuildDir)$(UnityDebuggerDir)%(RecursiveDir)%(Filename)%(Extension)')">
+    <Copy SourceFiles="@(_Files)" DestinationFiles="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(_DebuggerFiles)" DestinationFiles="@(_DebuggerFiles->'$(UnityBuildDir)$(UnityDebuggerDir)%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
     <!--Touch Files="@(_DebuggerFiles->'$(UnityBuildDir)$(UnityDebuggerDir)%(RecursiveDir)%(Filename)%(Extension)')" /-->
-
   </Target>
-
   <Target Name="Deploy" DependsOnTargets="Build" />
   <Target Name="DeployDebugger" DependsOnTargets="_CopyDebuggerBuild;_CopyDependenciesToDebuggerDir" />
   <Target Name="BuildDebugger" DependsOnTargets="_BuildDebuggerProject;DeployDebugger" />
-
 </Project>

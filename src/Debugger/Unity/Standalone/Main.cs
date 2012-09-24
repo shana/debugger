@@ -1,5 +1,7 @@
+using System;
 using System.IO;
 using CodeEditor.Composition.Hosting;
+using UnityEngine;
 
 namespace CodeEditor.Debugger.Unity.Standalone
 {
@@ -9,6 +11,7 @@ namespace CodeEditor.Debugger.Unity.Standalone
 
 		public static void Start()
 		{
+			Console.WriteLine("Start: " + AssemblyPath);
 			var compositionContainer = new CompositionContainer(new DirectoryCatalog(AssemblyPath));
 			compositionContainer.GetExportedValue<IDebuggerSessionAssembler>().Assemble();
 			view = compositionContainer.GetExportedValue<MainWindow>();
@@ -31,6 +34,11 @@ namespace CodeEditor.Debugger.Unity.Standalone
 
 		public static void Update()
 		{
+		}
+
+		public static void FixedUpdate()
+		{
+			
 		}
 	}
 }

@@ -96,6 +96,7 @@
     <Compile Include="IFaces\IDebuggerSessionAssembler.cs" />
     <Compile Include="IFaces\IExecutingLocationProvider.cs" />
     <Compile Include="IFaces\ILocation.cs" />
+    <Compile Include="IFaces\ISourcesProvider.cs" />
     <Compile Include="IFaces\IVirtualMachine.cs" />
     <Compile Include="IFaces\IThreadProvider.cs" />
     <Compile Include="IFaces\IBreakPoint.cs" />

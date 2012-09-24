@@ -7,7 +7,7 @@ using Event = Mono.Debugger.Soft.Event;
 namespace CodeEditor.Debugger.Unity.Engine
 {
 	[Export(typeof(IDebuggerWindow))]
-	public class ThreadsDisplay : IDebuggerWindow
+	public class ThreadsDisplay : DebuggerWindow
 	{
 		private readonly IDebuggerSession _debuggerSession;
 		private IThreadProvider _threadProvider;
@@ -19,7 +19,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 			_threadProvider = threadProvider;
 		}
 
-		public void OnGUI()
+		public override void OnGUI()
 		{
 			GUI.enabled = _debuggerSession.Suspended;
 			foreach(var thread in _threadProvider.Threads)
@@ -28,7 +28,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 			}
 		}
 
-		public string Title
+		public override string Title
 		{
 			get { return "Threads"; }
 		}

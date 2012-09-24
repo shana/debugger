@@ -1,19 +1,19 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CodeEditor.Composition;
-using Mono.Debugger.Soft;
+using CodeEditor.Debugger.Implementation;
 using UnityEngine;
-using Event = Mono.Debugger.Soft.Event;
+using mds = Mono.Debugger.Soft;
 
 namespace CodeEditor.Debugger.Unity.Engine
 {
 	[Export(typeof(IDebuggerWindow))]
-	public class CallStackDisplay : IDebuggerWindow
+	public class CallStackDisplay : DebuggerWindow
 	{
 		private readonly IDebuggerSession _debuggingSession;
 		private readonly ISourceNavigator _sourceNavigator;
-		private IEnumerable<StackFrame> _callFrames = new StackFrame[0];
+		private IEnumerable<mds.StackFrame> _callFrames = new mds.StackFrame[0];
 
 		[ImportingConstructor]
 		public CallStackDisplay(IDebuggerSession debuggingSession, ISourceNavigator sourceNavigator)
@@ -23,12 +23,12 @@ namespace CodeEditor.Debugger.Unity.Engine
 			_sourceNavigator = sourceNavigator;
 		}
 
-		private void VMGotSuspended(Event obj)
+		private void VMGotSuspended (mds.Event obj)
 		{
 			SetCallFrames(_debuggingSession.GetMainThread().GetFrames());
 		}
 
-		public void OnGUI()
+		public override void OnGUI ()
 		{
 			GUI.enabled = _debuggingSession.Suspended;
 
@@ -37,7 +37,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 			foreach(var frame in _callFrames)
 			{
 				if (GUILayout.Button(frame.Method.DeclaringType.Name+"."+frame.Method.Name + " : " + frame.Location.LineNumber))
-					_sourceNavigator.ShowSourceLocation(frame.Location);
+					_sourceNavigator.ShowSourceLocation(Location.FromLocation(frame.Location));
 			}
 			if (!_callFrames.Any())
 				GUILayout.Label("No stackframes on this threads stack");
@@ -45,12 +45,12 @@ namespace CodeEditor.Debugger.Unity.Engine
 			GUI.skin.button.alignment = backup;
 		}
 
-		public string Title
+		public override string Title
 		{
 			get { return "CallStack"; }
 		}
 
-		public void SetCallFrames(IEnumerable<StackFrame> frames)
+		public void SetCallFrames (IEnumerable<mds.StackFrame> frames)
 		{
 			_callFrames = frames;
 		}

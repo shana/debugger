@@ -8,7 +8,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 	[Export]
 	[Export(typeof(IDebuggerWindow))]
 	[Export(typeof(ILogProvider))]
-	public class LogWindow : IDebuggerWindow, ILogProvider
+	public class LogWindow : DebuggerWindow, ILogProvider
 	{
 		private const int MaxLines = 200;
 		private readonly ITextView _textView;
@@ -20,8 +20,9 @@ namespace CodeEditor.Debugger.Unity.Engine
 			_textView = viewFactory.CreateView();
 		}
 
-		public Rect ViewPort
+		public override Rect ViewPort
 		{
+			get { return _textView.ViewPort; }
 			set { _textView.ViewPort = value; }
 		}
 
@@ -30,13 +31,13 @@ namespace CodeEditor.Debugger.Unity.Engine
 			_pendingLines.Enqueue(text);
 		}
 
-		public void OnGUI()
+		public override void OnGUI ()
 		{
 			FlushPendingLines();
 			_textView.OnGUI();
 		}
 
-		public string Title
+		public override string Title
 		{
 			get { return "Log"; }
 		}

@@ -6,7 +6,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 {
 	public interface ISourceNavigator
 	{
-		void ShowSourceLocation(Location location);
+		void ShowSourceLocation(ILocation location);
 	}
 
 	[Export(typeof(ISourceNavigator))]
@@ -15,7 +15,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 		[Import]
 		public SourceWindow SourceWindow { get; set; }
 
-		public void ShowSourceLocation(Location location)
+		public void ShowSourceLocation(ILocation location)
 		{
 			if (!IsValidLocation(location))
 				return;
@@ -23,7 +23,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 			SourceWindow.ShowSourceLocation(location.SourceFile, location.LineNumber);
 		}
 
-		private static bool IsValidLocation(Location location)
+		private static bool IsValidLocation(ILocation location)
 		{
 			return location.LineNumber >= 1 && File.Exists(location.SourceFile);
 		}
