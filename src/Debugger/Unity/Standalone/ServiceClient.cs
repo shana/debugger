@@ -17,7 +17,6 @@ namespace CodeEditor.Debugger.Unity.Standalone
 	class ServiceClient : Client, ISourcesProvider
 	{
 		private bool _refreshing = false;
-		private bool _started = false;
 		private List<string> _sources = new List<string>();
 		public IList<string> Sources
 		{
@@ -29,29 +28,11 @@ namespace CodeEditor.Debugger.Unity.Standalone
 			Port = 12346;
 		}
 
-		public override void Start ()
-		{
-			if (!_started)
-			{
-				_started = true;
-				base.Start();
-			}
-		}
-
-		public override void Stop ()
-		{
-			if (_started)
-			{
-				_started = false;
-				base.Stop ();
-			}
-		}
-
-		public void StartRefreshingSources(EventHandler callback, object state)
+		public void StartRefreshingSources (Action<object> callback, object state)
 		{
 			Start();
 			_refreshing = true;
-			RefreshSources(callback, state);
+			RequestSourceRefresh(callback, state);
 		}
 
 		public void StopRefreshingSources()
@@ -60,32 +41,33 @@ namespace CodeEditor.Debugger.Unity.Standalone
 			Stop ();
 		}
 
-		void RefreshSources (EventHandler callback, object state)
+		void RequestSourceRefresh (Action<object> callback, object state)
 		{
 			var req = RequestData.Create(RequestType.Service, (ushort)ServiceRequestType.Sources, null);
 			SendRequestAsync (req, ar => OnRefreshSources (ar, callback), state);
 			BeginReceive ();
 		}
 		
-		void OnRefreshSources (IAsyncResult ar, EventHandler callback)
+		void OnRefreshSources (IAsyncResult ar, Action<object> callback)
 		{
 			try
 			{
 				var response = ((AsyncRequestResult)ar).Response;
-
 				var sources = Serializer.Unpack<string[]>(response);
 				_sources = new List<string>(sources);
 				if (callback != null)
-					callback(this, null);
-
+					callback(ar.AsyncState);
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex);
 			}
+		}
 
-			if (_refreshing)
-				RefreshSources (callback, ar.AsyncState);
+		protected override bool HandleData (System.Net.EndPoint sender, byte[] data)
+		{
+			base.HandleData (sender, data);
+			return _refreshing;
 		}
 
 		public override string ToString ()

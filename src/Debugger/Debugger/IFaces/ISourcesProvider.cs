@@ -7,7 +7,7 @@ namespace CodeEditor.Debugger
 	{
 		IList<string> Sources { get; }
 
-		void StartRefreshingSources(EventHandler callback, object state);
+		void StartRefreshingSources (Action<object> callback, object state);
 		void StopRefreshingSources();
 		void Stop();
 	}
