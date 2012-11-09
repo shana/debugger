@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using CodeEditor.Composition;
-using CodeEditor.Debugger.Backend;
+using Debugger.Backend;
 
-namespace CodeEditor.Debugger.Implementation
+namespace Debugger.Implementation
 {
 	[Export(typeof(ISourceToTypeMapper))]
 	class SourceToTypeMapper : ISourceToTypeMapper

@@ -1,12 +1,12 @@
 using Mono.Debugger.Soft;
 
-namespace CodeEditor.Debugger.Backend.Sdb
+namespace Debugger.Backend.Sdb
 {
-	public class SdbBreakpointEventRequest : IBreakpointEventRequest
+	public class SdbBreakpointEventRequest : Wrapper, IBreakpointEventRequest
 	{
 		private readonly BreakpointEventRequest _sdbRequest;
 
-		public SdbBreakpointEventRequest(BreakpointEventRequest sdbRequest)
+		public SdbBreakpointEventRequest(BreakpointEventRequest sdbRequest) : base(sdbRequest)
 		{
 			_sdbRequest = sdbRequest;
 		}

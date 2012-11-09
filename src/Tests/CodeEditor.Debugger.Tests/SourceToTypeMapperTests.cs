@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CodeEditor.Debugger.Backend;
 using CodeEditor.Debugger.Implementation;
+using Debugger.Backend;
 using Moq;
 using NUnit.Framework;
 
-namespace CodeEditor.Debugger.Tests
+namespace Debugger.Tests
 {
 	[TestFixture]
 	public class SourceToTypeMapperTests

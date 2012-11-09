@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using CodeEditor.Composition;
+using Debugger;
+using Debugger.Backend;
 
-namespace CodeEditor.Debugger.Implementation
+namespace Debugger.Implementation
 {
 	[Export(typeof(IBreakpointProvider))]
 	class BreakpointProvider : IBreakpointProvider
@@ -20,7 +22,7 @@ namespace CodeEditor.Debugger.Implementation
 
 		public IBreakPoint GetBreakPointAt(string file, int lineNumber)
 		{
-			return _breakPoints.FirstOrDefault(bp => bp.Location.SourceFile == file && bp.Location.LineNumber == lineNumber);
+			return _breakPoints.FirstOrDefault(bp => bp.Location.File == file && bp.Location.LineNumber == lineNumber);
 		}
 
 		public void ToggleBreakPointAt(string fileName, int lineNumber)

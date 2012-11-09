@@ -1,6 +1,6 @@
-namespace CodeEditor.Debugger.Backend
+namespace Debugger.Backend
 {
-	public interface ILocation
+	public interface ILocation : IWrapper
 	{
 		string File { get; }
 		int LineNumber { get; }

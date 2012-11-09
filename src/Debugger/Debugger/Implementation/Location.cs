@@ -1,6 +1,8 @@
-namespace CodeEditor.Debugger.Implementation
+using Debugger.Backend;
+
+namespace Debugger.Implementation
 {
-	public class Location : ILocation
+	public class Location : Wrapper, ILocation
 	{
 		private static Location _default;
 		public static Location Default { get { return _default; } }
@@ -24,7 +26,7 @@ namespace CodeEditor.Debugger.Implementation
 			get { return _line; }
 		}
 
-		public string SourceFile
+		public string File
 		{
 			get { return _file; }
 		}

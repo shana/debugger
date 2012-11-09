@@ -1,6 +1,6 @@
-namespace CodeEditor.Debugger.Backend
+namespace Debugger.Backend
 {
-	public interface IAssemblyMirror
+	public interface IAssemblyMirror : IWrapper
 	{
 	}
 }

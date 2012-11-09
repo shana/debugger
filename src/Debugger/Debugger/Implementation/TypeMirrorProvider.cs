@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using CodeEditor.Composition;
-using CodeEditor.Debugger.Backend;
+using Debugger.Backend;
+using TypeLoadEvent = Mono.Debugger.Soft.TypeLoadEvent;
 
-namespace CodeEditor.Debugger.Implementation
+namespace Debugger.Implementation
 {
 	[Export(typeof(ITypeMirrorProvider))]
 	class TypeMirrorProvider : ITypeMirrorProvider
@@ -20,8 +20,8 @@ namespace CodeEditor.Debugger.Implementation
 		internal TypeMirrorProvider(IDebuggerSession session)
 		{
 			_session = session;
-			_session.AssemblyUnloaded += AssemblyUnloaded;
-			_session.TypeLoaded += OnTypeLoaded;
+			//_session.VM.OnTypeLoad += AssemblyUnloaded;
+			_session.VM.OnTypeLoad += OnTypeLoaded;
 		}
 
 		public ITypeMirror[] LoadedTypesMirror
@@ -29,11 +29,12 @@ namespace CodeEditor.Debugger.Implementation
 			get { return _types.ToArray(); }
 		}
 
-		private void OnTypeLoaded(ITypeMirror typeMirror)
+		private void OnTypeLoaded (ITypeLoadEvent ev)
 		{
-			_types.Add(typeMirror);
-			if (TypeLoaded != null)
-				TypeLoaded(typeMirror);
+
+//			_types.Add (ev.Type);
+//			if (TypeLoaded != null)
+//				TypeLoaded (ev.Type);
 		}
 
 		private void AssemblyUnloaded(IAssemblyMirror assemblyMirror)

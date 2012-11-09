@@ -1,9 +1,9 @@
-﻿using CodeEditor.Debugger.Backend;
-using CodeEditor.Debugger.Implementation;
+﻿using CodeEditor.Debugger.Implementation;
+using Debugger.Backend;
 using Moq;
 using NUnit.Framework;
 
-namespace CodeEditor.Debugger.Tests
+namespace Debugger.Tests
 {
 	[TestFixture]
 	public class TypeProviderTests

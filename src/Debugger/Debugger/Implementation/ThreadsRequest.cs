@@ -7,7 +7,7 @@ namespace CodeEditor.Debugger.Implementation
 {
 	public class ThreadsRequest
 	{
-		private DebuggerSession _debuggerSession;
+		private IDebuggerSession _session;
 		private IList<ThreadMirror> _returnValue = null;
 		private bool _ready;
 
@@ -15,7 +15,7 @@ namespace CodeEditor.Debugger.Implementation
 		{
 			ThreadPool.QueueUserWorkItem(_ =>
 							{
-								_returnValue = _debuggerSession.GetThreads();
+								_returnValue = _session.VM.GetThreads ();
 								_ready = true;
 							});
 		}

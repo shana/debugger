@@ -1,25 +1,19 @@
-﻿using Mono.Debugger.Soft;
+using Mono.Debugger.Soft;
 
-namespace CodeEditor.Debugger.Backend.Sdb
+namespace Debugger.Backend.Sdb
 {
-	public class SdbLocation : ILocation
+	public class SdbLocation : Wrapper, ILocation
 	{
 		public Location MDSLocation { get; private set; }
 
-		public SdbLocation(Location location)
+		public SdbLocation(Location location) : base(location)
 		{
 			MDSLocation = location;
 		}
 
-		public string File
-		{
-			get { return MDSLocation.SourceFile; }
-		}
+		public string File { get { return MDSLocation.SourceFile; } }
 
-		public int LineNumber
-		{
-			get { return MDSLocation.LineNumber; }
-		}
+		public int LineNumber { get { return MDSLocation.LineNumber; } }
 
 	}
 }

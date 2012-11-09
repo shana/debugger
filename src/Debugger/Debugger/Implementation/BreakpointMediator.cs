@@ -1,8 +1,9 @@
 using System.Linq;
+using Debugger.Backend;
 using MDS = Mono.Debugger.Soft;
 using Mono.Debugger.Soft;
 
-namespace CodeEditor.Debugger.Implementation
+namespace Debugger.Implementation
 {
 	public class BreakpointMediator
 	{
@@ -17,9 +18,9 @@ namespace CodeEditor.Debugger.Implementation
 			_vm.OnTypeLoad += OnTypeLoad;
 		}
 
-		private void OnTypeLoad (TypeLoadEvent e)
+		private void OnTypeLoad (ITypeLoadEvent e)
 		{
-			var sourcefiles = e.Type.GetSourceFiles (true);
+			var sourcefiles = e.Type.SourceFiles;
 
 			if (e.Type.Name == "TestClass")
 			{
@@ -27,12 +28,11 @@ namespace CodeEditor.Debugger.Implementation
 			}
 
 			var breakPoints = _breakpointProvider.Breakpoints;
-			var relevantBreakPoints = breakPoints.Where (bp => sourcefiles.Contains (bp.Location.SourceFile));
+			var relevantBreakPoints = breakPoints.Where (bp => sourcefiles.Contains (bp.Location.File));
 
-			var methodMirrors = e.Type.GetMethods ();
 			foreach (var bp in relevantBreakPoints)
 			{
-				foreach (var method in methodMirrors)
+				foreach (var method in e.Type.Methods)
 				{
 					var bestLocation = BestLocationIn (method, bp);
 					if (bestLocation == null)
@@ -43,12 +43,12 @@ namespace CodeEditor.Debugger.Implementation
 			}
 		}
 
-		private MDS.Location BestLocationIn (MethodMirror method, IBreakPoint bp)
+		private ILocation BestLocationIn (IMethodMirror method, IBreakPoint bp)
 		{
-			var locations = method.Locations.ToArray ();
+			var locations = method.Locations;
 			var name = method.FullName;
 
-			return locations.FirstOrDefault (l => l.SourceFile == bp.Location.SourceFile && l.LineNumber == bp.Location.LineNumber);
+			return locations.FirstOrDefault (l => l.File == bp.Location.File && l.LineNumber == bp.Location.LineNumber);
 		}
 	}
 }

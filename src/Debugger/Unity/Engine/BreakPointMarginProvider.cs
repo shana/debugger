@@ -1,6 +1,7 @@
-﻿using CodeEditor.Composition;
+using CodeEditor.Composition;
 using CodeEditor.IO.Implementation;
 using CodeEditor.Text.UI.Unity.Engine;
+using Debugger;
 
 namespace CodeEditor.Debugger.Unity.Engine
 {
