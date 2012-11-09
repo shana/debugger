@@ -1,4 +1,4 @@
-namespace CodeEditor.Debugger
+namespace Debugger.Backend
 {
 	public interface IBreakPoint
 	{

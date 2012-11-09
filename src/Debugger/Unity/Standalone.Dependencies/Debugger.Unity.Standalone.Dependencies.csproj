@@ -8,8 +8,8 @@
     <ProjectGuid>{367AD6BB-75DA-4B31-ADD9-E89F5E02BA45}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeEditor.Debugger.Unity.Standalone.Dependencies</RootNamespace>
-    <AssemblyName>CodeEditor.Debugger.Unity.Standalone.Dependencies</AssemblyName>
+    <RootNamespace>Debugger.Unity.Standalone.Dependencies</RootNamespace>
+    <AssemblyName>Debugger.Unity.Standalone.Dependencies</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="'$(SolutionDir)' == ''">..\..\..\..\</SolutionDir>
@@ -44,25 +44,25 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SolutionDir)libs\CodeEditor.Grammars.dll</HintPath>
     </Reference>
-    <ProjectReference Include="..\..\Debugger\CodeEditor.Debugger.csproj">
+    <ProjectReference Include="..\..\Debugger\Debugger.csproj">
       <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
-      <Name>CodeEditor.Debugger</Name>
+      <Name>Debugger %28Debugger\Debugger%29</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Engine\CodeEditor.Debugger.Unity.Engine.csproj">
+    <ProjectReference Include="..\Engine\Debugger.Unity.Engine.csproj">
       <Project>{0E6DFD1C-426E-4F74-AD5B-D908458B3D7B}</Project>
-      <Name>CodeEditor.Debugger.Unity.Engine</Name>
+      <Name>Debugger.Unity.Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Standalone\CodeEditor.Debugger.Unity.Standalone.csproj">
+    <ProjectReference Include="..\Standalone\Debugger.Unity.Standalone.csproj">
       <Project>{05848CF0-F1ED-4806-8A06-62B7AD048BE7}</Project>
-      <Name>CodeEditor.Debugger.Unity.Standalone</Name>
+      <Name>Debugger.Unity.Standalone</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Backend.Sdb\CodeEditor.Debugger.Backend.Sdb.csproj">
+    <ProjectReference Include="..\..\Backend.Sdb\Debugger.Backend.Sdb.csproj">
       <Project>{796B13D9-48B9-4EBA-B274-BBF297AFBD66}</Project>
-      <Name>CodeEditor.Debugger.Backend.Sdb</Name>
+      <Name>Debugger.Backend.Sdb</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Backend\CodeEditor.Debugger.Backend.csproj">
+    <ProjectReference Include="..\..\Backend\Debugger.Backend.csproj">
       <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
-      <Name>CodeEditor.Debugger.Backend</Name>
+      <Name>Debugger.Backend</Name>
     </ProjectReference>
     <ProjectReference Include="$(SolutionDir)external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">
       <Project>{F2D07F82-9C51-4889-8987-4CEF47490751}</Project>

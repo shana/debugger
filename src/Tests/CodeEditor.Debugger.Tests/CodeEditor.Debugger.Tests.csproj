@@ -8,8 +8,8 @@
     <ProjectGuid>{3EBF45F9-8587-425F-A438-D699488850BB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeEditor.Debugger.Tests</RootNamespace>
-    <AssemblyName>CodeEditor.Debugger.Tests</AssemblyName>
+    <RootNamespace>Debugger.Tests</RootNamespace>
+    <AssemblyName>Debugger.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <StartupObject>
@@ -61,13 +61,13 @@
   </Target>
   -->
   <ItemGroup>
-    <ProjectReference Include="..\..\Debugger\Backend\CodeEditor.Debugger.Backend.csproj">
+    <ProjectReference Include="..\..\Debugger\Backend\Debugger.Backend.csproj">
       <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
-      <Name>CodeEditor.Debugger.Backend</Name>
+      <Name>Debugger.Backend</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Debugger\Debugger\CodeEditor.Debugger.csproj">
+    <ProjectReference Include="..\..\Debugger\Debugger\Debugger.csproj">
       <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
-      <Name>CodeEditor.Debugger</Name>
+      <Name>Debugger %28Debugger\Debugger%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Frameworks\CodeEditor.Remoting\CodeEditor.Remoting.csproj">
       <Project>{F3B4F98B-CC7D-4E3F-A8B6-FEA8E8C4A078}</Project>

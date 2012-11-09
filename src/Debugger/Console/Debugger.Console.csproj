@@ -8,8 +8,8 @@
     <ProjectGuid>{36C4B51C-F8C9-44EB-832E-82E14FA63499}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeEditor.Debugger.Console</RootNamespace>
-    <AssemblyName>CodeEditor.Debugger.Console</AssemblyName>
+    <RootNamespace>Debugger.Console</RootNamespace>
+    <AssemblyName>Debugger.Console</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>

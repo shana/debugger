@@ -1,0 +1,11 @@
+***************
+*** 1,4 ****
+- ﻿namespace CodeEditor.Debugger
+  {
+  	public interface ILogProvider
+  	{
+--- 1,4 ----
++ ﻿namespace Debugger
+  {
+  	public interface ILogProvider
+  	{

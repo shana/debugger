@@ -1,6 +1,6 @@
-using CodeEditor.Debugger.Implementation;
+using Debugger.Backend;
 
-namespace CodeEditor.Debugger
+namespace Debugger
 {
 	public interface IExecutingLocationProvider
 	{

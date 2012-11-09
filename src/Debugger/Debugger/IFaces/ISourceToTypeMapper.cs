@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using CodeEditor.Debugger.Backend;
-using Mono.Debugger.Soft;
+using Debugger.Backend;
 
-namespace CodeEditor.Debugger
+namespace Debugger
 {
 	public interface ISourceToTypeMapper
 	{

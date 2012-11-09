@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Debugger.Backend;
 
-namespace CodeEditor.Debugger
+namespace Debugger
 {
 	public interface IBreakpointProvider
 	{

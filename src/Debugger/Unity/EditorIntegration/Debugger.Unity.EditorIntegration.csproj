@@ -5,13 +5,17 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{05848CF0-F1ED-4806-8A06-62B7AD048BE7}</ProjectGuid>
+    <ProjectGuid>{E7D6952B-DC82-4D01-BFA6-D6BA4A65CEB2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeEditor.Debugger.Unity.Standalone</RootNamespace>
-    <AssemblyName>CodeEditor.Debugger.Unity.Standalone</AssemblyName>
+    <RootNamespace>Debugger.Unity.EditorIntegration</RootNamespace>
+    <AssemblyName>Debugger.Unity.EditorIntegration</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
     <SolutionDir Condition="'$(SolutionDir)' == ''">..\..\..\..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -22,7 +26,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -39,12 +42,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BootStrap.cs" />
-    <Compile Include="ExecutionFlowControlWindow.cs" />
-    <Compile Include="MainWindow.cs" />
-    <Compile Include="Main.cs" />
+    <Compile Include="DebuggerMenuItems.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Projects\CSharp\UnityEditor.csproj">
@@ -54,32 +53,6 @@
     <ProjectReference Include="..\..\..\..\..\..\Projects\CSharp\UnityEngine.csproj">
       <Project>{F0499708-3EB6-4026-8362-97E6FFC4E7C8}</Project>
       <Name>UnityEngine</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">
-      <Project>{F2D07F82-9C51-4889-8987-4CEF47490751}</Project>
-      <Name>Mono.Debugger.Soft</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Frameworks\CodeEditor.Composition\CodeEditor.Composition.csproj">
-      <Project>{9DB8BFD3-06C8-4A8C-8842-5931B924B56C}</Project>
-      <Name>CodeEditor.Composition</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Frameworks\CodeEditor.Remoting\CodeEditor.Remoting.csproj">
-      <Project>{F3B4F98B-CC7D-4E3F-A8B6-FEA8E8C4A078}</Project>
-      <Name>CodeEditor.Remoting</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Debugger\CodeEditor.Debugger.csproj">
-      <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
-      <Name>CodeEditor.Debugger</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Engine\CodeEditor.Debugger.Unity.Engine.csproj">
-      <Project>{0E6DFD1C-426E-4F74-AD5B-D908458B3D7B}</Project>
-      <Name>CodeEditor.Debugger.Unity.Engine</Name>
-      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using CodeEditor.Debugger.Implementation;
+using Debugger.Implementation;
 
-namespace CodeEditor.Debugger
+namespace Debugger
 {
 	public interface IThreadProvider
 	{

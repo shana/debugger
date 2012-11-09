@@ -8,8 +8,8 @@
     <ProjectGuid>{6441A270-0DF3-42C9-9409-02BC273507DA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeEditor.Debugger</RootNamespace>
-    <AssemblyName>CodeEditor.Debugger</AssemblyName>
+    <RootNamespace>Debugger</RootNamespace>
+    <AssemblyName>Debugger</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -51,14 +51,14 @@
       <Name>CodeEditor.Composition</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\Backend.Sdb\CodeEditor.Debugger.Backend.Sdb.csproj">
+    <ProjectReference Include="..\Backend.Sdb\Debugger.Backend.Sdb.csproj">
       <Project>{796B13D9-48B9-4EBA-B274-BBF297AFBD66}</Project>
-      <Name>CodeEditor.Debugger.Backend.Sdb</Name>
+      <Name>Debugger.Backend.Sdb</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\Backend\CodeEditor.Debugger.Backend.csproj">
+    <ProjectReference Include="..\Backend\Debugger.Backend.csproj">
       <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
-      <Name>CodeEditor.Debugger.Backend</Name>
+      <Name>Debugger.Backend</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Frameworks\CodeEditor.IO\CodeEditor.IO.csproj">
@@ -90,37 +90,29 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IFaces\IBreakpointEventRequestFactory.cs" />
-    <Compile Include="IFaces\IBreakpointProvider.cs" />
-    <Compile Include="IFaces\IDebuggerSession.cs" />
-    <Compile Include="IFaces\IDebuggerSessionAssembler.cs" />
-    <Compile Include="IFaces\IExecutingLocationProvider.cs" />
-    <Compile Include="IFaces\ILocation.cs" />
-    <Compile Include="IFaces\ISourcesProvider.cs" />
-    <Compile Include="IFaces\IVirtualMachine.cs" />
-    <Compile Include="IFaces\IThreadProvider.cs" />
-    <Compile Include="IFaces\IBreakPoint.cs" />
-    <Compile Include="IFaces\IDebuggerSessionCreationListener.cs" />
-    <Compile Include="IFaces\ILogProvider.cs" />
-    <Compile Include="IFaces\ITypeMirrorProvider.cs" />
-    <Compile Include="IFaces\ISourceToTypeMapper.cs" />
+    <Compile Include="IBreakpointProvider.cs" />
+    <None Include="IDebuggerSession-old.cs" />
+    <Compile Include="IDebuggerSession.cs" />
+    <Compile Include="IExecutingLocationProvider.cs" />
+    <Compile Include="ISourcesProvider.cs" />
+    <Compile Include="IThreadProvider.cs" />
+    <Compile Include="ILogProvider.cs" />
+    <Compile Include="ITypeMirrorProvider.cs" />
+    <Compile Include="ISourceToTypeMapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Implementation\BreakpointMediator.cs" />
     <Compile Include="Implementation\Location.cs" />
-    <Compile Include="Implementation\VirtualMachine.cs" />
-    <Compile Include="Implementation\BreakpointEventRequestFactory.cs" />
     <Compile Include="Implementation\BreakPoint.cs" />
     <Compile Include="Implementation\BreakpointProvider.cs" />
-    <Compile Include="Implementation\DebuggerSession.cs" />
-    <Compile Include="Implementation\DebuggerSessionAssembler.cs" />
+    <None Include="Implementation\DebuggerSession-old.cs" />
     <Compile Include="Implementation\ThreadProvider.cs" />
     <Compile Include="Implementation\TypeMirrorProvider.cs" />
     <Compile Include="Implementation\ExecutingLocationProvider.cs" />
     <Compile Include="Implementation\SourceToTypeMapper.cs" />
-    <Compile Include="Implementation\ThreadsRequest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Implementation\DebuggerSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
 </Project>

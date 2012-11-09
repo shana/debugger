@@ -1,7 +1,7 @@
 using System;
-using CodeEditor.Debugger.Backend;
+using Debugger.Backend;
 
-namespace CodeEditor.Debugger
+namespace Debugger
 {
 	public interface ITypeMirrorProvider
 	{

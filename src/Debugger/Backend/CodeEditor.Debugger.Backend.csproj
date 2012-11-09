@@ -8,8 +8,8 @@
     <ProjectGuid>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeEditor.Debugger.Backend</RootNamespace>
-    <AssemblyName>CodeEditor.Debugger.Backend</AssemblyName>
+    <RootNamespace>Debugger.Backend</RootNamespace>
+    <AssemblyName>Debugger.Backend</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -33,12 +33,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="IAssemblyLoadEvent.cs" />
+    <Compile Include="IEvent.cs" />
     <Compile Include="IAssemblyMirror.cs" />
+    <Compile Include="IBreakPoint.cs" />
     <Compile Include="IBreakpointEventRequest.cs" />
     <Compile Include="ILocation.cs" />
     <Compile Include="IMethodMirror.cs" />
+    <Compile Include="IThreadMirror.cs" />
     <Compile Include="ITypeMirror.cs" />
+    <Compile Include="IVirtualMachine.cs" />
+    <Compile Include="IWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ITypeLoadEvent.cs" />
+    <Compile Include="Wrapper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
