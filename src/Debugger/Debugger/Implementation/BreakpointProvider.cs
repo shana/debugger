@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using CodeEditor.Composition;
+using Debugger;
+using Debugger.Backend;
 
-namespace CodeEditor.Debugger.Implementation
+namespace Debugger.Implementation
 {
 	[Export(typeof(IBreakpointProvider))]
 	class BreakpointProvider : IBreakpointProvider

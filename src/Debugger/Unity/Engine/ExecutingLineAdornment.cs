@@ -1,9 +1,8 @@
-﻿using CodeEditor.Composition;
+using CodeEditor.Composition;
 using CodeEditor.Text.UI.Unity.Engine;
 using UnityEngine;
-using System;
 
-namespace CodeEditor.Debugger.Unity.Engine
+namespace Debugger.Unity.Engine
 {
 	[Export(typeof(ITextViewAdornment))]
 	class ExecutingLineAdornment : ITextViewAdornment

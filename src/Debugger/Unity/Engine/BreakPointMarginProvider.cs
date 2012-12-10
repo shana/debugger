@@ -1,8 +1,8 @@
-﻿using CodeEditor.Composition;
+using CodeEditor.Composition;
 using CodeEditor.IO.Implementation;
 using CodeEditor.Text.UI.Unity.Engine;
 
-namespace CodeEditor.Debugger.Unity.Engine
+namespace Debugger.Unity.Engine
 {
 	[Export(typeof(ITextViewMarginProvider))]
 	class BreakPointMarginProvider : ITextViewMarginProvider

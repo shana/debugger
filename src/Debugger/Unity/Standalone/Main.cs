@@ -1,9 +1,8 @@
 using System;
 using System.IO;
 using CodeEditor.Composition.Hosting;
-using UnityEngine;
 
-namespace CodeEditor.Debugger.Unity.Standalone
+namespace Debugger.Unity.Standalone
 {
 	public class Main
 	{
@@ -13,7 +12,7 @@ namespace CodeEditor.Debugger.Unity.Standalone
 		{
 			Console.WriteLine("Start: " + AssemblyPath);
 			var compositionContainer = new CompositionContainer(new DirectoryCatalog(AssemblyPath));
-			compositionContainer.GetExportedValue<IDebuggerSessionAssembler>().Assemble();
+			//compositionContainer.GetExportedValue<IDebuggerSessionAssembler>().Assemble();
 			view = compositionContainer.GetExportedValue<MainWindow>();
 		}
 

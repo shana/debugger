@@ -1,10 +1,7 @@
-using System.Collections.Generic;
 using CodeEditor.Composition;
-using Mono.Debugger.Soft;
 using UnityEngine;
-using Event = Mono.Debugger.Soft.Event;
 
-namespace CodeEditor.Debugger.Unity.Engine
+namespace Debugger.Unity.Engine
 {
 	[Export(typeof(IDebuggerWindow))]
 	public class ThreadsDisplay : DebuggerWindow
@@ -21,7 +18,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 
 		public override void OnGUI()
 		{
-			GUI.enabled = _debuggerSession.Suspended;
+			GUI.enabled = _debuggerSession.Active;
 			foreach(var thread in _threadProvider.Threads)
 			{
 				GUILayout.Label("Thread id: "+thread.Id);

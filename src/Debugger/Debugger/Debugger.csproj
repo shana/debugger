@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6441A270-0DF3-42C9-9409-02BC273507DA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Debugger</RootNamespace>
+    <AssemblyName>Debugger</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">..\..\..\</SolutionDir>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">
+      <Project>{F2D07F82-9C51-4889-8987-4CEF47490751}</Project>
+      <Name>Mono.Debugger.Soft</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Backend.Sdb\Debugger.Backend.Sdb.csproj">
+      <Project>{796B13D9-48B9-4EBA-B274-BBF297AFBD66}</Project>
+      <Name>Debugger.Backend.Sdb</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Backend\Debugger.Backend.csproj">
+      <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
+      <Name>Debugger.Backend</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CodeEditor.Composition">
+      <HintPath>..\..\..\libs\CodeEditor.Composition.dll</HintPath>
+    </Reference>
+    <Reference Include="CodeEditor.IO">
+      <HintPath>..\..\..\libs\CodeEditor.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="CodeEditor.Text.Data">
+      <HintPath>..\..\..\libs\CodeEditor.Text.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="CodeEditor.Text.UI">
+      <HintPath>..\..\..\libs\CodeEditor.Text.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil, Version=0.6.9.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\libs\Cecil\Mono.Cecil.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IBreakpointProvider.cs" />
+    <None Include="IDebuggerSession-old.cs" />
+    <Compile Include="IDebuggerSession.cs" />
+    <Compile Include="IExecutingLocationProvider.cs" />
+    <Compile Include="ISourcesProvider.cs" />
+    <Compile Include="IThreadProvider.cs" />
+    <Compile Include="ILogProvider.cs" />
+    <Compile Include="ITypeMirrorProvider.cs" />
+    <Compile Include="ISourceToTypeMapper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Implementation\BreakpointMediator.cs" />
+    <Compile Include="Implementation\Location.cs" />
+    <Compile Include="Implementation\BreakPoint.cs" />
+    <Compile Include="Implementation\BreakpointProvider.cs" />
+    <None Include="Implementation\DebuggerSession-old.cs" />
+    <Compile Include="Implementation\ThreadProvider.cs" />
+    <Compile Include="Implementation\TypeMirrorProvider.cs" />
+    <Compile Include="Implementation\ExecutingLocationProvider.cs" />
+    <Compile Include="Implementation\SourceToTypeMapper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Implementation\DebuggerSession.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+</Project>

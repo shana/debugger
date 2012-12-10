@@ -140,7 +140,7 @@
     </Reference>
     <Reference Include="Mono.Cecil.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Tools\Mono.Cecil\Mono.Cecil.dll</HintPath>
+      <HintPath>..\..\libs\Cecil\Mono.Cecil.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Core.dll">

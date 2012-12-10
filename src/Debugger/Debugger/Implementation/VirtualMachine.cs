@@ -1,14 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using CodeEditor.Composition;
+using Debugger.Backend;
 using Mono.Debugger.Soft;
 using MDS=Mono.Debugger.Soft;
 
 
 namespace CodeEditor.Debugger.Implementation
 {
+	
 	[Export(typeof(IVirtualMachine))]
 	internal class VirtualMachine : IVirtualMachine
 	{
@@ -21,11 +23,11 @@ namespace CodeEditor.Debugger.Implementation
 		public event Action<VMDeathEvent> OnVMDeath;
 		public event Action<AssemblyLoadEvent> OnAssemblyLoad;
 
-		public event Action<TypeLoadEvent> OnTypeLoad;
+		public event Action<MDS.TypeLoadEvent> OnTypeLoad;
 		public event Action<VMDisconnectEvent> OnVMDisconnect;
 		public event Action<ThreadStartEvent> OnThreadStart;
 		public event Action<BreakpointEvent> OnBreakpoint;
-		public event Action<Event> OnVMGotSuspended;
+		public event Action<MDS.Event> OnVMGotSuspended;
 
 		public VirtualMachine()
 		{
@@ -83,7 +85,7 @@ namespace CodeEditor.Debugger.Implementation
 			}
 		}
 
-		private void HandleEvent (Event e, SuspendPolicy policy)
+		private void HandleEvent (MDS.Event e, SuspendPolicy policy)
 		{
 			Console.WriteLine("Event: " + e.GetType());
 			bool exit = false;
@@ -111,7 +113,7 @@ namespace CodeEditor.Debugger.Implementation
 					break;
 				case EventType.TypeLoad:
 					if (OnTypeLoad != null)
-						OnTypeLoad ((TypeLoadEvent)e);
+						OnTypeLoad ((MDS.TypeLoadEvent)e);
 					break;
 				case EventType.Breakpoint:
 					if (OnBreakpoint != null)
@@ -170,6 +172,11 @@ namespace CodeEditor.Debugger.Implementation
 
 		public void ResumeIfNeeded ()
 		{
+		}
+
+		public IList<ThreadMirror> GetThreads ()
+		{
+			return _vm.GetThreads();
 		}
 	}
 }

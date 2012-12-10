@@ -1,7 +1,6 @@
-﻿using System;
 using UnityEngine;
 
-namespace CodeEditor.Debugger.Unity.Engine
+namespace Debugger.Unity.Engine
 {
 	public class DebuggerWindow : IDebuggerWindow
 	{

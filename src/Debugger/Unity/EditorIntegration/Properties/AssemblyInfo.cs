@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("CodeEditor.Debugger.UnityEditor")]
+[assembly: AssemblyTitle("UnityDebugger.UnityEditor")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyProduct("CodeEditor.Debugger.UnityEditor")]
+[assembly: AssemblyProduct("UnityDebugger.UnityEditor")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]

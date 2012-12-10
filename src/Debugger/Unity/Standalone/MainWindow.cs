@@ -1,17 +1,13 @@
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using CodeEditor.Composition;
-using CodeEditor.Debugger.Implementation;
-using CodeEditor.Debugger.Unity.Engine;
 using CodeEditor.Remoting;
+using Debugger.Unity.Engine;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 using Event = Mono.Debugger.Soft.Event;
-using EventType = UnityEngine.EventType;
 
-namespace CodeEditor.Debugger.Unity.Standalone
+namespace Debugger.Unity.Standalone
 {
 	[Export]
 	public class MainWindow
@@ -49,7 +45,7 @@ namespace CodeEditor.Debugger.Unity.Standalone
 				return;
 
 			_debuggingSession.TraceCallback += s => Trace(s);
-			_debuggingSession.VMGotSuspended += OnVMGotSuspended;
+//			_debuggingSession.VMGotSuspended += OnVMGotSuspended;
 //			_debuggingSession.Start(DebuggerPortFromCommandLine());
 
 			_debugeeProcessID = DebugeeProcessIDFromCommandLine();
@@ -71,11 +67,11 @@ namespace CodeEditor.Debugger.Unity.Standalone
 
 		private void OnVMGotSuspended(Event e)
 		{
-			var stackFrames = _debuggingSession.GetMainThread().GetFrames();
-			if (!stackFrames.Any()) return;
+			//var stackFrames = _debuggingSession.GetMainThread().GetFrames();
+			//if (!stackFrames.Any()) return;
 
-			var topFrame = stackFrames[0];
-			_sourceNavigator.ShowSourceLocation(Location.FromLocation(topFrame.Location));
+			//var topFrame = stackFrames[0];
+			//_sourceNavigator.ShowSourceLocation(new Location(topFrame.Location));
 		}
 
 		public void OnGUI()
@@ -83,8 +79,8 @@ namespace CodeEditor.Debugger.Unity.Standalone
 //			if (!DebugeeProcessAlive())
 //				Application.Quit();
 
-			if (UnityEngine.Event.current.type == EventType.Layout)
-				_debuggingSession.Update();
+			//if (UnityEngine.Event.current.type == EventType.Layout)
+			//    _debuggingSession.Update();
 
 			_windowManager.OnGUI();
 		}
@@ -157,7 +153,7 @@ namespace CodeEditor.Debugger.Unity.Standalone
 
 		public void OnApplicationQuit()
 		{
-			_debuggingSession.Disconnect();
+//			_debuggingSession.Disconnect();
 		}
 	}
 }

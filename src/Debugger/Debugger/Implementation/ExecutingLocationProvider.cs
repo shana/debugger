@@ -1,7 +1,8 @@
 using CodeEditor.Composition;
+using Debugger.Backend;
 using Mono.Debugger.Soft;
 
-namespace CodeEditor.Debugger.Implementation
+namespace Debugger.Implementation
 {
 	using L = Location;
 
@@ -19,18 +20,16 @@ namespace CodeEditor.Debugger.Implementation
 			_currentLocation = L.Default;
 		}
 
-		private void OnVMGotSuspended(Event suspendingEvent)
+		private void OnVMGotSuspended(IEvent suspendingEvent)
 		{
 			if (suspendingEvent is VMDeathEvent)
 				return;
 
-			var frames = suspendingEvent.Thread.GetFrames();
-
-
+			var frames = suspendingEvent.Thread.Unwrap<ThreadMirror>().GetFrames();
 
 			_currentLocation = frames.Length == 0
 						? new Location(0, "")
-						: new Location(frames[0].LineNumber, frames[0].Location.SourceFile);
+						: new Location(frames[0].Location);
 		}
 
 		public ILocation Location

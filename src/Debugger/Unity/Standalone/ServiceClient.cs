@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using CodeEditor.Composition;
 using CodeEditor.Remoting;
-using UnityEngine;
 
-namespace CodeEditor.Debugger.Unity.Standalone
+namespace Debugger.Unity.Standalone
 {
 	// keep this in sync with the server
 	enum ServiceRequestType : ushort

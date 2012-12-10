@@ -1,7 +1,10 @@
-namespace CodeEditor.Debugger.Backend
+using System.Collections.Generic;
+
+namespace Debugger.Backend
 {
-	public interface IMethodMirror
+	public interface IMethodMirror : IWrapper
 	{
-		ILocation[] Locations { get; }
+		IEnumerable<ILocation> Locations { get; }
+		string FullName { get; }
 	}
 }

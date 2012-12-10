@@ -1,0 +1,259 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{367AD6BB-75DA-4B31-ADD9-E89F5E02BA45}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Debugger.Unity.Standalone.Dependencies</RootNamespace>
+    <AssemblyName>Debugger.Unity.Standalone.Dependencies</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">..\..\..\..\</SolutionDir>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Debugger\Debugger.csproj">
+      <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
+      <Name>Debugger %28Debugger\Debugger%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\Debugger.Unity.Engine.csproj">
+      <Project>{0E6DFD1C-426E-4F74-AD5B-D908458B3D7B}</Project>
+      <Name>Debugger.Unity.Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Standalone\Debugger.Unity.Standalone.csproj">
+      <Project>{05848CF0-F1ED-4806-8A06-62B7AD048BE7}</Project>
+      <Name>Debugger.Unity.Standalone</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Backend.Sdb\Debugger.Backend.Sdb.csproj">
+      <Project>{796B13D9-48B9-4EBA-B274-BBF297AFBD66}</Project>
+      <Name>Debugger.Backend.Sdb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Backend\Debugger.Backend.csproj">
+      <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
+      <Name>Debugger.Backend</Name>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">
+      <Project>{F2D07F82-9C51-4889-8987-4CEF47490751}</Project>
+      <Name>Mono.Debugger.Soft</Name>
+    </ProjectReference>
+
+
+    <Reference Include="Mono.Cecil, Version=0.6.9.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\Mono.Cecil.dll</HintPath>
+    </Reference>
+
+
+    <Reference Include="Boo.Adt, Version=1.0.4528.0, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\Boo.Adt.dll</HintPath>
+    </Reference>
+    <Reference Include="Boo.Lang, Version=1.0.4528.0, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\Boo.Lang.dll</HintPath>
+    </Reference>
+    <Reference Include="Boo.Lang.PatternMatching, Version=1.0.4528.0, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\Boo.Lang.PatternMatching.dll</HintPath>
+    </Reference>
+
+    <Reference Include="Boo.OMeta, Version=1.0.4528.0, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\Boo.OMeta.dll</HintPath>
+    </Reference>
+
+    <Reference Include="CodeEditor.Collections, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Collections.dll</HintPath>
+    </Reference>
+
+    <Reference Include="CodeEditor.Composition, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Composition.dll</HintPath>
+    </Reference>
+
+    <Reference Include="CodeEditor.Remoting, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\CodeEditor.Remoting.dll</HintPath>
+    </Reference>
+
+    <Reference Include="CodeEditor.Grammars, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Grammars.dll</HintPath>
+    </Reference>
+
+    <Reference Include="CodeEditor.IO, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\CodeEditor.IO.dll</HintPath>
+    </Reference>
+
+    <Reference Include="CodeEditor.Languages.Boo, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Languages.Boo.dll</HintPath>
+    </Reference>
+
+    <Reference Include="CodeEditor.Languages.Common, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Languages.Common.dll</HintPath>
+    </Reference>
+
+    <Reference Include="CodeEditor.Languages.CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Languages.CSharp.dll</HintPath>
+    </Reference>
+
+    <Reference Include="CodeEditor.Languages.UnityScript, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Languages.UnityScript.dll</HintPath>
+    </Reference>
+
+    <Reference Include="CodeEditor.Text.UI.Unity.Engine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Text.UI.Unity.Engine.dll</HintPath>
+    </Reference>
+
+    <Reference Include="CodeEditor.Text.Data, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Text.Data.dll</HintPath>
+    </Reference>
+
+    <Reference Include="CodeEditor.Text.Logic, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Text.Logic.dll</HintPath>
+    </Reference>
+
+    <Reference Include="CodeEditor.Text.UI, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Text.UI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Empty.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)Unity.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup Condition=" '$(OS)' == 'Unix' ">
+    <UnityBuildDir>$(UnityBuildRoot)MacEditor\</UnityBuildDir>
+    <UnityCmd>$(UnityBuildDir)Unity.app\Contents\MacOS\Unity</UnityCmd>
+    <UnityDebuggerProjectBuildDir>Build\Mac\</UnityDebuggerProjectBuildDir>
+    <UnityDebuggerDir>Unity.app\Contents\Tools\Debugger\</UnityDebuggerDir>
+    <UnityDebuggerDataDir>$(UnityDebuggerDir)Debugger.app\Contents\Data\Managed\</UnityDebuggerDataDir>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' != 'Unix' ">
+    <UnityBuildDir>$(UnityBuildRoot)WindowsEditor\</UnityBuildDir>
+    <UnityCmd>$(UnityBuildDir)Unity.exe</UnityCmd>
+    <UnityDebuggerProjectBuildDir>Build\Windows\</UnityDebuggerProjectBuildDir>
+    <UnityDebuggerDir>Data\Tools\Debugger\</UnityDebuggerDir>
+    <UnityDebuggerDataDir>$(UnityDebuggerDir)Debugger_Data\Managed\</UnityDebuggerDataDir>
+  </PropertyGroup>
+  <Target Name="AfterBuild" DependsOnTargets="BuildDebugger" />
+  <!-- Make sure all the assemblies are cleaned from the debugger dir as well -->
+  <Target Name="AfterClean" DependsOnTargets="_ResolveOutputFiles">
+    <Delete Files="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(Filename)%(Extension)')" />
+  </Target>
+  <!-- This target resolves all the assemblies that this project references directly or
+        indirectly, excluding the UnityEngine.dll and UnityEditor.dll -->
+  <Target Name="_ResolveOutputFiles" DependsOnTargets="_ResolvePaths">
+    <CreateItem Condition="'$(Configuration)' == 'Debug'" Include="$(OutDir)*.dll;$(OutDir)*.pdb" Exclude="$(OutDir)UnityEngine*;$(OutDir)UnityEditor*;$(OutDir)$(TargetFilename)">
+      <Output TaskParameter="Include" ItemName="_Files" />
+    </CreateItem>
+    <CreateItem Condition="'$(Configuration)' != 'Debug'" Include="$(OutDir)*.dll" Exclude="$(OutDir)UnityEngine*;$(OutDir)UnityEditor*;$(OutDir)$(TargetFilename)">
+      <Output TaskParameter="Include" ItemName="_Files" />
+    </CreateItem>
+    <Message Text="@(_Files)" Importance="Low" />
+  </Target>
+  <!-- This target resolves all the debugger player files -->
+  <Target Name="_ResolveOutputDebugger" DependsOnTargets="_ResolvePaths">
+    <CreateItem Include="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)**">
+      <Output TaskParameter="Include" ItemName="_DebuggerFiles" />
+    </CreateItem>
+    <Message Text="Debugger Files: @(_DebuggerFiles)" Importance="Low" />
+  </Target>
+  <!-- This target resolves full project and tool paths for the _BuildDebuggerProject target -->
+  <Target Name="_ResolvePaths">
+    <!-- This allows us to later get the full path by doing %(UnityDebuggerProjectDir.FullPath) -->
+    <CreateItem Include="..\Standalone\UnityProject\">
+      <Output TaskParameter="Include" ItemName="UnityDebuggerProjectDir" />
+    </CreateItem>
+    <CreateProperty Value="%(UnityDebuggerProjectDir.FullPath)">
+      <Output TaskParameter="Value" PropertyName="_ProjectAbsPath" />
+    </CreateProperty>
+    <CreateProperty Value="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)Debugger.app" Condition="'$(OS)'=='Unix'">
+      <Output TaskParameter="Value" PropertyName="_DebuggerExe" />
+    </CreateProperty>
+    <CreateProperty Value="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)Debugger.exe" Condition="'$(OS)'!='Unix'">
+      <Output TaskParameter="Value" PropertyName="_DebuggerExe" />
+    </CreateProperty>
+    <CreateProperty Value="$(UnityCmd) -buildOSXPlayer &quot;$(_DebuggerExe)&quot;" Condition="'$(OS)'=='Unix'">
+      <Output TaskParameter="Value" PropertyName="_UnityCmd" />
+    </CreateProperty>
+    <CreateProperty Value="$(UnityCmd) -buildWindowsPlayer &quot;$(_DebuggerExe)&quot;" Condition="'$(OS)'!='Unix'">
+      <Output TaskParameter="Value" PropertyName="_UnityCmd" />
+    </CreateProperty>
+  </Target>
+  <!-- Take all the assemblies and copy them to the debugger dir,
+        with dependency checks (only copies what's changed) -->
+  <Target Name="_CopyDependenciesToDebuggerDir" DependsOnTargets="_ResolveOutputFiles" Inputs="@(_Files)" Outputs="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(Filename)%(Extension)')">
+    <MakeDir Directories="$(UnityBuildDir)$(UnityDebuggerDataDir)" />
+    <Copy SourceFiles="@(_Files)" DestinationFolder="$(UnityBuildDir)$(UnityDebuggerDataDir)" SkipUnchangedFiles="true" />
+    <!-- Touch Files="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(Filename)%(Extension)')" /-->
+  </Target>
+  <Target Name="_SetupDebuggerProject" DependsOnTargets="_ResolveOutputFiles">
+    <!-- MakeDir Directories="$(_ProjectAbsPath)Project\Assets\bin" / -->
+    <MakeDir Directories="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)" />
+    <ItemGroup>
+      <_ToDelete Include="$(_ProjectAbsPath)Project\Assets\bin\*.dll;$(_ProjectAbsPath)Project\Assets\bin\*.pdb" Exclude="@(_Files->'$(_ProjectAbsPath)Project\Assets\bin\%(RecursiveDir)%(Filename)%(Extension)')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_Files)" DestinationFolder="$(_ProjectAbsPath)Project\Assets\bin" SkipUnchangedFiles="true" />
+    <Delete Files="@(_ToDelete)" />
+  </Target>
+  <!-- This target is called by the BuildDebuggerProject target. It builds the unity debugger
+       project and deploys the result to the proper directories -->
+  <Target Name="_BuildDebuggerProject" DependsOnTargets="_SetupDebuggerProject" Inputs="@(_Files)" Outputs="$(_DebuggerExe)">
+    <Exec Command="$(_UnityCmd) -batchmode -projectpath &quot;$(_ProjectAbsPath)Project&quot; -quit" />
+    <Touch Files="$(_DebuggerExe)" />
+    <!-- Clean out files that aren't needed anymore -->
+    <Delete Files="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)Debugger_Data\Managed\CodeEditor.*" />
+    <Delete Files="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)Debugger_Data\Managed\Mono.Debugger.Soft.dll" />
+    <Delete Files="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)Debugger_Data\Managed\Mono.Cecil.dll" />
+    <Delete Files="$(_ProjectAbsPath)Project\Assets\bin" />
+  </Target>
+  <Target Name="_CopyDebuggerBuild" DependsOnTargets="_ResolveOutputFiles;_ResolveOutputDebugger" Inputs="@(_Files->'$(_ProjectAbsPath)Project\Assets\bin\%(RecursiveDir)%(Filename)%(Extension)');@(_DebuggerFiles)" Outputs="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(RecursiveDir)%(Filename)%(Extension)');@(_DebuggerFiles->'$(UnityBuildDir)$(UnityDebuggerDir)%(RecursiveDir)%(Filename)%(Extension)')">
+    <Copy SourceFiles="@(_Files)" DestinationFiles="@(_Files->'$(UnityBuildDir)$(UnityDebuggerDataDir)%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(_DebuggerFiles)" DestinationFiles="@(_DebuggerFiles->'$(UnityBuildDir)$(UnityDebuggerDir)%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <!--Touch Files="@(_DebuggerFiles->'$(UnityBuildDir)$(UnityDebuggerDir)%(RecursiveDir)%(Filename)%(Extension)')" /-->
+  </Target>
+  <Target Name="Deploy" DependsOnTargets="Build" />
+  <Target Name="DeployDebugger" DependsOnTargets="_CopyDebuggerBuild;_CopyDependenciesToDebuggerDir" />
+  <Target Name="BuildDebugger" DependsOnTargets="_BuildDebuggerProject;DeployDebugger" />
+</Project>

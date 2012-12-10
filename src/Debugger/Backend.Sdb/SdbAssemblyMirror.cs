@@ -1,14 +1,11 @@
-﻿using Mono.Debugger.Soft;
+using Mono.Debugger.Soft;
 
-namespace CodeEditor.Debugger.Backend.Sdb
+namespace Debugger.Backend.Sdb
 {
-	public class SdbAssemblyMirror : IAssemblyMirror
+	public class SdbAssemblyMirror : Wrapper, IAssemblyMirror
 	{
-		public SdbAssemblyMirror(AssemblyMirror assemblyMirror)
-		{
-			Mirror = assemblyMirror;
-		}
+		public AssemblyMirror Mirror { get { return _obj as AssemblyMirror; }}
 
-		public AssemblyMirror Mirror { get; private set; }
+		public SdbAssemblyMirror(AssemblyMirror assemblyMirror) : base (assemblyMirror) {}
 	}
 }

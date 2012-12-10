@@ -1,8 +1,8 @@
-﻿using System.IO;
+using System.IO;
 using CodeEditor.Composition;
-using Mono.Debugger.Soft;
+using Debugger.Backend;
 
-namespace CodeEditor.Debugger.Unity.Engine
+namespace Debugger.Unity.Engine
 {
 	public interface ISourceNavigator
 	{

@@ -1,9 +1,8 @@
-using System;
 using CodeEditor.Composition;
 using CodeEditor.Text.UI.Unity.Engine;
 using UnityEngine;
 
-namespace CodeEditor.Debugger.Unity.Engine
+namespace Debugger.Unity.Engine
 {
 	[Export]
 	[Export (typeof (IDebuggerWindow))]

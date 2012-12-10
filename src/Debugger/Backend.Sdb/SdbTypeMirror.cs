@@ -1,38 +1,43 @@
-﻿using System.Linq;
-using CodeEditor.Composition;
+using System.Collections.Generic;
+using System.Linq;
 using Mono.Debugger.Soft;
 
-namespace CodeEditor.Debugger.Backend.Sdb
+namespace Debugger.Backend.Sdb
 {
-	public class SdbTypeMirror : ITypeMirror
+	public class SdbTypeMirror : Wrapper, ITypeMirror
 	{
 		private readonly TypeMirror _sdbType;
-		private readonly Lazy<IMethodMirror[]> _methodsMirror;
-		private readonly Lazy<string[]> _sourceFiles;
+		private readonly List<IMethodMirror> _methodsMirror;
+		private readonly List<string> _sourceFiles;
 		public IAssemblyMirror Assembly { get; private set; }
 
-		public string[] SourceFiles
+		public IEnumerable<string> SourceFiles
 		{
-			get { return _sourceFiles.Value; }
+			get { return _sourceFiles; }
 		}
 
-		public IMethodMirror[] Methods
+		public IEnumerable<IMethodMirror> Methods
 		{
-			get { return _methodsMirror.Value; }
+			get { return _methodsMirror; }
 		}
 
-		private SdbMethodMirror[] GetMethodMirrors()
+		private List<IMethodMirror> GetMethodMirrors()
 		{
-				return _sdbType.GetMethods().Select(m => new SdbMethodMirror(m)).ToArray();
+				return _sdbType.GetMethods().Select(m => new SdbMethodMirror(m) as IMethodMirror).ToList();
 		}
 
-		public SdbTypeMirror(TypeMirror sdbType, IAssemblyMirror assemblyMirror)
+		public SdbTypeMirror(TypeMirror sdbType, IAssemblyMirror assemblyMirror) : base(sdbType)
 		{
 			_sdbType = sdbType;
 			Assembly = assemblyMirror;
 
-			_methodsMirror = new Lazy<IMethodMirror[]>(GetMethodMirrors);
-			_sourceFiles = new Lazy<string[]>(() => _sdbType.GetSourceFiles(true));
+			_methodsMirror = GetMethodMirrors();
+			_sourceFiles = new List<string>(_sdbType.GetSourceFiles(true));
+		}
+
+		public string Name
+		{
+			get { return _sdbType.Name; }
 		}
 	}
 }

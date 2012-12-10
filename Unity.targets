@@ -1,9 +1,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup Condition=" '$(OS)' == 'Unix' ">
-		<UnityBuildRoot>..\..\..\..\..\..\build\</UnityBuildRoot>
+		<UnityBuildRoot>..\..\..\..\..\unity\build\</UnityBuildRoot>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(OS)' != 'Unix' ">
-		<UnityBuildRoot>..\..\..\..\..\..\build\</UnityBuildRoot>
-		<!-- UnityBuildRoot>c:\code\funkyed\build\</UnityBuildRoot -->
+		<UnityBuildRoot>..\..\..\..\..\unity\build\</UnityBuildRoot>
 	</PropertyGroup>
 </Project>

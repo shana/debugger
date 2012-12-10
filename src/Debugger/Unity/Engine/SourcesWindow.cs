@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using CodeEditor.Composition;
-using CodeEditor.Debugger.Implementation;
+using Debugger.Implementation;
 using UnityEngine;
 
-namespace CodeEditor.Debugger.Unity.Engine
+namespace Debugger.Unity.Engine
 {
 	[Export]
 	[Export (typeof (IDebuggerWindow))]

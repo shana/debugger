@@ -1,8 +1,9 @@
-﻿using CodeEditor.IO.Implementation;
+using CodeEditor.IO.Implementation;
 using CodeEditor.Text.UI.Unity.Engine;
+using Debugger.Backend;
 using UnityEngine;
 
-namespace CodeEditor.Debugger.Unity.Engine
+namespace Debugger.Unity.Engine
 {
 	class BreakPointMargin : ITextViewMargin
 	{

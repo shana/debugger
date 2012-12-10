@@ -1,4 +1,6 @@
-namespace CodeEditor.Debugger.Implementation
+using Debugger.Backend;
+
+namespace Debugger.Implementation
 {
 	class BreakPoint : IBreakPoint
 	{

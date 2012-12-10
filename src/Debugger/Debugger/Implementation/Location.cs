@@ -1,6 +1,8 @@
-namespace CodeEditor.Debugger.Implementation
+using Debugger.Backend;
+
+namespace Debugger.Implementation
 {
-	public class Location : ILocation
+	public class Location : Wrapper, ILocation
 	{
 		private static Location _default;
 		public static Location Default { get { return _default; } }
@@ -13,7 +15,13 @@ namespace CodeEditor.Debugger.Implementation
 			_default = new Location(0, "");
 		}
 
-		public Location(int line,string file)
+		public Location(Mono.Debugger.Soft.Location location) : base(location)
+		{
+			_line = location.LineNumber;
+			_file = location.SourceFile;
+		}
+
+		public Location(int line,string file) : base(null)
 		{
 			_line = line;
 			_file = file;
@@ -27,11 +35,6 @@ namespace CodeEditor.Debugger.Implementation
 		public string SourceFile
 		{
 			get { return _file; }
-		}
-
-		public static ILocation FromLocation (Mono.Debugger.Soft.Location location)
-		{
-			return new Location(location.LineNumber, location.SourceFile);
 		}
 	}
 }

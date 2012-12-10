@@ -2,7 +2,7 @@ using CodeEditor.Composition;
 using CodeEditor.Text.UI.Unity.Engine;
 using UnityEngine;
 
-namespace CodeEditor.Debugger.Unity.Engine
+namespace Debugger.Unity.Engine
 {
 	[Export(typeof(ITextViewAppearanceProvider))]
 	class TextViewAppearanceProvider : ITextViewAppearanceProvider
@@ -19,6 +19,7 @@ namespace CodeEditor.Debugger.Unity.Engine
 		private readonly GUIStyle _text;
 		private readonly GUIStyle _lineNumber;
 		private readonly Color _lineNumberColor;
+		private readonly Color _selectionColor;
 
 		public TextViewAppearance()
 		{
@@ -59,6 +60,11 @@ namespace CodeEditor.Debugger.Unity.Engine
 		public Color LineNumberColor
 		{
 			get { return _lineNumberColor; }
+		}
+
+		public Color SelectionColor
+		{
+			get { return _selectionColor; }
 		}
 	}
 }

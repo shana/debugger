@@ -1,9 +1,12 @@
-namespace CodeEditor.Debugger.Backend
+using System.Collections.Generic;
+
+namespace Debugger.Backend
 {
-	public interface ITypeMirror
+	public interface ITypeMirror : IWrapper
 	{
+		string Name { get; }
 		IAssemblyMirror Assembly { get; }
-		string[] SourceFiles { get; }
-		IMethodMirror[] Methods { get; }
+		IEnumerable<string> SourceFiles { get; }
+		IEnumerable<IMethodMirror> Methods { get; }
 	}
 }

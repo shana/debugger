@@ -1,4 +1,4 @@
-﻿namespace CodeEditor.Debugger.Console
+﻿namespace Debugger.Console
 {
 	class Program
 	{

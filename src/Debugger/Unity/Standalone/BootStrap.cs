@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CodeEditor.Debugger.Unity.Standalone
+namespace Debugger.Unity.Standalone
 {
 	public class BootStrap : MonoBehaviour
 	{

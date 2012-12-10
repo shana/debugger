@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 using UnityEditor;
 
-namespace CodeEditor.Debugger.Unity.EditorIntegration
+namespace Debugger.Unity.EditorIntegration
 {
 	public static class DebuggerMenuItems
 	{
