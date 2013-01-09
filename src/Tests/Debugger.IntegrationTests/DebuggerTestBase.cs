@@ -1,8 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using Debugger.Implementation;
-using Mono.Debugger.Soft;
+using System.Reflection;
+using Debugger.Backend;
+using MDS=Mono.Debugger.Soft;
 using NUnit.Framework;
 
 namespace Debugger.IntegrationTests
@@ -10,15 +11,12 @@ namespace Debugger.IntegrationTests
 	internal class DebuggerTestBase
 	{
 		public const bool DebugMono = true;
-		protected VirtualMachine _vm;
+		protected IVirtualMachine _vm;
 		private bool _finished;
-		private BreakpointProvider _breakpointProvider;
+		private IBreakpointProvider _breakpointProvider;
 		protected IExecutingLocationProvider ExecutingLocationProvider;
 
-		private static LaunchOptions DebuggerOptions
-		{
-			get { return new LaunchOptions () { AgentArgs = "loglevel=2,logfile=c:/as3/sdblog" }; }
-		}
+		private static string DebuggerOptions = "loglevel=2,logfile=c:/as3/sdblog";
 
 		public static string DebugeeProgramClassName
 		{
@@ -53,7 +51,7 @@ namespace Debugger.IntegrationTests
 			}
 			try
 			{
-				_vm.Exit ();
+//				_vm.Exit ();
 			}
 			catch (Exception ex)
 			{
@@ -63,18 +61,18 @@ namespace Debugger.IntegrationTests
 			}
 			try
 			{
-				Synchronization.WaitFor (() => _vm.Process.HasExited, "Waiting for process to exit");
+//				Synchronization.WaitFor (() => _vm.Process.HasExited, "Waiting for process to exit");
 			}
 			catch (TimeoutException)
 			{
-				_vm.Process.Kill ();
+//				_vm.Process.Kill ();
 				Console.WriteLine ("VM process did not exit cleanly");
 			}
 
-			foreach (var error in _vm.Errors)
-				Console.WriteLine ("VM had error: "+error);
+			//foreach (var error in _vm.Errors)
+			//    Console.WriteLine ("VM had error: "+error);
 
-			Assert.IsEmpty (_vm.Errors);
+			//Assert.IsEmpty (_vm.Errors);
 		}
 
 		protected void Finish ()
@@ -82,15 +80,15 @@ namespace Debugger.IntegrationTests
 			_finished = true;
 		}
 
-		private static VirtualMachine SetupVirtualMachineRunning (string exe)
+		private static IVirtualMachine SetupVirtualMachineRunning (string exe)
 		{
 			var psi = ProcessStartInfoFor (exe);
 
 			Console.WriteLine ((string) psi.FileName);
 
-			var sdb = VirtualMachineManager.Launch ((ProcessStartInfo) psi, DebuggerOptions);
-			var vm = new VirtualMachine (sdb);
-			return vm;
+			var sdb = DebuggerSession.Launch ((ProcessStartInfo) psi, DebuggerOptions);
+//			var vm = new VirtualMachine (sdb);
+			return sdb.VM;
 		}
 
 		public static ProcessStartInfo ProcessStartInfoFor (string exe)

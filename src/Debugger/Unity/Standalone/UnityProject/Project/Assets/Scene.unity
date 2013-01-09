@@ -3,7 +3,7 @@
 --- !u!29 &1
 SceneSettings:
   m_ObjectHideFlags: 0
-  m_PVSData:
+  m_PVSData: 
   m_QueryMode: 1
   m_PVSObjectsArray: []
   m_PVSPortalsArray: []
@@ -27,7 +27,7 @@ RenderSettings:
   m_SpotCookie: {fileID: 0}
   m_ObjectHideFlags: 0
 --- !u!127 &3
-GameManager:
+LevelGameManager:
   m_ObjectHideFlags: 0
 --- !u!157 &4
 LightmapSettings:
@@ -162,5 +162,5 @@ MonoBehaviour:
   m_GameObject: {fileID: 2011578232}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1372443450, guid: 1af1142562ba2034e923b86ecedc8f3e, type: 3}
-  m_Name:
+  m_Script: {fileID: -1172940019, guid: 1af1142562ba2034e923b86ecedc8f3e, type: 3}
+  m_Name: 

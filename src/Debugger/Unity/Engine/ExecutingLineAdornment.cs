@@ -4,21 +4,20 @@ using UnityEngine;
 
 namespace Debugger.Unity.Engine
 {
-	[Export(typeof(ITextViewAdornment))]
+	//[Export(typeof(ITextViewAdornment))]
 	class ExecutingLineAdornment : ITextViewAdornment
 	{
-		[Import]
 		IExecutingLocationProvider ExecutingLocationProvider { get; set; }
 
-		public void Draw(ITextViewLine line, Rect lineRect)
+		public void Draw (ITextViewLine line, Rect lineRect)
 		{
 			if (line.LineNumber == ExecutingLocationProvider.Location.LineNumber)
-				Draw(lineRect);
+				Draw (lineRect);
 		}
 
-		private void Draw(Rect lineRect)
+		private void Draw (Rect lineRect)
 		{
-			GUIUtils.DrawRect(lineRect, Color.red);
+			GUIUtils.DrawRect (lineRect, Color.red);
 		}
 	}
 }

@@ -3,12 +3,21 @@ using System.Diagnostics;
 using System.Linq;
 using CodeEditor.Composition;
 using CodeEditor.Remoting;
+using Debugger.Backend;
 using Debugger.Unity.Engine;
 using UnityEngine;
 using Event = Mono.Debugger.Soft.Event;
 
 namespace Debugger.Unity.Standalone
 {
+	[Export(typeof(IDebuggerSession))]
+	class DummyDebuggerSession : IDebuggerSession
+	{
+		public bool Active { get; private set; }
+		public IVirtualMachine VM { get; private set; }
+		public event Action<string> TraceCallback;
+	}
+
 	[Export]
 	public class MainWindow
 	{
@@ -23,15 +32,25 @@ namespace Debugger.Unity.Standalone
 		private readonly int _debugeeProcessID;
 
 		[ImportingConstructor]
-		public MainWindow(SourceWindow sourceWindow, LogWindow log, DebuggerWindowManager windowManager,
-			ISourceNavigator sourceNavigator, IDebuggerSession debuggingSession,
-			ISourcesProvider provider) {
+		public MainWindow (SourceWindow sourceWindow,
+			LogWindow log,
+			DebuggerWindowManager windowManager,
+			ISourceNavigator sourceNavigator,
+			IDebuggerSession debuggingSession,
+			ISourcesProvider provider)
+		{
+
+			UnityEngine.Debug.Log ("MainWindow");
 
 			_sourceWindow = sourceWindow;
 			_log = log;
 			_windowManager = windowManager;
 			_sourceNavigator = sourceNavigator;
-			_debuggingSession = debuggingSession;
+
+			if (HasArguments ())
+				_debuggingSession = DebuggerSession.Attach (SdbPortFromCommandLine());
+			else
+				_debuggingSession = debuggingSession;
 			_sourcesWindow = windowManager.Get<SourcesWindow>();
 
 			Camera.main.backgroundColor = new Color(0.125f, 0.125f, 0.125f, 0);
@@ -46,7 +65,6 @@ namespace Debugger.Unity.Standalone
 
 			_debuggingSession.TraceCallback += s => Trace(s);
 //			_debuggingSession.VMGotSuspended += OnVMGotSuspended;
-//			_debuggingSession.Start(DebuggerPortFromCommandLine());
 
 			_debugeeProcessID = DebugeeProcessIDFromCommandLine();
 
@@ -59,9 +77,9 @@ namespace Debugger.Unity.Standalone
 
 		private void SetupDebuggingWindows()
 		{
-//			_windowManager.Add(new ExecutionFlowControlWindow(_debuggingSession));
-//			_windowManager.Add(new CallStackDisplay(_debuggingSession, _sourceNavigator));
-//			_windowManager.Add(new ThreadsDisplay(_debuggingSession, new DebugThreadProvider(_debuggingSession)));
+			_windowManager.Add(new ExecutionFlowControlWindow(_debuggingSession));
+			_windowManager.Add(new CallStackDisplay(_debuggingSession, _sourceNavigator));
+			_windowManager.Add(new ThreadsDisplay(_debuggingSession, new ThreadProvider(_debuggingSession)));
 		}
 
 
@@ -76,6 +94,7 @@ namespace Debugger.Unity.Standalone
 
 		public void OnGUI()
 		{
+			UnityEngine.Debug.Log ("OnGUI");
 //			if (!DebugeeProcessAlive())
 //				Application.Quit();
 

@@ -1,7 +1,7 @@
 namespace Debugger.Backend
 {
-	public interface IBreakpointEventRequest : IWrapper
+	public interface IBreakpointEventRequest : IEventRequest
 	{
-		void Enable();
+		
 	}
 }

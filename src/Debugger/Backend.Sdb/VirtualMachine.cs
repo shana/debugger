@@ -8,24 +8,27 @@ namespace Debugger.Backend.Sdb
 {
 	internal class VirtualMachine : Wrapper, IVirtualMachine
 	{
-		private readonly Mono.Debugger.Soft.VirtualMachine _vm;
 		private bool _running = true;
 		private bool _exited = false;
 		private readonly List<Exception> _errors = new List<Exception> ();
 
-		public event Action<MDS.VMStartEvent> OnVMStart;
-		public event Action<MDS.VMDeathEvent> OnVMDeath;
-		public event Action<AssemblyLoadEvent> OnAssemblyLoad;
+		private readonly MDS.VirtualMachine _vm;
+		private IEventRequest _methodEntryRequest;
+
+		public event Action<IEvent> OnVMStart;
+		public event Action<IEvent> OnVMDeath;
+		public event Action<IAssemblyLoadEvent> OnAssemblyLoad;
 
 		public event Action<ITypeLoadEvent> OnTypeLoad;
-		public event Action<MDS.VMDisconnectEvent> OnVMDisconnect;
-		public event Action<MDS.ThreadStartEvent> OnThreadStart;
-		public event Action<MDS.BreakpointEvent> OnBreakpoint;
+		public event Action<IEvent> OnVMDisconnect;
+		public event Action<IEvent> OnThreadStart;
+		public event Action<IEvent> OnBreakpoint;
 		public event Action<IEvent> OnVMGotSuspended;
 
-		public VirtualMachine(Mono.Debugger.Soft.VirtualMachine vm) : base(vm)
+		public VirtualMachine (MDS.VirtualMachine vm) : base(vm)
 		{
 			_vm = vm;
+			_vm.Suspend ();
 			_vm.EnableEvents (
 				MDS.EventType.AssemblyLoad,
 				MDS.EventType.VMDeath,
@@ -33,12 +36,18 @@ namespace Debugger.Backend.Sdb
 				MDS.EventType.VMStart
 			);
 
+			_methodEntryRequest = new EventRequest (_vm.CreateMethodEntryRequest ());
 			QueueUserWorkItem (EventLoop);
 		}
 
 		public Process Process
 		{
 			get { return _vm.Process; }
+		}
+
+		public void Suspend ()
+		{
+			_vm.Suspend ();
 		}
 
 		public void Resume ()
@@ -91,11 +100,11 @@ namespace Debugger.Backend.Sdb
 			switch (e.EventType)
 			{
 				case MDS.EventType.VMStart:
-					if (OnVMStart != null) OnVMStart ((MDS.VMStartEvent)e);
+					if (OnVMStart != null) OnVMStart (new Event(e));
 					break;
 				case MDS.EventType.ThreadStart:
 					if (OnThreadStart != null)
-						OnThreadStart ((MDS.ThreadStartEvent)e);
+						OnThreadStart (new Event(e));
 					break;
 				case MDS.EventType.AssemblyLoad:
 					if (OnAssemblyLoad != null)
@@ -107,14 +116,14 @@ namespace Debugger.Backend.Sdb
 					break;
 				case MDS.EventType.Breakpoint:
 					if (OnBreakpoint != null)
-						OnBreakpoint ((MDS.BreakpointEvent)e);
+						OnBreakpoint (new Event(e));
 					break;
 				case MDS.EventType.VMDeath:
-					if (OnVMDeath != null) OnVMDeath ((MDS.VMDeathEvent)e);
+					if (OnVMDeath != null) OnVMDeath (new Event(e));
 					_running = false;
 					break;
 				case MDS.EventType.VMDisconnect:
-					if (OnVMDisconnect != null) OnVMDisconnect ((MDS.VMDisconnectEvent)e);
+					if (OnVMDisconnect != null) OnVMDisconnect (new Event(e));
 					_running = false;
 					break;
 				case MDS.EventType.MethodEntry:

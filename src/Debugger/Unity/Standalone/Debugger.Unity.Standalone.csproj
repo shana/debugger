@@ -61,6 +61,10 @@
       <Name>Mono.Debugger.Soft</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\Backend\Debugger.Backend.csproj">
+      <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
+      <Name>Debugger.Backend</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Debugger\Debugger.csproj">
       <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
       <Name>Debugger %28Debugger\Debugger%29</Name>

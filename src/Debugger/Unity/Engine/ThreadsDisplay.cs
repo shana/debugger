@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace Debugger.Unity.Engine
 {
-	[Export(typeof(IDebuggerWindow))]
+	//[Export(typeof(IDebuggerWindow))]
 	public class ThreadsDisplay : DebuggerWindow
 	{
 		private readonly IDebuggerSession _debuggerSession;
 		private IThreadProvider _threadProvider;
 
-		[ImportingConstructor]
+		//[ImportingConstructor]
 		public ThreadsDisplay(IDebuggerSession debuggerSession, IThreadProvider threadProvider)
 		{
 			_debuggerSession = debuggerSession;

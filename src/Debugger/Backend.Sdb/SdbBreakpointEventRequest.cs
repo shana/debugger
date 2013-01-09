@@ -12,5 +12,10 @@ namespace Debugger.Backend.Sdb
 		{
 			_sdbRequest.Enable();
 		}
+
+		public void Disable ()
+		{
+			_sdbRequest.Disable ();
+		}
 	}
 }

@@ -38,6 +38,7 @@
     <Compile Include="IAssemblyMirror.cs" />
     <Compile Include="IBreakPoint.cs" />
     <Compile Include="IBreakpointEventRequest.cs" />
+    <Compile Include="IEventRequest.cs" />
     <Compile Include="ILocation.cs" />
     <Compile Include="IMethodMirror.cs" />
     <Compile Include="IStackFrame.cs" />
@@ -48,6 +49,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ITypeLoadEvent.cs" />
     <Compile Include="Wrapper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CodeEditor.Composition">
+      <HintPath>..\..\..\libs\CodeEditor.Composition.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

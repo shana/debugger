@@ -1,5 +1,4 @@
-﻿using Mono.Debugger.Soft;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Debugger.IntegrationTests
 {

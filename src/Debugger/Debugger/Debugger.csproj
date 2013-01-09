@@ -82,29 +82,29 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IBreakpointProvider.cs" />
-    <None Include="IDebuggerSession-old.cs" />
-    <Compile Include="IDebuggerSession.cs" />
-    <Compile Include="IExecutingLocationProvider.cs" />
-    <Compile Include="ISourcesProvider.cs" />
-    <Compile Include="IThreadProvider.cs" />
-    <Compile Include="ILogProvider.cs" />
-    <Compile Include="ITypeMirrorProvider.cs" />
-    <Compile Include="ISourceToTypeMapper.cs" />
+    <Compile Include="interfaces\IBreakpointProvider.cs" />
+    <None Include="interfaces\IDebuggerSession-old.cs" />
+    <Compile Include="interfaces\IDebuggerSession.cs" />
+    <Compile Include="interfaces\IExecutingLocationProvider.cs" />
+    <Compile Include="interfaces\ISourcesProvider.cs" />
+    <Compile Include="interfaces\IThreadProvider.cs" />
+    <Compile Include="interfaces\ILogProvider.cs" />
+    <Compile Include="interfaces\ITypeMirrorProvider.cs" />
+    <Compile Include="interfaces\ISourceToTypeMapper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Implementation\BreakpointMediator.cs" />
-    <Compile Include="Implementation\Location.cs" />
-    <Compile Include="Implementation\BreakPoint.cs" />
-    <Compile Include="Implementation\BreakpointProvider.cs" />
-    <None Include="Implementation\DebuggerSession-old.cs" />
-    <Compile Include="Implementation\ThreadProvider.cs" />
-    <Compile Include="Implementation\TypeMirrorProvider.cs" />
-    <Compile Include="Implementation\ExecutingLocationProvider.cs" />
-    <Compile Include="Implementation\SourceToTypeMapper.cs" />
+    <Compile Include="BreakpointMediator.cs" />
+    <Compile Include="Location.cs" />
+    <Compile Include="BreakPoint.cs" />
+    <Compile Include="BreakpointProvider.cs" />
+    <None Include="DebuggerSession-old.cs" />
+    <Compile Include="ThreadProvider.cs" />
+    <Compile Include="TypeMirrorProvider.cs" />
+    <Compile Include="ExecutingLocationProvider.cs" />
+    <Compile Include="SourceToTypeMapper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Implementation\DebuggerSession.cs" />
+    <Compile Include="DebuggerSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
 </Project>

@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace Debugger.Unity.Engine
 {
-	[Export(typeof(IDebuggerWindow))]
+	// [Export(typeof(IDebuggerWindow))]
 	public class CallStackDisplay : DebuggerWindow
 	{
 		private readonly IDebuggerSession _debuggingSession;
 		private readonly ISourceNavigator _sourceNavigator;
 		private IEnumerable<IStackFrame> _callFrames;
 
-		[ImportingConstructor]
+		// [ImportingConstructor]
 		public CallStackDisplay(IDebuggerSession debuggingSession, ISourceNavigator sourceNavigator)
 		{
 			_debuggingSession = debuggingSession;

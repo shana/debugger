@@ -1,0 +1,52 @@
+using System.Linq;
+using Debugger.Backend;
+
+namespace Debugger
+{
+	public class BreakpointMediator
+	{
+		private readonly IVirtualMachine _vm;
+		private readonly IBreakpointProvider _breakpointProvider;
+
+		public BreakpointMediator (IVirtualMachine vm, IBreakpointProvider breakpointProvider)
+		{
+			_vm = vm;
+			_breakpointProvider = breakpointProvider;
+
+			_vm.OnTypeLoad += OnTypeLoad;
+		}
+
+		private void OnTypeLoad (ITypeLoadEvent e)
+		{
+			var sourcefiles = e.Type.SourceFiles;
+
+			if (e.Type.Name == "TestClass")
+			{
+				int a = 4;
+			}
+
+			var breakPoints = _breakpointProvider.Breakpoints;
+			var relevantBreakPoints = breakPoints.Where (bp => sourcefiles.Contains (bp.Location.SourceFile));
+
+			foreach (var bp in relevantBreakPoints)
+			{
+				foreach (var method in e.Type.Methods)
+				{
+					var bestLocation = BestLocationIn (method, bp);
+					if (bestLocation == null)
+						continue;
+
+					_vm.CreateBreakpointRequest (bestLocation).Enable();
+				}
+			}
+		}
+
+		private ILocation BestLocationIn (IMethodMirror method, IBreakPoint bp)
+		{
+			var locations = method.Locations;
+			var name = method.FullName;
+
+			return locations.FirstOrDefault (l => l.SourceFile == bp.Location.SourceFile && l.LineNumber == bp.Location.LineNumber);
+		}
+	}
+}

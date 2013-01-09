@@ -3,12 +3,12 @@ using Debugger.Unity.Engine;
 
 namespace Debugger.Unity.Standalone
 {
-	[Export(typeof(IDebuggerWindow))]
+	//[Export(typeof(IDebuggerWindow))]
 	internal class ExecutionFlowControlWindow : DebuggerWindow
 	{
 		private readonly IDebuggerSession _debuggingSession;
 
-		[ImportingConstructor]
+		//[ImportingConstructor]
 		public ExecutionFlowControlWindow(IDebuggerSession debuggingSession)
 		{
 			_debuggingSession = debuggingSession;

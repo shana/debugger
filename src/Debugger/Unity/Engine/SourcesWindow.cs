@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
 using CodeEditor.Composition;
-using Debugger.Implementation;
 using UnityEngine;
 
 namespace Debugger.Unity.Engine
