@@ -34,17 +34,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CodeEditor.Composition">
-      <HintPath>..\..\..\..\libs\CodeEditor.Composition.dll</HintPath>
+      <HintPath>..\..\..\..\libs\editor\CodeEditor.Composition.dll</HintPath>
     </Reference>
-    <Reference Include="CodeEditor.Remoting">
-      <HintPath>..\..\..\..\libs\CodeEditor.Remoting.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\..\..\..\unity\Tools\Unity.Remoting\Unity.Remoting.csproj">
+      <Project>{F3B4F98B-CC7D-4E3F-A8B6-FEA8E8C4A078}</Project>
+      <Name>Unity.Remoting</Name>
+    </ProjectReference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\libs\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\unity\Projects\CSharp\bin\Debug\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

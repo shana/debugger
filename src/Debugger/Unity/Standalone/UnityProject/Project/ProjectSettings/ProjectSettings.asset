@@ -36,6 +36,7 @@ PlayerSettings:
   runInBackground: 0
   captureSingleScreen: 0
   Override IPod Music: 0
+  enableHWStatistics: 1
   usePlayerLog: 1
   stripPhysics: 0
   resizableWindow: 0

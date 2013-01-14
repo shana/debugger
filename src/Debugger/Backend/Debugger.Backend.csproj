@@ -52,7 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CodeEditor.Composition">
-      <HintPath>..\..\..\libs\CodeEditor.Composition.dll</HintPath>
+      <HintPath>..\..\..\libs\editor\CodeEditor.Composition.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>

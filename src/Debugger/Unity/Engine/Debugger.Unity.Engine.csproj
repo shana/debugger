@@ -52,26 +52,26 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CodeEditor.Composition">
-      <HintPath>..\..\..\..\libs\CodeEditor.Composition.dll</HintPath>
+      <HintPath>..\..\..\..\libs\editor\CodeEditor.Composition.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.IO">
-      <HintPath>..\..\..\..\libs\CodeEditor.IO.dll</HintPath>
+      <HintPath>..\..\..\..\libs\editor\CodeEditor.IO.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Text.Data">
-      <HintPath>..\..\..\..\libs\CodeEditor.Text.Data.dll</HintPath>
+      <HintPath>..\..\..\..\libs\editor\CodeEditor.Text.Data.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Text.UI">
-      <HintPath>..\..\..\..\libs\CodeEditor.Text.UI.dll</HintPath>
+      <HintPath>..\..\..\..\libs\editor\CodeEditor.Text.UI.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Text.UI.Unity.Engine">
-      <HintPath>..\..\..\..\libs\CodeEditor.Text.UI.Unity.Engine.dll</HintPath>
+      <HintPath>..\..\..\..\libs\editor\CodeEditor.Text.UI.Unity.Engine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\libs\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\unity\Projects\CSharp\bin\Debug\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

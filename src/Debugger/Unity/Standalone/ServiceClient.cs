@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CodeEditor.Composition;
-using CodeEditor.Remoting;
+using Unity.Remoting;
 
 namespace Debugger.Unity.Standalone
 {

@@ -42,7 +42,7 @@
     </Reference>
     <Reference Include="UnityEditor, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\libs\UnityEditor.dll</HintPath>
+      <HintPath>..\..\..\..\..\unity\Projects\CSharp\bin\Debug\UnityEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

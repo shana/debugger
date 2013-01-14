@@ -88,10 +88,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SolutionDir)libs\editor\CodeEditor.Composition.dll</HintPath>
     </Reference>
-    <Reference Include="CodeEditor.Remoting, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\CodeEditor.Remoting.dll</HintPath>
-    </Reference>
     <Reference Include="CodeEditor.Grammars, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SolutionDir)libs\editor\CodeEditor.Grammars.dll</HintPath>

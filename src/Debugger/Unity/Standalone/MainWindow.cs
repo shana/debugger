@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using CodeEditor.Composition;
-using CodeEditor.Remoting;
+using Unity.Remoting;
 using Debugger.Backend;
 using Debugger.Unity.Engine;
 using UnityEngine;
