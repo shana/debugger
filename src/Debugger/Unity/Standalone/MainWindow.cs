@@ -72,7 +72,7 @@ namespace Debugger.Unity.Standalone
 			if (client != null)
 				client.Port = ServicePortFromCommandLine();
 
-			provider.StartRefreshingSources(null, null);
+			//provider.StartRefreshingSources(null, null);
 		}
 
 		private void SetupDebuggingWindows()
