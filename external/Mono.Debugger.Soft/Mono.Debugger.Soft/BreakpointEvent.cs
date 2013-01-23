@@ -4,9 +4,12 @@ namespace Mono.Debugger.Soft
 	public class BreakpointEvent : Event {
 		MethodMirror method;
 		long id;
+		private readonly long loc;
 
-		internal BreakpointEvent (VirtualMachine vm, int req_id, long thread_id, long id, long loc) : base (EventType.Breakpoint, vm, req_id, thread_id) {
+		internal BreakpointEvent (VirtualMachine vm, int req_id, long thread_id, long id, long loc) : base (EventType.Breakpoint, vm, req_id, thread_id)
+		{
 			this.id = id;
+			this.loc = loc;
 		}
 
 		public MethodMirror Method {
@@ -15,6 +18,11 @@ namespace Mono.Debugger.Soft
 					method = vm.GetMethod (id);
 				return method;
 			}
+		}
+
+		public long Location
+		{
+			get { return loc; }
 		}
 	}
 }

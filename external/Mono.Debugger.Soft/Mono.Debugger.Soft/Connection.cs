@@ -385,7 +385,7 @@ namespace Mono.Debugger.Soft
 		static readonly bool EnableConnectionLogging = !String.IsNullOrEmpty (Environment.GetEnvironmentVariable ("MONO_SDB_LOG"));
 		static int ConnectionId;
 		readonly StreamWriter LoggingStream = EnableConnectionLogging ? 
-			new StreamWriter (string.Format ("/tmp/sdb_conn_log_{0}", ConnectionId++), false) : null;
+			new StreamWriter (System.IO.Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), string.Format ("sdb_conn_log_{0}", ConnectionId++)), false) : null;
 
 		/*
 		 * Th version of the wire-protocol implemented by the library. The library
