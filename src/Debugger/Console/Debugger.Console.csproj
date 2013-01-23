@@ -10,12 +10,13 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Debugger.Console</RootNamespace>
     <AssemblyName>Debugger.Console</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <SolutionDir Condition="'$(SolutionDir)' == ''">..\..\..\</SolutionDir>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,6 +36,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CodeEditor.Composition, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\libs\editor\CodeEditor.Composition.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -49,8 +54,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Options.cs" />
+    <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">
+      <Project>{F2D07F82-9C51-4889-8987-4CEF47490751}</Project>
+      <Name>Mono.Debugger.Soft</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Backend.Sdb\Debugger.Backend.Sdb.csproj">
+      <Project>{796B13D9-48B9-4EBA-B274-BBF297AFBD66}</Project>
+      <Name>Debugger.Backend.Sdb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Backend\Debugger.Backend.csproj">
+      <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
+      <Name>Debugger.Backend</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Debugger\Debugger.csproj">
+      <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
+      <Name>Debugger %28Debugger\Debugger%29</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

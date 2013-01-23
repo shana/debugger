@@ -1,7 +1,8 @@
 namespace Debugger.Backend
 {
-	public interface IBreakPoint
+	public interface IBreakpoint : IEventRequest
 	{
 		ILocation Location { get; }
+		bool Enabled { get; }
 	}
 }

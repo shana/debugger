@@ -80,14 +80,15 @@
     <Compile Include="CallStackDisplay.cs" />
     <Compile Include="DebuggerWindow.cs" />
     <Compile Include="ExecutingLineAdornment.cs" />
+    <Compile Include="ExecutionWindow.cs" />
     <Compile Include="LogWindow.cs" />
     <Compile Include="DebuggerWindowManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SourceNavigator.cs" />
+    <Compile Include="SourcesProvider.cs" />
     <Compile Include="SourcesWindow.cs" />
     <Compile Include="SourceWindow.cs" />
     <Compile Include="TextViewAppearanceProvider.cs" />
-    <Compile Include="ThreadsDisplay.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">

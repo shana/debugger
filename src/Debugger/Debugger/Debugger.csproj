@@ -41,16 +41,6 @@
   </Target>
   -->
   <ItemGroup>
-    <ProjectReference Include="..\..\..\external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">
-      <Project>{F2D07F82-9C51-4889-8987-4CEF47490751}</Project>
-      <Name>Mono.Debugger.Soft</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Backend.Sdb\Debugger.Backend.Sdb.csproj">
-      <Project>{796B13D9-48B9-4EBA-B274-BBF297AFBD66}</Project>
-      <Name>Debugger.Backend.Sdb</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\Backend\Debugger.Backend.csproj">
       <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
       <Name>Debugger.Backend</Name>
@@ -82,26 +72,26 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Breakpoint.cs" />
     <Compile Include="interfaces\IBreakpointProvider.cs" />
     <None Include="interfaces\IDebuggerSession-old.cs" />
     <Compile Include="interfaces\IDebuggerSession.cs" />
-    <Compile Include="interfaces\IExecutingLocationProvider.cs" />
+    <Compile Include="interfaces\IExecutionProvider.cs" />
     <Compile Include="interfaces\ISourcesProvider.cs" />
     <Compile Include="interfaces\IThreadProvider.cs" />
     <Compile Include="interfaces\ILogProvider.cs" />
-    <Compile Include="interfaces\ITypeMirrorProvider.cs" />
-    <Compile Include="interfaces\ISourceToTypeMapper.cs" />
+    <Compile Include="interfaces\ITypeProvider.cs" />
+    <Compile Include="interfaces\ISourceProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BreakpointMediator.cs" />
-    <Compile Include="Location.cs" />
-    <Compile Include="BreakPoint.cs" />
     <Compile Include="BreakpointProvider.cs" />
     <None Include="DebuggerSession-old.cs" />
+    <Compile Include="Location.cs" />
     <Compile Include="ThreadProvider.cs" />
-    <Compile Include="TypeMirrorProvider.cs" />
-    <Compile Include="ExecutingLocationProvider.cs" />
-    <Compile Include="SourceToTypeMapper.cs" />
+    <Compile Include="TypeProvider.cs" />
+    <Compile Include="ExecutionProvider.cs" />
+    <Compile Include="SourceProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DebuggerSession.cs" />

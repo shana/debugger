@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using Debugger.Backend;
 
 namespace Debugger
 {
 	public interface IThreadProvider
 	{
-		IList<DebugThread> Threads { get; }
+		IEnumerable<IThreadMirror> Threads { get; }
 	}
 }

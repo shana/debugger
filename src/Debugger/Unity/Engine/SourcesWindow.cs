@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using CodeEditor.Composition;
@@ -9,30 +10,34 @@ namespace Debugger.Unity.Engine
 	[Export (typeof (IDebuggerWindow))]
 	public class SourcesWindow : DebuggerWindow
 	{
-		private ISourcesProvider _provider;
-		private ISourceNavigator _sourceNavigator;
+		private ISourcesProvider sourcesProvider;
+		private ISourceNavigator sourceNavigator;
 
 		[ImportingConstructor]
-		public SourcesWindow(ISourcesProvider provider, ISourceNavigator sourceNavigator)
+		public SourcesWindow (ISourcesProvider sourcesProvider, ISourceNavigator sourceNavigator)
 		{
-			_provider = provider;
-			_sourceNavigator = sourceNavigator;
+			this.sourcesProvider = sourcesProvider;
+			this.sourceNavigator = sourceNavigator;
 		}
 
-		public override void OnGUI()
+		public void StartRefreshing ()
+		{
+			sourcesProvider.FileChanged += (f) => { if (sourceNavigator.CurrentSource.SourceFile == f) sourceNavigator.RefreshSource (); };
+			sourcesProvider.StartRefreshingSources ();
+		}
+
+		public override void OnGUI ()
 		{
 			GUI.enabled = true;
 			var backup = GUI.skin.button.alignment;
 			GUI.skin.button.alignment = TextAnchor.MiddleLeft;
-			
-			var files = new List<string> (_provider.Sources);
-			foreach (var file in files)
+
+			foreach (var file in sourcesProvider.Sources)
 			{
-				if (GUILayout.Button(Path.GetFileName(file)))
-					_sourceNavigator.ShowSourceLocation(new Location(1, file));
+				if (GUILayout.Button (Path.GetFileName (file)))
+					sourceNavigator.ShowSourceLocation (new Location (1, file));
 			}
 		}
-
 
 		public override string Title
 		{

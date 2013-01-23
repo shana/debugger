@@ -6,5 +6,7 @@ namespace Debugger.Backend
 	{
 		IEnumerable<ILocation> Locations { get; }
 		string FullName { get; }
+		ITypeMirror DeclaringType { get; }
+		string Name { get; }
 	}
 }

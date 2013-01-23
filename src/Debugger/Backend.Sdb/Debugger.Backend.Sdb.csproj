@@ -33,20 +33,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AssemblyLoadEvent.cs" />
+    <Compile Include="AssemblyEvent.cs" />
+    <Compile Include="BreakpointEvent.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SdbAssemblyMirror.cs" />
-    <Compile Include="SdbBreakpointEventRequest.cs" />
+    <Compile Include="SdbBreakpoint.cs" />
     <Compile Include="EventRequest.cs" />
     <Compile Include="SdbLocation.cs" />
     <Compile Include="SdbMethodMirror.cs" />
     <Compile Include="SdbStackFrame.cs" />
     <Compile Include="SdbThreadMirror.cs" />
     <Compile Include="SdbTypeMirror.cs" />
-    <Compile Include="TypeLoadEvent.cs" />
+    <Compile Include="TypeEvent.cs" />
     <Compile Include="VirtualMachine.cs" />
-    <Compile Include="VirtualMachineFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">
@@ -61,6 +61,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="CodeEditor.Composition">
+      <HintPath>..\..\..\libs\editor\CodeEditor.Composition.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\..\..\libs\Cecil\Mono.Cecil.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -8,5 +8,6 @@ namespace Debugger.Backend
 		IAssemblyMirror Assembly { get; }
 		IEnumerable<string> SourceFiles { get; }
 		IEnumerable<IMethodMirror> Methods { get; }
+		string FullName { get; }
 	}
 }

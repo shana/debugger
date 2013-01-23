@@ -1,51 +1,112 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using CodeEditor.Composition;
 using Debugger.Backend;
 
 namespace Debugger
 {
-	[Export(typeof(IBreakpointProvider))]
-	class BreakpointProvider : IBreakpointProvider
+	[Export (typeof (IBreakpointProvider))]
+	public class BreakpointProvider : IBreakpointProvider
 	{
-		readonly List<IBreakPoint> _breakPoints = new List<IBreakPoint>();
+		private readonly ISourceProvider sourceProvider;
+		readonly List<IBreakpoint> breakpoints = new List<IBreakpoint> ();
 
-		public event Action<IBreakPoint> BreakpointAdded;
-		public event Action<IBreakPoint> BreakPointRemoved;
+		public event Action<IBreakpoint> BreakpointAdded;
+		public event Action<IBreakpoint> BreakpointRemoved;
+		public event Action<IBreakpoint> BreakpointEnabled;
+		public event Action<IBreakpoint> BreakpointDisabled;
 
-		public IEnumerable<IBreakPoint> Breakpoints
+		[ImportingConstructor]
+		public BreakpointProvider (ISourceProvider sourceProvider)
 		{
-			get { return _breakPoints; }
+			this.sourceProvider = sourceProvider;
+			Breakpoint.OnEnable += OnBreakpointEnabled;
+			Breakpoint.OnDisable += OnBreakpointDisabled;
 		}
 
-		public IBreakPoint GetBreakPointAt(string file, int lineNumber)
+		private void OnBreakpointEnabled (IBreakpoint breakpoint)
 		{
-			return _breakPoints.FirstOrDefault(bp => bp.Location.SourceFile == file && bp.Location.LineNumber == lineNumber);
+			if (BreakpointEnabled != null)
+				BreakpointEnabled (breakpoint);
 		}
 
-		public void ToggleBreakPointAt(string fileName, int lineNumber)
+		private void OnBreakpointDisabled (IBreakpoint breakpoint)
 		{
-			Console.WriteLine("Toggling breakpoint at line: "+lineNumber);
-			var breakPoint = GetBreakPointAt(fileName, lineNumber);
+			if (BreakpointDisabled != null)
+				BreakpointDisabled (breakpoint);
+		}
+
+		public IEnumerable<IBreakpoint> Breakpoints
+		{
+			get { return breakpoints; }
+		}
+
+		public IBreakpoint GetBreakpointAt (string file, int lineNumber)
+		{
+			if (!Path.IsPathRooted (file))
+				file = sourceProvider.GetFullPathForFilename (file);
+			return breakpoints.FirstOrDefault (bp => bp.Location.SourceFile == file && bp.Location.LineNumber == lineNumber);
+		}
+
+		public void ToggleBreakpointAt (string fileName, int lineNumber)
+		{
+			LogProvider.Log ("Toggling breakpoint at line: " + lineNumber);
+
+			if (!Path.IsPathRooted (fileName))
+				fileName = sourceProvider.GetFullPathForFilename (fileName);
+
+			var breakPoint = GetBreakpointAt (fileName, lineNumber);
 			if (breakPoint == null)
-				AddBreakPoint(new BreakPoint(new Location(lineNumber,fileName)));
+			{
+				breakPoint = new Breakpoint (new Location (lineNumber, fileName));
+				AddBreakpoint (breakPoint);
+			}
 			else
-				RemoveBreakPoint(breakPoint);
+				RemoveBreakpoint (breakPoint);
 		}
 
-		private void AddBreakPoint(IBreakPoint point)
+		private bool AddBreakpoint (IBreakpoint breakpoint)
 		{
-			_breakPoints.Add(point);
+			if (breakpoints.Contains (breakpoint))
+				return false;
+			breakpoints.Add (breakpoint);
 			if (BreakpointAdded != null)
-				BreakpointAdded(point);
+				BreakpointAdded (breakpoint);
+			return true;
 		}
 
-		private void RemoveBreakPoint(IBreakPoint breakPoint)
+		public bool AddBreakpoint (string file, int lineNumber)
 		{
-			_breakPoints.Remove(breakPoint);
-			if (BreakPointRemoved != null)
-				BreakPointRemoved(breakPoint);
+			if (!Path.IsPathRooted (file))
+				file = sourceProvider.GetFullPathForFilename (file);
+			if (file == null)
+				return false;
+			return AddBreakpoint (new Breakpoint (new Location (lineNumber, file)));
 		}
+
+		public bool RemoveBreakpoint (IBreakpoint breakpoint)
+		{
+			if (!breakpoints.Contains (breakpoint))
+				return false;
+
+			breakpoints.Remove (breakpoint);
+			if (BreakpointRemoved != null)
+				BreakpointRemoved (breakpoint);
+			return true;
+		}
+
+		public bool RemoveBreakpoint (string file, int lineNumber)
+		{
+			if (!Path.IsPathRooted (file))
+				file = sourceProvider.GetFullPathForFilename (file);
+
+			var breakpoint = GetBreakpointAt (file, lineNumber);
+			if (breakpoint != null)
+				return RemoveBreakpoint (breakpoint);
+			return false;
+		}
+
 	}
 }

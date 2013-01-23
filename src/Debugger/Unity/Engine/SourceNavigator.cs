@@ -6,26 +6,36 @@ namespace Debugger.Unity.Engine
 {
 	public interface ISourceNavigator
 	{
-		void ShowSourceLocation(ILocation location);
+		void ShowSourceLocation (ILocation location);
+		void RefreshSource ();
+		ILocation CurrentSource { get; }
 	}
 
-	[Export(typeof(ISourceNavigator))]
+	[Export (typeof (ISourceNavigator))]
 	internal class SourceNavigator : ISourceNavigator
 	{
 		[Import]
 		public SourceWindow SourceWindow { get; set; }
+		public ILocation CurrentSource { get; private set; }
 
-		public void ShowSourceLocation(ILocation location)
+		public void RefreshSource ()
 		{
-			if (!IsValidLocation(location))
-				return;
-			//Trace("{0}:{1}", location.SourceFile, location.LineNumber);
-			SourceWindow.ShowSourceLocation(location.SourceFile, location.LineNumber);
+			SourceWindow.RefreshSource ();
 		}
 
-		private static bool IsValidLocation(ILocation location)
+		public void ShowSourceLocation (ILocation location)
 		{
-			return location.LineNumber >= 1 && File.Exists(location.SourceFile);
+			if (!IsValidLocation (location))
+				return;
+
+			CurrentSource = location;
+			//Trace("{0}:{1}", location.SourceFile, location.LineNumber);
+			SourceWindow.ShowSourceLocation (CurrentSource);
+		}
+
+		static bool IsValidLocation (ILocation location)
+		{
+			return location.LineNumber >= 1 && File.Exists (location.SourceFile);
 		}
 	}
 

@@ -1,27 +1,40 @@
-using MDS=Mono.Debugger.Soft;
+using MDS = Mono.Debugger.Soft;
 using System.Linq;
 
 namespace Debugger.Backend.Sdb
 {
 	public class SdbThreadMirror : Wrapper, IThreadMirror
 	{
-		private MDS.ThreadMirror _threadMirror { get { return _obj as MDS.ThreadMirror; } }
-		private IStackFrame[] _frames;
+		private MDS.ThreadMirror threadMirror { get { return obj as MDS.ThreadMirror; } }
+		private IStackFrame[] frames;
 
-		public long Id { get { return Unwrap<MDS.ThreadMirror>().Id; } }
-		public string Name { get { return Unwrap<MDS.ThreadMirror>().Name; } }
+		public long Id { get { return Unwrap<MDS.ThreadMirror> ().Id; } }
+		public string Name { get { return Unwrap<MDS.ThreadMirror> ().Name; } }
 
-		public SdbThreadMirror(MDS.ThreadMirror threadMirror) : base(threadMirror)
+		public SdbThreadMirror (MDS.ThreadMirror threadMirror)
+			: base (threadMirror)
 		{
-			_frames = threadMirror.GetFrames().Select(x => new SdbStackFrame(x)).ToArray();
 		}
 
-		public MDS.StackFrame[] Frames { get { return Unwrap<MDS.ThreadMirror>().GetFrames(); } }
 
-		public IStackFrame[] GetFrames()
+		public IStackFrame[] GetFrames ()
 		{
-			return _frames;
+			if (frames == null)
+				frames = threadMirror.GetFrames ().Select (x => new SdbStackFrame (x)).ToArray ();
+			return frames;
 		}
 
+		public override bool Equals (object obj)
+		{
+			var right = obj as SdbThreadMirror;
+			if (right == null)
+				return false;
+			return this.GetHashCode () == right.GetHashCode ();
+		}
+
+		public override int GetHashCode ()
+		{
+			return (int)Id;
+		}
 	}
 }

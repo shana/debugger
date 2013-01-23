@@ -1,16 +1,38 @@
+using System;
 using Debugger.Backend;
 
 namespace Debugger
 {
-	class BreakPoint : IBreakPoint
+	public class Breakpoint : IBreakpoint
 	{
-		private readonly Location _location;
+		public ILocation Location { get; set; }
+		public bool Enabled { get; private set; }
+		public static event Action<IBreakpoint> OnEnable;
+		public static event Action<IBreakpoint> OnDisable;
 
-		public BreakPoint(Location location)
+		public Breakpoint (ILocation location)
 		{
-			_location = location;
+			Location = location;
+		}
+	
+		public T Unwrap<T> () where T : class
+		{
+			return null;
 		}
 
-		public ILocation Location { get { return _location;  } }
+		public void Enable ()
+		{
+			Enabled = true;
+			if (OnEnable != null)
+				OnEnable (this);
+		}
+
+		public void Disable ()
+		{
+			Enabled = false;
+			if (OnDisable != null)
+				OnDisable (this);
+		}
+
 	}
 }

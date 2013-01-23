@@ -7,84 +7,100 @@ namespace Debugger.Unity.Engine
 {
 	public interface IDebuggerWindow
 	{
-		void OnGUI();
+		void OnGUI ();
 		string Title { get; }
-		Rect ViewPort { get; }
+		Rect ViewPort { get; set; }
+		DockType DockType { get; set; }
+		bool ExpandWidth { get; set; }
+		bool ExpandHeight { get; set; }
 	}
 
 	[Export]
 	public class DebuggerWindowManager
 	{
+		private readonly List<IDebuggerWindow> windows;
+		private readonly List<IDebuggerWindow> customWindows;
+
+		public Rect ViewPort { get; set; }
+
 		[Export]
 		public class ImportedWindows
 		{
 			[ImportMany]
-			internal IDebuggerWindow[] _importedWindows;
+			internal IDebuggerWindow[] importedWindows;
 		}
 
 		[ImportingConstructor]
-		public DebuggerWindowManager(ImportedWindows windows)
+		public DebuggerWindowManager (ImportedWindows windows)
 		{
-			_windows = windows._importedWindows.Where (w => w.ViewPort.Equals (DebuggerWindow.Default)).ToList ();
-			_customWindows = windows._importedWindows.Where (w => !w.ViewPort.Equals (DebuggerWindow.Default)).ToList ();
+			this.windows = windows.importedWindows.Where (w => w.ViewPort.Equals (DebuggerWindow.Default)).ToList ();
+			customWindows = windows.importedWindows.Where (w => !w.ViewPort.Equals (DebuggerWindow.Default)).ToList ();
 		}
 
-		private readonly List<IDebuggerWindow> _windows;
-		private readonly List<IDebuggerWindow> _customWindows;
-
-		public Rect ViewPort { get; set; }
-
-		public T Get<T>() where T:class
+		public T Get<T> () where T : class
 		{
-			return (_windows.FirstOrDefault(w => w is T) ?? _customWindows.FirstOrDefault(w => w is T)) as T;
+			return (windows.FirstOrDefault (w => w is T) ?? customWindows.FirstOrDefault (w => w is T)) as T;
 		}
 
-		public void Add(IDebuggerWindow debuggerWindow)
+		public void Add (IDebuggerWindow debuggerWindow)
 		{
-			if (debuggerWindow.ViewPort.Equals(DebuggerWindow.Default))
-				_windows.Add(debuggerWindow);
+			if (debuggerWindow.ViewPort.Equals (DebuggerWindow.Default))
+				windows.Add (debuggerWindow);
 			else
-				_customWindows.Add (debuggerWindow);
+				customWindows.Add (debuggerWindow);
 		}
 
 		public void ResetWindows ()
 		{
-			_windows.AddRange(_customWindows);
-			_customWindows.Clear();
-			_customWindows.AddRange(_windows.Where (w => !w.ViewPort.Equals (DebuggerWindow.Default)));
-			_windows.RemoveAll(w => !w.ViewPort.Equals(DebuggerWindow.Default));
+			windows.AddRange (customWindows);
+			customWindows.Clear ();
+			customWindows.AddRange (windows.Where (w => !w.ViewPort.Equals (DebuggerWindow.Default)));
+			windows.RemoveAll (w => !w.ViewPort.Equals (DebuggerWindow.Default));
 		}
 
-		public void OnGUI()
+		public void OnGUI ()
 		{
-			foreach (var window in _customWindows)
+			int gapwidth = 10;
+			float currentX = 0;
+
+			foreach (var window in customWindows)
 			{
+				var x = currentX;
+				var y = window.ViewPort.y;
+				var w = window.ViewPort.width;
+				var h = window.ViewPort.height;
+				if (window.ExpandWidth)
+					w = Screen.width - currentX;
+
+				window.ViewPort = new Rect(x, y, w, h);
+
 				GUI.enabled = true;
 				GUILayout.BeginArea (window.ViewPort, window.Title, GUI.skin.window);
 				window.OnGUI ();
 				GUILayout.EndArea ();
+
+				currentX += w + gapwidth;
 			}
 
 			GUI.enabled = true;
 			GUILayout.BeginArea (ViewPort);
 
-			int windowCount = _windows.Count();
+			int windowCount = windows.Count ();
 			int gaps = windowCount - 1;
-			int gapwidth = 10;
-			int width = (Screen.width - gaps*gapwidth)/windowCount;
+			int width = (Screen.width - gaps * gapwidth) / windowCount;
 
-			var rect = new Rect(0,0, width,ViewPort.height);
+			var rect = new Rect (0, 0, width, ViewPort.height);
 
-			foreach(var window in _windows)
+			foreach (var window in windows)
 			{
 				GUI.enabled = true;
 				GUILayout.BeginArea (rect, window.Title, GUI.skin.window);
 				window.OnGUI ();
-				GUILayout.EndArea();
+				GUILayout.EndArea ();
 				rect.x = rect.x + width + gapwidth;
 			}
-				
-			GUILayout.EndArea();
+
+			GUILayout.EndArea ();
 		}
 	}
 }

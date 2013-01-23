@@ -12,7 +12,6 @@ namespace Debugger.Unity.Standalone
 		{
 			Console.WriteLine("Start: " + AssemblyPath);
 			var compositionContainer = new CompositionContainer(new DirectoryCatalog(AssemblyPath));
-			//compositionContainer.GetExportedValue<IDebuggerSessionAssembler>().Assemble();
 			view = compositionContainer.GetExportedValue<MainWindow>();
 		}
 

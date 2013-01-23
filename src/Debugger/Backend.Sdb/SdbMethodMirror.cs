@@ -1,32 +1,43 @@
 using System.Collections.Generic;
 using System.Linq;
-using Mono.Debugger.Soft;
+using MDS=Mono.Debugger.Soft;
 
 namespace Debugger.Backend.Sdb
 {
 	internal class SdbMethodMirror : Wrapper, IMethodMirror
 	{
-		private MethodMirror _methodMirror { get { return _obj as MethodMirror; } }
-		private readonly List<ILocation> _locations;
+		private MDS.MethodMirror methodMirror { get { return obj as MDS.MethodMirror; } }
+		private readonly List<ILocation> locations;
 
-		public SdbMethodMirror(MethodMirror methodMirror) : base(methodMirror)
+		public SdbMethodMirror (MDS.MethodMirror methodMirror)
+			: base (methodMirror)
 		{
-			_locations = new List<ILocation>(_methodMirror.Locations.Select(SdbLocationFor));
+			locations = new List<ILocation> (this.methodMirror.Locations.Select (SdbLocationFor));
+		}
+
+		public string Name
+		{
+			get { return methodMirror.Name; }
 		}
 
 		public string FullName
 		{
-			get { return _methodMirror.Name; }
+			get { return methodMirror.Name; }
 		}
 
 		public IEnumerable<ILocation> Locations
 		{
-			get { return _locations.ToArray(); }
+			get { return locations.ToArray (); }
 		}
 
-		private static ILocation SdbLocationFor(Location l)
+		public ITypeMirror DeclaringType
 		{
-			return new SdbLocation(l);
+			get { return Cache.Lookup<SdbTypeMirror> (methodMirror.DeclaringType); }
+		}
+
+		private static ILocation SdbLocationFor (MDS.Location l)
+		{
+			return Cache.Lookup<SdbLocation> (l);
 		}
 
 	}

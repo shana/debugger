@@ -41,12 +41,12 @@ namespace Debugger.Unity.Engine
 
 		private void SetBreakPoint(ITextViewLine line)
 		{
-			_breakpointProvider.ToggleBreakPointAt(File().FullName, line.LineNumber);
+			_breakpointProvider.ToggleBreakpointAt(File().FullName, line.LineNumber);
 		}
 
-		private IBreakPoint GetBreakPoint(ITextViewLine line)
+		private IBreakpoint GetBreakPoint(ITextViewLine line)
 		{
-			return _breakpointProvider.GetBreakPointAt(File().FullName, line.LineNumber);
+			return _breakpointProvider.GetBreakpointAt(File().FullName, line.LineNumber);
 		}
 
 		private File File()

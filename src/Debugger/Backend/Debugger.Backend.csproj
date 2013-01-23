@@ -33,11 +33,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="IAssemblyLoadEvent.cs" />
+    <Compile Include="Cache.cs" />
+    <Compile Include="Factory.cs" />
+    <Compile Include="IAssemblyEvent.cs" />
+    <Compile Include="IBreakpointEvent.cs" />
     <Compile Include="IEvent.cs" />
     <Compile Include="IAssemblyMirror.cs" />
-    <Compile Include="IBreakPoint.cs" />
-    <Compile Include="IBreakpointEventRequest.cs" />
+    <Compile Include="IBreakpoint.cs" />
     <Compile Include="IEventRequest.cs" />
     <Compile Include="ILocation.cs" />
     <Compile Include="IMethodMirror.cs" />
@@ -47,12 +49,12 @@
     <Compile Include="IVirtualMachine.cs" />
     <Compile Include="IWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ITypeLoadEvent.cs" />
+    <Compile Include="ITypeEvent.cs" />
     <Compile Include="Wrapper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CodeEditor.Composition">
-      <HintPath>..\..\..\libs\editor\CodeEditor.Composition.dll</HintPath>
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\..\..\libs\Cecil\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>

@@ -12,8 +12,8 @@ namespace Debugger.IntegrationTests
 
 			_vm.OnBreakpoint += e => {
 				// the actual line number on the breakpoint is 8, since 7 is the {
-				Assert.AreEqual(8, ExecutingLocationProvider.Location.LineNumber);
-				Assert.AreEqual(LocationOfSourceFile, ExecutingLocationProvider.Location.SourceFile);
+				Assert.AreEqual(8, ExecutionProvider.Location.LineNumber);
+				Assert.AreEqual(LocationOfSourceFile, ExecutionProvider.Location.SourceFile);
 				Finish();
 			};
 

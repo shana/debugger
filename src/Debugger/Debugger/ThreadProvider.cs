@@ -5,38 +5,37 @@ using Debugger.Backend;
 
 namespace Debugger
 {
-	[Export(typeof(IThreadProvider))]
+	[Export (typeof (IThreadProvider))]
 	public class ThreadProvider : IThreadProvider
 	{
-		readonly IDebuggerSession _session;
-
-		private IList<DebugThread> _threads = new List<DebugThread>();
+		private readonly IVirtualMachine vm;
+		private readonly IExecutionProvider executionProvider;
+		private IList<IThreadMirror> threads = null;
 
 		[ImportingConstructor]
-		public ThreadProvider(IDebuggerSession debuggingSession)
+		public ThreadProvider (IVirtualMachine vm, IExecutionProvider executionProvider)
 		{
-			_session = debuggingSession;
-			_session.VM.OnVMGotSuspended += VMGotSuspended;
+			this.vm = vm;
+			this.executionProvider = executionProvider;
+			executionProvider.Suspended += Suspended;
 		}
 
-		private void VMGotSuspended(IEvent obj)
+		private void Suspended (IThreadMirror thread)
 		{
-			var threads = _session.VM.GetThreads ();
-			_threads = threads.Select(t => new DebugThread(t.Id)).ToList();
+			threads = null;
+			CurrentThread = thread;
 		}
 
-		public IList<DebugThread> Threads {
-			get { return _threads; }
-		}
-	}
-
-	public class DebugThread
-	{
-		public DebugThread(long id)
+		public IEnumerable<IThreadMirror> Threads
 		{
-			Id = id;
+			get
+			{
+				if (threads == null)
+					this.threads = vm.GetThreads ().ToList ();
+				return threads;
+			}
 		}
 
-		public long Id { get; private set; }
+		public IThreadMirror CurrentThread { get; private set; }
 	}
 }

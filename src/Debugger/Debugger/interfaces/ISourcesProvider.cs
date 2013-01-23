@@ -5,10 +5,12 @@ namespace Debugger
 {
 	public interface ISourcesProvider
 	{
+		int Port { get; set; }
+		string Path { get; set; }
 		IList<string> Sources { get; }
-
-		void StartRefreshingSources (Action<object> callback, object state);
-		void StopRefreshingSources();
-		void Stop();
+		void StartRefreshingSources ();
+		void StopRefreshingSources ();
+		event Action<string> FileChanged;
+		event Action SourcesChanged;
 	}
 }

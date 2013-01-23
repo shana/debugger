@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CodeEditor.Composition;
@@ -6,44 +7,47 @@ using UnityEngine;
 
 namespace Debugger.Unity.Engine
 {
-	// [Export(typeof(IDebuggerWindow))]
+	[Export]
+	[Export (typeof (IDebuggerWindow))]
 	public class CallStackDisplay : DebuggerWindow
 	{
-		private readonly IDebuggerSession _debuggingSession;
-		private readonly ISourceNavigator _sourceNavigator;
-		private IEnumerable<IStackFrame> _callFrames;
+		private readonly IDebuggerSession session;
+		private readonly IExecutionProvider executionProvider;
+		private readonly IThreadProvider threadProvider;
+		private readonly ISourceNavigator sourceNavigator;
+		private IEnumerable<IStackFrame> callFrames;
+		private bool dirty;
 
-		// [ImportingConstructor]
-		public CallStackDisplay(IDebuggerSession debuggingSession, ISourceNavigator sourceNavigator)
+		[ImportingConstructor]
+		public CallStackDisplay (IDebuggerSession session, IExecutionProvider executionProvider,
+			IThreadProvider threadProvider, ISourceNavigator sourceNavigator)
 		{
-			_debuggingSession = debuggingSession;
-			_sourceNavigator = sourceNavigator;
-			_debuggingSession.VM.OnVMGotSuspended += VMGotSuspended;
-		}
-
-		private void VMGotSuspended (IEvent obj)
-		{
-			var thread = _debuggingSession.VM.GetThreads().FirstOrDefault();
-			if (thread != null)
-				SetCallFrames(thread.GetFrames());
+			this.session = session;
+			this.executionProvider = executionProvider;
+			this.threadProvider = threadProvider;
+			this.executionProvider.Suspended += RefreshFrames;
+			this.sourceNavigator = sourceNavigator;
 		}
 
 		public override void OnGUI ()
 		{
-			GUI.enabled = _debuggingSession.Active;
+			GUI.enabled = session.Active && !executionProvider.Running;
 
-			var backup = GUI.skin.button.alignment;
-			GUI.skin.button.alignment = TextAnchor.MiddleLeft;
+			if (!executionProvider.Running)
+			{
+				var backup = GUI.skin.button.alignment;
+				GUI.skin.button.alignment = TextAnchor.MiddleLeft;
+				foreach (var frame in callFrames)
+				{
+					if (GUILayout.Button (frame.Method.DeclaringType.Name + "." + frame.Method.Name + " : " + frame.Location.LineNumber))
+						sourceNavigator.ShowSourceLocation (frame.Location);
+				}
 
-			//foreach(var frame in _callFrames)
-			//{
-			//    if (GUILayout.Button(frame.Method.DeclaringType.Name+"."+frame.Method.Name + " : " + frame.Location.LineNumber))
-			//        _sourceNavigator.ShowSourceLocation(Location.FromLocation(frame.Location));
-			//}
-			//if (!_callFrames.Any())
-			//    GUILayout.Label("No stackframes on this threads stack");
+				if (!callFrames.Any ())
+					GUILayout.Label ("No stackframes on this threads stack");
 
-			GUI.skin.button.alignment = backup;
+				GUI.skin.button.alignment = backup;
+			}
 		}
 
 		public override string Title
@@ -51,9 +55,9 @@ namespace Debugger.Unity.Engine
 			get { return "CallStack"; }
 		}
 
-		public void SetCallFrames (IEnumerable<IStackFrame> frames)
+		private void RefreshFrames (IThreadMirror thread)
 		{
-			_callFrames = frames;
+			callFrames = thread.GetFrames ();
 		}
 	}
 }

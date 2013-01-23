@@ -50,11 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BootStrap.cs" />
-    <Compile Include="ExecutionFlowControlWindow.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">

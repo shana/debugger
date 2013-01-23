@@ -14,7 +14,7 @@ namespace Debugger.IntegrationTests
 		protected IVirtualMachine _vm;
 		private bool _finished;
 		private IBreakpointProvider _breakpointProvider;
-		protected IExecutingLocationProvider ExecutingLocationProvider;
+		protected IExecutionProvider ExecutionProvider;
 
 		private static string DebuggerOptions = "loglevel=2,logfile=c:/as3/sdblog";
 
@@ -144,9 +144,9 @@ class "+DebugeeProgramClassName + @"
 		protected void SetupTestWithBreakpoint(int line)
 		{
 			_breakpointProvider = new BreakpointProvider();
-			_breakpointProvider.ToggleBreakPointAt(LocationOfSourceFile, line);
+			_breakpointProvider.ToggleBreakpointAt(LocationOfSourceFile, line);
 			new BreakpointMediator(_vm, _breakpointProvider);
-			ExecutingLocationProvider = new ExecutingLocationProvider(_vm);
+			ExecutionProvider = new ExecutionProvider(_vm);
 		}
 	}
 }

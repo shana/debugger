@@ -10,169 +10,111 @@ using Event = Mono.Debugger.Soft.Event;
 
 namespace Debugger.Unity.Standalone
 {
-	[Export(typeof(IDebuggerSession))]
-	class DummyDebuggerSession : IDebuggerSession
-	{
-		public bool Active { get; private set; }
-		public IVirtualMachine VM { get; private set; }
-		public event Action<string> TraceCallback;
-	}
-
 	[Export]
 	public class MainWindow
 	{
-		private readonly SourceWindow _sourceWindow;
-		private readonly LogWindow _log;
-		private readonly SourcesWindow _sourcesWindow;
+		private readonly SourcesWindow sourcesWindow;
+		private readonly SourceWindow sourceWindow;
+		private readonly LogWindow log;
+		private readonly CallStackDisplay callStackDisplay;
+		private readonly ExecutionWindow executionWindow;
 
-		private readonly IDebuggerSession _debuggingSession;
-		private readonly DebuggerWindowManager _windowManager;
-		private readonly ISourceNavigator _sourceNavigator;
-		
-		private readonly int _debugeeProcessID;
+		private readonly IDebuggerSession session;
+		private readonly DebuggerWindowManager windowManager;
 
 		[ImportingConstructor]
-		public MainWindow (SourceWindow sourceWindow,
+		public MainWindow (
+			IDebuggerSession session,
+			ISourcesProvider sourcesProvider,
+			SourcesWindow sourcesWindow,
+			SourceWindow sourceWindow,
 			LogWindow log,
-			DebuggerWindowManager windowManager,
-			ISourceNavigator sourceNavigator,
-			IDebuggerSession debuggingSession,
-			ISourcesProvider provider)
+			CallStackDisplay callStackDisplay,
+			ExecutionWindow executionWindow,
+			DebuggerWindowManager windowManager
+		)
 		{
-
-			UnityEngine.Debug.Log ("MainWindow");
-
-			_sourceWindow = sourceWindow;
-			_log = log;
-			_windowManager = windowManager;
-			_sourceNavigator = sourceNavigator;
+			this.log = log;
+			this.callStackDisplay = callStackDisplay;
+			this.executionWindow = executionWindow;
+			this.sourcesWindow = sourcesWindow;
+			this.sourceWindow = sourceWindow;
+			this.session = session;
+			this.windowManager = windowManager;
 
 			if (HasArguments ())
-				_debuggingSession = DebuggerSession.Attach (SdbPortFromCommandLine());
-			else
-				_debuggingSession = debuggingSession;
-			_sourcesWindow = windowManager.Get<SourcesWindow>();
+				this.session.Port = SdbPortFromCommandLine ();
 
-			Camera.main.backgroundColor = new Color(0.125f, 0.125f, 0.125f, 0);
+			Camera.main.backgroundColor = new Color (0.125f, 0.125f, 0.125f, 0);
 			Application.runInBackground = true;
 
-			SetupDebuggingWindows();
+			AdjustLayout ();
 
-			AdjustLayout();
-
-			if (!HasArguments())
+			if (!HasArguments ())
 				return;
 
-			_debuggingSession.TraceCallback += s => Trace(s);
-//			_debuggingSession.VMGotSuspended += OnVMGotSuspended;
+			this.session.TraceCallback += s => Trace (s);
+			sourcesProvider.Path = ProjectPathFromCommandLine ();
 
-			_debugeeProcessID = DebugeeProcessIDFromCommandLine();
+			sourcesWindow.StartRefreshing ();
 
-			var client = provider as Client;
-			if (client != null)
-				client.Port = ServicePortFromCommandLine();
-
-			//provider.StartRefreshingSources(null, null);
+			session.Start ();
 		}
 
-		private void SetupDebuggingWindows()
+		public void OnGUI ()
 		{
-			_windowManager.Add(new ExecutionFlowControlWindow(_debuggingSession));
-			_windowManager.Add(new CallStackDisplay(_debuggingSession, _sourceNavigator));
-			_windowManager.Add(new ThreadsDisplay(_debuggingSession, new ThreadProvider(_debuggingSession)));
+			windowManager.OnGUI ();
 		}
 
-
-		private void OnVMGotSuspended(Event e)
-		{
-			//var stackFrames = _debuggingSession.GetMainThread().GetFrames();
-			//if (!stackFrames.Any()) return;
-
-			//var topFrame = stackFrames[0];
-			//_sourceNavigator.ShowSourceLocation(new Location(topFrame.Location));
-		}
-
-		public void OnGUI()
-		{
-			UnityEngine.Debug.Log ("OnGUI");
-//			if (!DebugeeProcessAlive())
-//				Application.Quit();
-
-			//if (UnityEngine.Event.current.type == EventType.Layout)
-			//    _debuggingSession.Update();
-
-			_windowManager.OnGUI();
-		}
-
-		public void FixedUpdate()
-		{
-		}
-
-		private bool DebugeeProcessAlive()
-		{
-			Process process;
-			try
-			{
-				process = Process.GetProcessById(_debugeeProcessID);
-			}
-			catch (ArgumentException)
-			{
-				return false;
-			}
-			return !process.HasExited;
-		}
-
-		private void AdjustLayout()
+		private void AdjustLayout ()
 		{
 			var srcsViewPort = new Rect (0, 0, Screen.width * .2f, Screen.height * .7f);
-			_sourcesWindow.ViewPort = srcsViewPort;
+			sourcesWindow.ViewPort = srcsViewPort;
 
-			var srcViewPort = new Rect (Screen.width * .2f, 0, Screen.width - (Screen.width * .2f), Screen.height * .7f);
-			_sourceWindow.ViewPort = srcViewPort;
-			
+			var srcViewPort = new Rect (Screen.width * .2f, 0, Screen.width * .7f, Screen.height * .7f);
+			sourceWindow.ViewPort = srcViewPort;
+			sourceWindow.ExpandWidth = true;
+
 			var consoleTop = srcViewPort.yMax + VerticalSpacing;
-			_windowManager.ViewPort = new Rect(0, consoleTop, Screen.width, Screen.height - consoleTop);
+			windowManager.ViewPort = new Rect (0, consoleTop, Screen.width, Screen.height - consoleTop);
 
-			_windowManager.ResetWindows();
+			windowManager.ResetWindows ();
 		}
 
 		const int VerticalSpacing = 4;
 
-		bool HasArguments() {
-			return Environment.GetCommandLineArgs().Count() > 2;
+		bool HasArguments ()
+		{
+			return Environment.GetCommandLineArgs ().Count () > 2;
 		}
 
-		private int SdbPortFromCommandLine ()
+		int SdbPortFromCommandLine ()
 		{
 			return ReadIntFromCommandLine (1);
 		}
-		
-		private int ServicePortFromCommandLine ()
+
+		string ProjectPathFromCommandLine ()
 		{
-			return ReadIntFromCommandLine(2);
+			return Environment.GetCommandLineArgs ()[3];
 		}
 
-		private int DebugeeProcessIDFromCommandLine()
+		static int ReadIntFromCommandLine (int index)
 		{
-			return ReadIntFromCommandLine(3);
+			var args = Environment.GetCommandLineArgs ();
+			return int.Parse (args[index]);
 		}
 
-		private static int ReadIntFromCommandLine(int index)
+		void Trace (string format, params object[] args)
 		{
-			var args = Environment.GetCommandLineArgs();
-			return int.Parse(args[index]);
+			var text = string.Format (format, args);
+			Console.WriteLine (text);
+			log.WriteLine (text);
 		}
 
-		private void Trace(string format, params object[] args)
+		public void OnApplicationQuit ()
 		{
-			var text = string.Format(format, args);
-			Console.WriteLine(text);
-			_log.WriteLine(text);
-		}
-
-		public void OnApplicationQuit()
-		{
-//			_debuggingSession.Disconnect();
+			if (session.Active)
+				session.Stop ();
 		}
 	}
 }

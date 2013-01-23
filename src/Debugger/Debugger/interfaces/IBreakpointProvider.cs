@@ -6,10 +6,16 @@ namespace Debugger
 {
 	public interface IBreakpointProvider
 	{
-		IBreakPoint GetBreakPointAt(string file, int lineNumber);
-		void ToggleBreakPointAt(string fileName, int lineNumber);
-		event Action<IBreakPoint> BreakpointAdded;
-		event Action<IBreakPoint> BreakPointRemoved;
-		IEnumerable<IBreakPoint> Breakpoints { get; }
+		IBreakpoint GetBreakpointAt(string file, int lineNumber);
+		void ToggleBreakpointAt(string fileName, int lineNumber);
+		IEnumerable<IBreakpoint> Breakpoints { get; }
+		bool AddBreakpoint (string file, int lineNumber);
+		bool RemoveBreakpoint (IBreakpoint breakpoint);
+		bool RemoveBreakpoint (string file, int lineNumber);
+
+		event Action<IBreakpoint> BreakpointAdded;
+		event Action<IBreakpoint> BreakpointRemoved;
+		event Action<IBreakpoint> BreakpointEnabled;
+		event Action<IBreakpoint> BreakpointDisabled;
 	}
 }

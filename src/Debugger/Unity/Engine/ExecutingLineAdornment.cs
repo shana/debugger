@@ -7,11 +7,11 @@ namespace Debugger.Unity.Engine
 	//[Export(typeof(ITextViewAdornment))]
 	class ExecutingLineAdornment : ITextViewAdornment
 	{
-		IExecutingLocationProvider ExecutingLocationProvider { get; set; }
+		IExecutionProvider ExecutionProvider { get; set; }
 
 		public void Draw (ITextViewLine line, Rect lineRect)
 		{
-			if (line.LineNumber == ExecutingLocationProvider.Location.LineNumber)
+			if (line.LineNumber == ExecutionProvider.Location.LineNumber)
 				Draw (lineRect);
 		}
 

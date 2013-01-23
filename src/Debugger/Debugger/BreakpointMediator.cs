@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Debugger.Backend;
 
@@ -5,46 +7,98 @@ namespace Debugger
 {
 	public class BreakpointMediator
 	{
-		private readonly IVirtualMachine _vm;
-		private readonly IBreakpointProvider _breakpointProvider;
+		private readonly DebuggerSession session;
+		private readonly Dictionary<IBreakpoint, IBreakpoint> breakpoints = new Dictionary<IBreakpoint, IBreakpoint> ();
 
-		public BreakpointMediator (IVirtualMachine vm, IBreakpointProvider breakpointProvider)
+		public BreakpointMediator (DebuggerSession session)
 		{
-			_vm = vm;
-			_breakpointProvider = breakpointProvider;
+			this.session = session;
 
-			_vm.OnTypeLoad += OnTypeLoad;
+			session.TypeProvider.TypeLoaded += OnTypeLoaded;
+			session.TypeProvider.TypeUnloaded += OnTypeUnloaded;
+			session.BreakpointProvider.BreakpointAdded += OnBreakpointAdded;
+			session.BreakpointProvider.BreakpointRemoved += OnBreakpointRemoved;
+			session.BreakpointProvider.BreakpointEnabled += OnBreakpointEnabled;
+			session.BreakpointProvider.BreakpointDisabled += OnBreakpointDisabled;
 		}
 
-		private void OnTypeLoad (ITypeLoadEvent e)
+		private void OnBreakpointEnabled (IBreakpoint breakpoint)
 		{
-			var sourcefiles = e.Type.SourceFiles;
+			IBreakpoint bp;
+			if (breakpoints.TryGetValue (breakpoint, out bp))
+				bp.Enable ();
+			else
+				OnBreakpointAdded (breakpoint);
+		}
 
-			if (e.Type.Name == "TestClass")
-			{
-				int a = 4;
+		private void OnBreakpointDisabled (IBreakpoint breakpoint)
+		{
+			IBreakpoint bp;
+			if (breakpoints.TryGetValue (breakpoint, out bp))
+				bp.Disable ();
+		}
+
+		private void OnBreakpointRemoved (IBreakpoint breakpoint)
+		{
+			IBreakpoint bp;
+			if (breakpoints.TryGetValue (breakpoint, out bp)) {
+				bp.Disable ();
+				breakpoints.Remove (breakpoint);
 			}
+		}
 
-			var breakPoints = _breakpointProvider.Breakpoints;
-			var relevantBreakPoints = breakPoints.Where (bp => sourcefiles.Contains (bp.Location.SourceFile));
-
-			foreach (var bp in relevantBreakPoints)
+		private void OnBreakpointAdded (IBreakpoint breakpoint)
+		{
+			var types = session.SourceProvider.TypesFor (breakpoint.Location.SourceFile);
+			foreach (var type in types)
 			{
-				foreach (var method in e.Type.Methods)
+				foreach (var method in type.Methods)
+				{
+					var bestLocation = BestLocationIn (method, breakpoint);
+					if (bestLocation == null)
+						continue;
+
+					breakpoints.Add (breakpoint, Factory.CreateBreakpoint (bestLocation));
+					break;
+				}
+			}
+		}
+
+		private void OnTypeLoaded (ITypeEvent ev, ITypeMirror type)
+		{
+			if (ev.Cancel)
+				return;
+
+			var sourcefiles = type.SourceFiles;
+			var relevantBreakpoints = session.BreakpointProvider.Breakpoints.Where (bp => sourcefiles.Contains (bp.Location.SourceFile));
+
+			foreach (var bp in relevantBreakpoints)
+			{
+				foreach (var method in type.Methods)
 				{
 					var bestLocation = BestLocationIn (method, bp);
 					if (bestLocation == null)
 						continue;
 
-					_vm.CreateBreakpointRequest (bestLocation).Enable();
+					var b = Factory.CreateBreakpoint (bestLocation);
+					breakpoints.Add (bp, b);
+					b.Enable ();
+					break;
 				}
 			}
 		}
 
-		private ILocation BestLocationIn (IMethodMirror method, IBreakPoint bp)
+		private void OnTypeUnloaded (ITypeMirror typeMirror)
+		{
+			var bps = breakpoints.Where (x => typeMirror.SourceFiles.Contains(x.Value.Location.SourceFile)).ToArray ();
+			foreach (var bp in bps)
+				breakpoints.Remove (bp.Key);
+		}
+
+		private ILocation BestLocationIn (IMethodMirror method, IBreakpoint bp)
 		{
 			var locations = method.Locations;
-			var name = method.FullName;
+			//var name = method.FullName;
 
 			return locations.FirstOrDefault (l => l.SourceFile == bp.Location.SourceFile && l.LineNumber == bp.Location.LineNumber);
 		}

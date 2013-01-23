@@ -15,12 +15,6 @@ namespace Debugger
 			_default = new Location(0, "");
 		}
 
-		public Location(Mono.Debugger.Soft.Location location) : base(location)
-		{
-			_line = location.LineNumber;
-			_file = location.SourceFile;
-		}
-
 		public Location(int line,string file) : base(null)
 		{
 			_line = line;

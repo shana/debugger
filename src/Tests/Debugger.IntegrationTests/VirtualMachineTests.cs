@@ -71,7 +71,7 @@ namespace Debugger.IntegrationTests
 										Assert.AreEqual (9, locations[2].LineNumber);
 										Assert.AreEqual (9, locations[3].LineNumber);
 
-										request = _vm.CreateBreakpointRequest (locations.First ());
+										request = _vm.SetBreakpoint (locations.First ());
 										request.Enable ();
 									}
 								};

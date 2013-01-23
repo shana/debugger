@@ -6,38 +6,60 @@ namespace Debugger.Backend.Sdb
 {
 	public class SdbTypeMirror : Wrapper, ITypeMirror
 	{
-		private readonly TypeMirror _sdbType;
-		private readonly List<IMethodMirror> _methodsMirror;
-		private readonly List<string> _sourceFiles;
-		public IAssemblyMirror Assembly { get; private set; }
+		private readonly TypeMirror sdbType;
+		private IEnumerable<IMethodMirror> methodsMirror;
+		private IEnumerable<string> sourceFiles;
+		private IAssemblyMirror assembly;
+		public IAssemblyMirror Assembly
+		{
+			get
+			{
+				if (assembly == null)
+					assembly = Cache.Lookup<SdbAssemblyMirror> (sdbType.Assembly);
+				return assembly;
+			}
+		}
 
 		public IEnumerable<string> SourceFiles
 		{
-			get { return _sourceFiles; }
+			get
+			{
+				if (sourceFiles == null)
+					sourceFiles = this.sdbType.GetSourceFiles (true);
+				return sourceFiles;
+			}
 		}
 
 		public IEnumerable<IMethodMirror> Methods
 		{
-			get { return _methodsMirror; }
-		}
-
-		private List<IMethodMirror> GetMethodMirrors()
-		{
-				return _sdbType.GetMethods().Select(m => new SdbMethodMirror(m) as IMethodMirror).ToList();
-		}
-
-		public SdbTypeMirror(TypeMirror sdbType, IAssemblyMirror assemblyMirror) : base(sdbType)
-		{
-			_sdbType = sdbType;
-			Assembly = assemblyMirror;
-
-			_methodsMirror = GetMethodMirrors();
-			_sourceFiles = new List<string>(_sdbType.GetSourceFiles(true));
+			get
+			{
+				if (methodsMirror == null)
+					methodsMirror = sdbType.GetMethods ().Select (m => Cache.Lookup<SdbMethodMirror> (m) as IMethodMirror);
+				return methodsMirror;
+			}
 		}
 
 		public string Name
 		{
-			get { return _sdbType.Name; }
+			get { return sdbType.Name; }
+		}
+
+		public string FullName
+		{
+			get { return sdbType.FullName; }
+		}
+
+		public SdbTypeMirror (TypeMirror sdbType)
+			: base (sdbType)
+		{
+			this.sdbType = sdbType;
+			assembly = Cache.Lookup<SdbAssemblyMirror> (sdbType.Assembly);
+		}
+
+		public override string ToString ()
+		{
+			return FullName;
 		}
 	}
 }
