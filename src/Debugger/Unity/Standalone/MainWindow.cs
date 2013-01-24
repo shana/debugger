@@ -1,12 +1,8 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
 using CodeEditor.Composition;
-using Unity.Remoting;
-using Debugger.Backend;
 using Debugger.Unity.Engine;
 using UnityEngine;
-using Event = Mono.Debugger.Soft.Event;
 
 namespace Debugger.Unity.Standalone
 {

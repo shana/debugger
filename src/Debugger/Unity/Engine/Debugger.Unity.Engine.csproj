@@ -105,6 +105,10 @@
       <Name>Debugger %28Debugger\Debugger%29</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\Frontend\Debugger.Frontend.csproj">
+      <Project>{9FC9E578-64AB-43F0-BCF7-F87D18CADAC0}</Project>
+      <Name>Debugger.Frontend</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

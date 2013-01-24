@@ -55,11 +55,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">
-      <Project>{F2D07F82-9C51-4889-8987-4CEF47490751}</Project>
-      <Name>Mono.Debugger.Soft</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\Backend\Debugger.Backend.csproj">
       <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
       <Name>Debugger.Backend</Name>
@@ -68,6 +63,10 @@
       <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
       <Name>Debugger %28Debugger\Debugger%29</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Frontend\Debugger.Frontend.csproj">
+      <Project>{9FC9E578-64AB-43F0-BCF7-F87D18CADAC0}</Project>
+      <Name>Debugger.Frontend</Name>
     </ProjectReference>
     <ProjectReference Include="..\Engine\Debugger.Unity.Engine.csproj">
       <Project>{0E6DFD1C-426E-4F74-AD5B-D908458B3D7B}</Project>

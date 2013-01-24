@@ -46,6 +46,10 @@
       <Name>Debugger.Backend</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\Frontend\Debugger.Frontend.csproj">
+      <Project>{9FC9E578-64AB-43F0-BCF7-F87D18CADAC0}</Project>
+      <Name>Debugger.Frontend</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CodeEditor.Composition">
@@ -73,20 +77,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Breakpoint.cs" />
-    <Compile Include="interfaces\IBreakpointProvider.cs" />
-    <None Include="interfaces\IDebuggerSession-old.cs" />
-    <Compile Include="interfaces\IDebuggerSession.cs" />
-    <Compile Include="interfaces\IExecutionProvider.cs" />
-    <Compile Include="interfaces\ISourcesProvider.cs" />
-    <Compile Include="interfaces\IThreadProvider.cs" />
-    <Compile Include="interfaces\ILogProvider.cs" />
-    <Compile Include="interfaces\ITypeProvider.cs" />
-    <Compile Include="interfaces\ISourceProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BreakpointMediator.cs" />
     <Compile Include="BreakpointProvider.cs" />
-    <None Include="DebuggerSession-old.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="ThreadProvider.cs" />
     <Compile Include="TypeProvider.cs" />
