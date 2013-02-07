@@ -1,84 +1,96 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using CodeEditor.Composition;
 using Debugger.Backend;
-using Debugger.Backend.Event;
 
 namespace Debugger
 {
 	[Export (typeof (ITypeProvider))]
-	class TypeProvider : ITypeProvider
+	public class TypeProvider : ITypeProvider
 	{
-		private readonly IVirtualMachine vm;
-		private readonly List<ITypeMirror> types = new List<ITypeMirror> ();
+		private readonly IVirtualMachine virtualMachine;
+		private readonly List<ITypeMirror> loadedTypes = new List<ITypeMirror> ();
 		private readonly List<string> filter = new List<string> ();
+		private string basePath;
 
-		public event Action<ITypeEvent, ITypeMirror> TypeLoaded;
+		public string BasePath
+		{
+			get { return basePath; }
+			set
+			{
+				basePath = value;
+				AddFilter (basePath);
+			}
+		}
+
+		public IList<ITypeMirror> LoadedTypes { get { return loadedTypes.ToArray (); } }
+		public IList<string> SourceFiles { get { return loadedTypes.SelectMany (t => t.SourceFiles).ToList ().ToArray (); } }
+
+		public event Action<ITypeMirror> TypeLoaded;
 		public event Action<ITypeMirror> TypeUnloaded;
 
 		[ImportingConstructor]
-		internal TypeProvider (IVirtualMachine vm)
+		public TypeProvider (IVirtualMachine virtualMachine)
 		{
-			this.vm = vm;
-			this.vm.OnType += OnType;
-			this.vm.OnAssembly += OnAssembly;
+			this.virtualMachine = virtualMachine;
+			this.virtualMachine.AssemblyLoaded += OnAssemblyLoaded;
+			this.virtualMachine.AssemblyUnloaded += OnAssemblyUnloaded;
+			this.virtualMachine.TypeLoaded += OnTypeLoaded;
 		}
 
-		public ITypeMirror[] LoadedTypes
+		private void OnAssemblyLoaded (IAssemblyEvent ev)
 		{
-			get { return types.ToArray (); }
+			LogProvider.Log (ev.Assembly.Path);
+			ev.Cancel = filter.Count > 0 && !filter.Any (f => ev.Assembly.Path.StartsWith (f));
 		}
 
-		private void OnType (ITypeEvent ev)
+		private void OnAssemblyUnloaded (IAssemblyEvent assemblyEvent)
 		{
-			if (filter.Count > 0 && !filter.Contains (ev.Type.Name))
-				return;
+			var unloaded = new List<ITypeMirror> ();
+			foreach (var loadedType in loadedTypes)
+			{
+				if (loadedType.Assembly.Equals (assemblyEvent.Assembly) && !unloaded.Contains (loadedType))
+					unloaded.Add (loadedType);
+			}
 
+			unloaded.ForEach (t => loadedTypes.Remove (t));
+			if (TypeUnloaded != null)
+				unloaded.ForEach (t => TypeUnloaded (t));
+		}
+
+		private void OnTypeLoaded (ITypeEvent typeEvent)
+		{
+			loadedTypes.Add (typeEvent.Type);
 			if (TypeLoaded != null)
-			{
-				TypeLoaded (ev, ev.Type);
-				if (!ev.Cancel)
-					types.Add (ev.Type);
-			}
+				TypeLoaded (typeEvent.Type);
 		}
 
-		private void OnAssembly (IAssemblyEvent ev)
+		public void AddFilter (string path)
 		{
-			if (ev.State == State.Unload)
-			{
-				var asm = ev.Assembly;
-				var unloadedTypes = types.Where (t => t.Assembly.Equals (asm)).ToArray ();
-				types.RemoveAll (t => unloadedTypes.Contains (t));
-				if (TypeUnloaded != null)
-				{
-					foreach (var type in unloadedTypes)
-						TypeUnloaded (type);
-				}
-			}
+			if (path == null)
+				return;
+			if (!filter.Contains (path))
+				filter.Add (path);
 		}
 
-		public void AddFilter (params string[] typeNames)
-		{
-			foreach (var typeName in typeNames)
-			{
-				if (!filter.Contains (typeName))
-					filter.Add (typeName);
-			}
-		}
-
-		public void RemoveFilter (params string[] typeNames)
-		{
-			foreach (var typeName in typeNames)
-			{
-				if (filter.Contains (typeName))
-					filter.Remove (typeName);
-			}
-		}
-
-		public void RemoveAllFilters ()
+		public void ClearFilters ()
 		{
 			filter.Clear ();
+		}
+
+		public IList<ITypeMirror> TypesFor (string file)
+		{
+			file = MapFile (file);
+			return loadedTypes.Where (t => t.SourceFiles.Contains (file)).ToList ();
+		}
+
+		public string MapFile (string file)
+		{
+			if (Path.IsPathRooted (file))
+				return file;
+			return Path.Combine (basePath, "Assets/" + file);
 		}
 	}
 }

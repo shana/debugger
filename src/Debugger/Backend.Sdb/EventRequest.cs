@@ -10,14 +10,21 @@ namespace Debugger.Backend.Sdb
 
 		public EventRequest (MDS.EventRequest sdbRequest) : base(sdbRequest) {}
 
-		public void Enable()
+		public event Action<IEventRequest> RequestEnabled;
+		public event Action<IEventRequest> RequestDisabled;
+		public virtual void Enable ()
 		{
 			LogProvider.WithErrorLogging (sdbRequest.Enable);
+			if (RequestEnabled != null)
+				RequestEnabled (this);
+
 		}
 
-		public void Disable ()
+		public virtual void Disable ()
 		{
 			LogProvider.WithErrorLogging (sdbRequest.Disable);
+			if (RequestDisabled != null)
+				RequestDisabled (this);
 		}
 	}
 }

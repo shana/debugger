@@ -28,23 +28,23 @@ namespace Debugger
 		public ExecutionProvider (IVirtualMachine vm)
 		{
 			this.vm = vm;
-			this.vm.OnVMSuspended += OnVMSuspended;
-			this.vm.OnStep += OnStep;
-			this.vm.OnThread += OnThread;
-			this.vm.OnBreakpoint += OnBreakpoint;
+			this.vm.VMSuspended += VMSuspended;
+			this.vm.Stepped += OnStepped;
+			this.vm.ThreadStarted += OnThreadStarted;
+			this.vm.BreakpointHit += OnBreakpointHit;
 			currentLocation = null;
 			currentThread = null;
 			running = true;
 		}
 
-		private void OnBreakpoint (IBreakpointEvent ev)
+		private void OnBreakpointHit (IBreakpointEvent ev)
 		{
 			vm.Suspend ();
 			if (Break != null)
 				Break ();
 		}
 
-		private void OnThread (IEvent ev)
+		private void OnThreadStarted (IEvent ev)
 		{
 			if (ev.State == State.Unload)
 			{
@@ -56,7 +56,7 @@ namespace Debugger
 			}
 		}
 
-		private void OnVMSuspended (IEvent suspendingEvent)
+		private void VMSuspended (IEvent suspendingEvent)
 		{
 			lock (obj) {
 				running = false;
@@ -65,7 +65,7 @@ namespace Debugger
 
 				currentThread = suspendingEvent.Thread;
 				var frames = currentThread.GetFrames();
-				currentLocation = frames.Length == 0 ? new Location (0, "") : frames[0].Location;
+				currentLocation = frames.Count == 0 ? new Location (0, "") : frames[0].Location;
 			}
 		}
 
@@ -95,7 +95,7 @@ namespace Debugger
 			Resume ();
 		}
 
-		private void OnStep (IEvent ev)
+		private void OnStepped (IEvent ev)
 		{
 			vm.Suspend ();
 			ev.Request.Disable ();

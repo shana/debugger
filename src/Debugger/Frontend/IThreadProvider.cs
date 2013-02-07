@@ -5,6 +5,6 @@ namespace Debugger
 {
 	public interface IThreadProvider
 	{
-		IEnumerable<IThreadMirror> Threads { get; }
+		IList<IThreadMirror> Threads { get; }
 	}
 }

@@ -3,7 +3,7 @@ using Debugger.Backend;
 
 namespace Debugger
 {
-	public class Breakpoint : IBreakpoint
+	public class Breakpoint : EventRequest, IBreakpoint
 	{
 		public ILocation Location { get; set; }
 		public bool Enabled { get; private set; }
@@ -15,19 +15,14 @@ namespace Debugger
 			Location = location;
 		}
 	
-		public T Unwrap<T> () where T : class
-		{
-			return null;
-		}
-
-		public void Enable ()
+		public override void Enable ()
 		{
 			Enabled = true;
 			if (OnEnable != null)
 				OnEnable (this);
 		}
 
-		public void Disable ()
+		public override void Disable ()
 		{
 			Enabled = false;
 			if (OnDisable != null)

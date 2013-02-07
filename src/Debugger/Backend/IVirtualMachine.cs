@@ -5,27 +5,27 @@ namespace Debugger.Backend
 {
 	public interface IVirtualMachine : IWrapper
 	{
-		event Action<IEvent> OnVM;
-		event Action<IEvent> OnVMSuspended;
-		event Action<IEvent> OnAppDomain;
-		event Action<IEvent> OnThread;
-		event Action<IAssemblyEvent> OnAssembly;
-		event Action<ITypeEvent> OnType;
-		event Action<IBreakpointEvent> OnBreakpoint;
+		IList<IAssemblyMirror> Assemblies { get; }
+		IList<IAssemblyMirror> RootAssemblies { get; }
+		IList<IThreadMirror> Threads { get; } 
 
-		IEnumerable<IAssemblyMirror> Assemblies { get; }
-		IEnumerable<IAssemblyMirror> RootAssemblies { get; }
+		event Action<IEvent> VMStateChanged;
+		event Action<IEvent> VMSuspended;
+		event Action<IEvent> AppDomainLoaded;
+		event Action<IEvent> AppDomainUnloaded;
+		event Action<IEvent> ThreadStarted;
+		event Action<IEvent> ThreadStopped;
+		event Action<IAssemblyEvent> AssemblyLoaded;
+		event Action<IAssemblyEvent> AssemblyUnloaded;
+		event Action<ITypeEvent> TypeLoaded;
+		event Action<IBreakpointEvent> BreakpointHit;
+		event Action<IEvent> Stepped;
 
 		void Attach (int port);
-
-		//IBreakpoint SetBreakpoint (ILocation location);
-		void ClearAllBreakpoints ();
-		IList<IThreadMirror> GetThreads();
+		void Detach ();
 
 		void Suspend ();
 		void Resume ();
 
-		void Detach ();
-		event Action<IEvent> OnStep;
 	}
 }

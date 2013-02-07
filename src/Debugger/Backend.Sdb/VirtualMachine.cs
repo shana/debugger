@@ -10,6 +10,16 @@ using CodeEditor.Composition;
 
 namespace Debugger.Backend.Sdb
 {
+	[Export(typeof(IFactory))]
+	public class VMFactory : IFactory
+	{
+		public void Initialize ()
+		{
+			Factory.Register (() => new VirtualMachine ());
+		}
+	}
+
+
 	[Export (typeof (IVirtualMachine))]
 	public class VirtualMachine : Wrapper, IVirtualMachine
 	{
@@ -20,15 +30,43 @@ namespace Debugger.Backend.Sdb
 
 		private MDS.VirtualMachine vm;
 		private IEventRequest methodEntryRequest;
+		private List<long> filteredAssemblies = new List<long> ();
 
-		public event Action<IEvent> OnVM;
-		public event Action<IEvent> OnVMSuspended;
-		public event Action<IEvent> OnAppDomain;
-		public event Action<IEvent> OnThread;
-		public event Action<IAssemblyEvent> OnAssembly;
-		public event Action<ITypeEvent> OnType;
-		public event Action<IBreakpointEvent> OnBreakpoint;
-		public event Action<IEvent> OnStep;
+		public event Action<IEvent> VMStateChanged;
+		public event Action<IEvent> VMSuspended;
+		public event Action<IEvent> AppDomainLoaded;
+		public event Action<IEvent> AppDomainUnloaded;
+		public event Action<IEvent> ThreadStarted;
+		public event Action<IEvent> ThreadStopped;
+		public event Action<IAssemblyEvent> AssemblyLoaded;
+		public event Action<IAssemblyEvent> AssemblyUnloaded;
+		public event Action<ITypeEvent> TypeLoaded;
+		public event Action<IBreakpointEvent> BreakpointHit;
+		public event Action<IEvent> Stepped;
+
+		public IList<IAssemblyMirror> RootAssemblies
+		{
+			get { return vm.RootDomain.GetAssemblies ().Select (a => Cache.Lookup<SdbAssemblyMirror> (a) as IAssemblyMirror).ToList ().AsReadOnly (); }
+		}
+
+		public IList<IAssemblyMirror> Assemblies
+		{
+			get { return appdomains.SelectMany (a => a.GetAssemblies ().Select (x => Cache.Lookup<SdbAssemblyMirror> (x) as IAssemblyMirror)).ToList ().AsReadOnly (); }
+		}
+
+		public IList<IThreadMirror> Threads {
+			get { return vm.GetThreads ().Select (x => Cache.Lookup<SdbThreadMirror> (x) as IThreadMirror).ToList ().AsReadOnly (); }
+		}
+
+		public Process Process
+		{
+			get { return vm.Process; }
+		}
+
+		public IEnumerable<Exception> Errors
+		{
+			get { return errors; }
+		}
 
 		[ImportingConstructor]
 		public VirtualMachine ()
@@ -46,40 +84,27 @@ namespace Debugger.Backend.Sdb
 		public void Attach (int port)
 		{
 			LogProvider.Log ("Attempting connection at port {0}...", port);
-			this.vm = MDS.VirtualMachineManager.Connect (new IPEndPoint (IPAddress.Loopback, port));
-			this.vm.EnableEvents (
+			vm = MDS.VirtualMachineManager.Connect (new IPEndPoint (IPAddress.Loopback, port));
+			vm.EnableEvents (
 				MDS.EventType.AppDomainCreate,
 				MDS.EventType.AppDomainUnload,
 				MDS.EventType.VMStart,
 				MDS.EventType.VMDeath,
 				MDS.EventType.VMDisconnect,
 				MDS.EventType.AssemblyLoad,
-				MDS.EventType.AssemblyUnload,
-				MDS.EventType.TypeLoad
+				MDS.EventType.AssemblyUnload
 			);
 
-			methodEntryRequest = new EventRequest (this.vm.CreateMethodEntryRequest ());
+			methodEntryRequest = new EventRequest (vm.CreateMethodEntryRequest ());
 			QueueUserWorkItem (EventLoop);
 		}
 
-		public IEnumerable<IAssemblyMirror> RootAssemblies
-		{
-			get { return vm.RootDomain.GetAssemblies ().Select (a => Cache.Lookup<SdbAssemblyMirror> (a) as IAssemblyMirror); }
-		}
-
-		public IEnumerable<IAssemblyMirror> Assemblies
-		{
-			get { return appdomains.SelectMany (a => a.GetAssemblies ().Select (x => Cache.Lookup<SdbAssemblyMirror> (x) as IAssemblyMirror)); }
-		}
-
-		public Process Process
-		{
-			get { return vm.Process; }
-		}
 
 		public void Suspend ()
 		{
 			vm.Suspend ();
+			if (VMSuspended != null)
+				VMSuspended (null);
 		}
 
 		public void Resume ()
@@ -99,11 +124,6 @@ namespace Debugger.Backend.Sdb
 		public void Detach ()
 		{
 			vm.Detach ();
-		}
-
-		public IEnumerable<Exception> Errors
-		{
-			get { return errors; }
 		}
 
 		private void QueueUserWorkItem (Action a)
@@ -140,78 +160,91 @@ namespace Debugger.Backend.Sdb
 
 			bool ret = running;
 
-			if (OnVMSuspended != null && policy != MDS.SuspendPolicy.None)
-			{
-				switch (e.EventType)
-				{
-					case MDS.EventType.VMStart:
-					case MDS.EventType.VMDeath:
-					case MDS.EventType.VMDisconnect:
-					case MDS.EventType.AppDomainCreate:
-					case MDS.EventType.AppDomainUnload:
-					case MDS.EventType.ThreadStart:
-					case MDS.EventType.ThreadDeath:
-					case MDS.EventType.AssemblyLoad:
-					case MDS.EventType.AssemblyUnload:
-					case MDS.EventType.TypeLoad:
-						break;
-					default:
-						LogProvider.Log (e.EventType.ToString ());
-						OnVMSuspended (new Event (e, State.Suspend));
-						break;
-				}
-			}
+			//if (VMSuspended != null && policy != MDS.SuspendPolicy.None)
+			//{
+			//    switch (e.EventType)
+			//    {
+			//        case MDS.EventType.VMStart:
+			//        case MDS.EventType.VMDeath:
+			//        case MDS.EventType.VMDisconnect:
+			//        case MDS.EventType.AppDomainCreate:
+			//        case MDS.EventType.AppDomainUnload:
+			//        case MDS.EventType.ThreadStart:
+			//        case MDS.EventType.ThreadDeath:
+			//        case MDS.EventType.AssemblyLoad:
+			//        case MDS.EventType.AssemblyUnload:
+			//        case MDS.EventType.TypeLoad:
+			//            break;
+			//        default:
+			//            LogProvider.Log (e.EventType.ToString ());
+			//            OnVMSuspended (new Event (e, State.Suspend));
+			//            break;
+			//    }
+			//}
 
 			switch (e.EventType)
 			{
 				case MDS.EventType.VMStart:
-					if (OnVM != null)
-						OnVM (new Event (e, State.Start));
+					if (VMStateChanged != null)
+						VMStateChanged (new Event (e, State.Start));
 					break;
 				case MDS.EventType.VMDeath:
-					if (OnVM != null)
-						OnVM (new Event (e, State.Stop));
+					if (VMStateChanged != null)
+						VMStateChanged (new Event (e, State.Stop));
 					ret = false;
 					break;
 				case MDS.EventType.VMDisconnect:
-					if (OnVM != null)
-						OnVM (new Event (e, State.Disconnect));
+					if (VMStateChanged != null)
+						VMStateChanged (new Event (e, State.Disconnect));
 					ret = false;
 					break;
 				case MDS.EventType.AppDomainCreate:
+					if (AppDomainLoaded != null)
+						AppDomainLoaded (new Event (e));
 					appdomains.Add (((MDS.AppDomainCreateEvent)e).Domain);
 					break;
 				case MDS.EventType.AppDomainUnload:
+					if (AppDomainUnloaded != null)
+						AppDomainUnloaded (new Event (e));
 					if (appdomains.Contains (((MDS.AppDomainUnloadEvent)e).Domain))
-						appdomains.Add (((MDS.AppDomainUnloadEvent)e).Domain);
+						appdomains.Remove (((MDS.AppDomainUnloadEvent)e).Domain);
 					break;
 				case MDS.EventType.ThreadStart:
-					if (OnThread != null)
-						OnThread (new Event (e, State.Start));
+					if (ThreadStarted != null)
+						ThreadStarted (new Event (e));
 					break;
 				case MDS.EventType.ThreadDeath:
-					if (OnThread != null)
-						OnThread (new Event (e, State.Stop));
+					if (ThreadStopped != null)
+						ThreadStopped (new Event (e));
 					break;
 				case MDS.EventType.AssemblyLoad:
-					if (OnAssembly != null)
-						OnAssembly (new AssemblyEvent (e, State.Load));
+					if (AssemblyLoaded != null) {
+						var ev = new AssemblyEvent (e);
+						AssemblyLoaded (ev);
+						if (!ev.Cancel && !filteredAssemblies.Contains (((MDS.AssemblyLoadEvent)e).Assembly.Id))
+						{
+							var tr = vm.CreateTypeLoadRequest ();
+							tr.AssemblyFilter = new MDS.AssemblyMirror [] {((MDS.AssemblyLoadEvent)e).Assembly};
+							tr.Enable ();
+							filteredAssemblies.Add (((MDS.AssemblyLoadEvent)e).Assembly.Id);
+						}
+					}
 					break;
 				case MDS.EventType.AssemblyUnload:
-					if (OnAssembly != null)
-						OnAssembly (new AssemblyEvent (e, State.Unload));
+					if (AssemblyUnloaded != null)
+						AssemblyUnloaded (new AssemblyEvent (e));
 					break;
 				case MDS.EventType.TypeLoad:
-					if (OnType != null)
-						OnType (new TypeEvent (e, State.Load));
+					if (TypeLoaded != null)
+						TypeLoaded (new TypeEvent (e));
 					break;
 				case MDS.EventType.Breakpoint:
-					if (OnBreakpoint != null)
-						OnBreakpoint (new BreakpointEvent (e, State.None));
+					if (BreakpointHit != null)
+						BreakpointHit (new BreakpointEvent (e));
 					break;
 				case MDS.EventType.Step:
-					if (OnStep != null)
-						OnStep (new Event (e, State.None));
+					if (Stepped != null)
+						Stepped (new Event (e));
 					break;
 				case MDS.EventType.MethodEntry:
 					LogProvider.Log (((MDS.MethodEntryEvent)e).Method.FullName);
@@ -236,18 +269,5 @@ namespace Debugger.Backend.Sdb
 			vm.Detach ();
 		}
 
-		public void ResumeIfNeeded ()
-		{
-		}
-
-		public IList<IThreadMirror> GetThreads ()
-		{
-			return vm.GetThreads ().Select (x => Cache.Lookup<SdbThreadMirror> (x) as IThreadMirror).ToList ();
-		}
-
-		public void ClearAllBreakpoints ()
-		{
-			vm.ClearAllBreakpoints ();
-		}
 	}
 }

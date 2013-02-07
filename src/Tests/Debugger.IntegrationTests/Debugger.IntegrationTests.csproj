@@ -8,8 +8,8 @@
     <ProjectGuid>{E169204B-D59F-4CDA-A0A9-CBCEF7F538B3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeEditor.Debugger.IntegrationTests</RootNamespace>
-    <AssemblyName>CodeEditor.Debugger.IntegrationTests</AssemblyName>
+    <RootNamespace>Debugger.IntegrationTests</RootNamespace>
+    <AssemblyName>Debugger.IntegrationTests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="'$(SolutionDir)' == ''">..\..\..\</SolutionDir>

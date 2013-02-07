@@ -25,7 +25,7 @@ namespace Debugger.Backend.Sdb
 			get { return methodMirror.Name; }
 		}
 
-		public IEnumerable<ILocation> Locations
+		public IList<ILocation> Locations
 		{
 			get { return locations.ToArray (); }
 		}
@@ -38,6 +38,19 @@ namespace Debugger.Backend.Sdb
 		private static ILocation SdbLocationFor (MDS.Location l)
 		{
 			return Cache.Lookup<SdbLocation> (l);
+		}
+
+		public override int GetHashCode ()
+		{
+			return (DeclaringType.Assembly.FullName + "_" + DeclaringType.FullName + "_" + FullName).GetHashCode ();
+		}
+
+		public override bool Equals (object o)
+		{
+			var right = o as SdbMethodMirror;
+			if (right == null)
+				return false;
+			return this.GetHashCode () == right.GetHashCode ();
 		}
 
 	}

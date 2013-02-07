@@ -1,46 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CodeEditor.Debugger.Backend;
-using CodeEditor.Debugger.Implementation;
+﻿using Debugger.Backend;
 using Moq;
 using NUnit.Framework;
 
-namespace CodeEditor.Debugger.Tests
+namespace Debugger.Tests
 {
 	[TestFixture]
-	public class SourceToTypeMapperTests
+	public class SourceToTypeMapperTests : BaseDebuggerSessionTest
 	{
-		private Mock<IDebuggerSession> _session;
-		private Mock<ITypeMirrorProvider> _typeProvider;
-		private SourceToTypeMapper _mapper;
-
 		[SetUp]
-		public void Setup()
+		public void Setup ()
 		{
-			_session = new Mock<IDebuggerSession>();
-			_typeProvider = new Mock<ITypeMirrorProvider>();
-			_mapper = new SourceToTypeMapper(_typeProvider.Object);
+			vm.Start ();
+			session.Start ();
+			vm.LoadAssembly (typeof(type1).Assembly.Location);
+		}
+
+		[TearDown]
+		public void Teardown ()
+		{
+			session.Stop ();
 		}
 
 		[Test]
-		public void NoTypesForUnknownFile()
+		public void NoTypesForUnknownFile ()
 		{
-			var types = _mapper.TypesFor("somenonexistingfile.cs");
-			CollectionAssert.IsEmpty(types);
+			var types = typeProvider.TypesFor ("somenonexistingfile.cs");
+			CollectionAssert.IsEmpty (types);
 		}
 
 		[Test]
-		public void TypeIsFoundByItsSourceFile()
+		public void TypeIsFoundByItsSourceFile ()
 		{
-			var debugType = new Mock<ITypeMirror>();
-			debugType.SetupGet(t => t.SourceFiles).Returns(new[] { "myfile.cs" });
-
-			_typeProvider.Raise(tp => tp.TypeLoaded += null, debugType.Object);
-
-			var types = _mapper.TypesFor("myfile.cs");
-			CollectionAssert.AreEquivalent(new[]{debugType.Object}, types);
+			var types = typeProvider.TypesFor ("type1.cs");
+			CollectionAssert.AreEquivalent (typeProvider.LoadedTypes, types);
 		}
 	}
 }

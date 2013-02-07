@@ -64,10 +64,8 @@
     <Reference Include="CodeEditor.Text.UI">
       <HintPath>..\..\..\libs\editor\CodeEditor.Text.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil, Version=0.6.9.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Mono.Cecil">
       <HintPath>..\..\..\libs\Cecil\Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -79,13 +77,12 @@
     <Compile Include="Breakpoint.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BreakpointMediator.cs" />
     <Compile Include="BreakpointProvider.cs" />
+    <Compile Include="EventRequest.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="ThreadProvider.cs" />
     <Compile Include="TypeProvider.cs" />
     <Compile Include="ExecutionProvider.cs" />
-    <Compile Include="SourceProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DebuggerSession.cs" />

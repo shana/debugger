@@ -1,4 +1,5 @@
 using System;
+using CodeEditor.Composition.Hosting;
 
 namespace Debugger.Backend
 {
@@ -38,13 +39,30 @@ namespace Debugger.Backend
 		}
 	}
 
+	public interface IFactory
+	{
+		void Initialize ();
+	}
+
 	public static class Factory
 	{
+		public static Func<IVirtualMachine> CreateVirtualMachine {get; private set;} 
 		public static Func<ILocation, IBreakpoint> CreateBreakpoint {get; private set; }
 		public static Func<IThreadMirror, IEventRequest> CreateStepRequest {get; private set; }
 		public static Func<IEventRequest> CreateMethodEntryRequest {get; private set; }
 		public static Func<IEventRequest> CreateMethodExitRequest {get; private set; }
 		public static Func<string, int, ILocation> CreateLocation { get; private set; }
+
+		static Factory ()
+		{
+			var compositionContainer = new CompositionContainer (new DirectoryCatalog (Environment.CurrentDirectory));
+			compositionContainer.GetExportedValue<IFactory> ().Initialize ();
+		}
+
+		public static void Register (Func<IVirtualMachine> createVM)
+		{
+			CreateVirtualMachine = createVM;
+		}
 
 		public static void Register (
 			Func<ILocation, IBreakpoint> createBreakpoint, 

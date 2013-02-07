@@ -23,8 +23,8 @@ namespace Debugger.Backend.Sdb
 				return sdbMethodMirror;
 			}
 		}
-		public BreakpointEvent (MDS.Event ev, State state)
-			: base (ev, state)
+		public BreakpointEvent (MDS.Event ev)
+			: base (ev)
 		{
 		}
 	}

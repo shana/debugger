@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mono.Cecil;
 
 namespace Debugger.Backend
 {
@@ -6,8 +7,8 @@ namespace Debugger.Backend
 	{
 		string Name { get; }
 		IAssemblyMirror Assembly { get; }
-		IEnumerable<string> SourceFiles { get; }
-		IEnumerable<IMethodMirror> Methods { get; }
+		IList<string> SourceFiles { get; }
+		IList<IMethodMirror> Methods { get; }
 		string FullName { get; }
 	}
 }

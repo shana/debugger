@@ -1,25 +1,27 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using CodeEditor.Composition;
 using Debugger.Backend;
 
 namespace Debugger
 {
 	public class BreakpointMediator
 	{
-		private readonly DebuggerSession session;
+		private readonly ITypeProvider typeProvider;
+		private readonly IBreakpointProvider breakpointProvider;
 		private readonly Dictionary<IBreakpoint, IBreakpoint> breakpoints = new Dictionary<IBreakpoint, IBreakpoint> ();
 
-		public BreakpointMediator (DebuggerSession session)
+		[ImportingConstructor]
+		public BreakpointMediator (ITypeProvider typeProvider, IBreakpointProvider breakpointProvider)
 		{
-			this.session = session;
-
-			session.TypeProvider.TypeLoaded += OnTypeLoaded;
-			session.TypeProvider.TypeUnloaded += OnTypeUnloaded;
-			session.BreakpointProvider.BreakpointAdded += OnBreakpointAdded;
-			session.BreakpointProvider.BreakpointRemoved += OnBreakpointRemoved;
-			session.BreakpointProvider.BreakpointEnabled += OnBreakpointEnabled;
-			session.BreakpointProvider.BreakpointDisabled += OnBreakpointDisabled;
+			this.typeProvider = typeProvider;
+			this.breakpointProvider = breakpointProvider;
+			typeProvider.TypeLoaded += OnTypeLoaded;
+			typeProvider.TypeUnloaded += OnTypeUnloaded;
+			breakpointProvider.BreakpointAdded += OnBreakpointAdded;
+			breakpointProvider.BreakpointRemoved += OnBreakpointRemoved;
+			breakpointProvider.BreakpointEnabled += OnBreakpointEnabled;
+			breakpointProvider.BreakpointDisabled += OnBreakpointDisabled;
 		}
 
 		private void OnBreakpointEnabled (IBreakpoint breakpoint)
@@ -49,7 +51,7 @@ namespace Debugger
 
 		private void OnBreakpointAdded (IBreakpoint breakpoint)
 		{
-			var types = session.SourceProvider.TypesFor (breakpoint.Location.SourceFile);
+			var types = typeProvider.TypesFor (breakpoint.Location.SourceFile);
 			foreach (var type in types)
 			{
 				foreach (var method in type.Methods)
@@ -64,13 +66,10 @@ namespace Debugger
 			}
 		}
 
-		private void OnTypeLoaded (ITypeEvent ev, ITypeMirror type)
+		private void OnTypeLoaded (ITypeMirror type)
 		{
-			if (ev.Cancel)
-				return;
-
 			var sourcefiles = type.SourceFiles;
-			var relevantBreakpoints = session.BreakpointProvider.Breakpoints.Where (bp => sourcefiles.Contains (bp.Location.SourceFile));
+			var relevantBreakpoints = breakpointProvider.Breakpoints.Where (bp => sourcefiles.Contains (bp.Location.SourceFile));
 
 			foreach (var bp in relevantBreakpoints)
 			{
@@ -97,10 +96,7 @@ namespace Debugger
 
 		private ILocation BestLocationIn (IMethodMirror method, IBreakpoint bp)
 		{
-			var locations = method.Locations;
-			//var name = method.FullName;
-
-			return locations.FirstOrDefault (l => l.SourceFile == bp.Location.SourceFile && l.LineNumber == bp.Location.LineNumber);
+			return method.Locations.FirstOrDefault (l => l.SourceFile == bp.Location.SourceFile && l.LineNumber == bp.Location.LineNumber);
 		}
 	}
 }

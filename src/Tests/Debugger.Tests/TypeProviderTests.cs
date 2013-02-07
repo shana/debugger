@@ -1,80 +1,72 @@
-﻿using CodeEditor.Debugger.Backend;
-using CodeEditor.Debugger.Implementation;
+﻿using Debugger.Backend;
 using Moq;
 using NUnit.Framework;
+using System.Linq;
 
-namespace CodeEditor.Debugger.Tests
+namespace Debugger.Tests
 {
 	[TestFixture]
-	public class TypeProviderTests
+	public class TypeProviderTests : BaseDebuggerSessionTest
 	{
-		private Mock<IDebuggerSession> _session;
-		private TypeMirrorProvider _typeMirrorProvider;
-
 		[SetUp]
-		public void Setup()
+		public void Setup ()
 		{
-			_session = new Mock<IDebuggerSession>();
-			_typeMirrorProvider = new TypeMirrorProvider(_session.Object);
+			vm.Start ();
+			session.Start ();
+		}
+
+		[TearDown]
+		public void Teardown ()
+		{
+			session.Stop ();
 		}
 
 		[Test]
-		public void LoadedTypes_EmptyOnStartup()
+		public void LoadedTypes_EmptyOnStartup ()
 		{
-			CollectionAssert.IsEmpty(_typeMirrorProvider.LoadedTypesMirror);
+			vm.Reset ();
+			CollectionAssert.IsEmpty (typeProvider.LoadedTypes);
 		}
 
 		[Test]
-		public void OneLoadedType_LoadedTypes_HasThatType()
+		public void OneLoadedType_LoadedTypes_HasThatType ()
 		{
-			var debugType = new Mock<ITypeMirror>();
-			_session.Raise(s => s.TypeLoaded += null, debugType.Object);
-			CollectionAssert.AreEquivalent(new[] { debugType.Object }, _typeMirrorProvider.LoadedTypesMirror);
+			vm.Reset ();
+			vm.LoadAssembly (typeof(type1).Assembly.Location);
+			Assert.AreEqual (1, typeProvider.LoadedTypes.Count);
+			CollectionAssert.AreEquivalent (typeProvider.LoadedTypes.Select (t => t.FullName), new string[] { typeof (type1).FullName });
 		}
 
 		[Test]
-		public void TypeWhoseAssemblyUnloaded_LoadedTypes_IsEmpty()
+		public void TypeWhoseAssemblyUnloaded_LoadedTypes_IsEmpty ()
 		{
-			var debugType = new Mock<ITypeMirror>();
-			var debugAssembly = new Mock<IAssemblyMirror>();
-			SetAssemblyForType(debugType, debugAssembly);
-
-			_session.Raise(s => s.TypeLoaded += null, debugType.Object);
-			_session.Raise(s => s.AssemblyUnloaded += null, debugAssembly.Object);
-
-			CollectionAssert.IsEmpty(_typeMirrorProvider.LoadedTypesMirror);
-		}
-
-		private static void SetAssemblyForType(Mock<ITypeMirror> debugType, Mock<IAssemblyMirror> debugAssembly)
-		{
-			debugType.SetupGet(d => d.Assembly).Returns(debugAssembly.Object);
+			vm.Reset ();
+			vm.LoadAssembly (typeof(type1).Assembly.Location);
+			vm.UnloadAssembly (typeof (type1).Assembly.FullName);
+			CollectionAssert.IsEmpty (typeProvider.LoadedTypes);
 		}
 
 		[Test]
-		public void TypeLoaded_PublishesEvent()
+		public void TypeLoaded_PublishesEvent ()
 		{
-			var debugType = new Mock<ITypeMirror>();
-
-			ITypeMirror loadedTypeMirror = null;
-			_typeMirrorProvider.TypeLoaded += t => loadedTypeMirror = t;
-			_session.Raise(s => s.TypeLoaded += null, debugType.Object);
-			Assert.AreEqual(debugType.Object,loadedTypeMirror);
+			vm.Reset ();
+			ITypeMirror loadedType = null;
+			typeProvider.TypeLoaded += mirror => loadedType = mirror;
+			vm.LoadAssembly (typeof(type1).Assembly.Location);
+			typeProvider.TypeLoaded += null;
+			Assert.IsNotNull (loadedType);
 		}
 
 		[Test]
-		public void AssemblyUnload_Publishes_TypeUnloadEvents()
+		public void AssemblyUnload_Publishes_TypeUnloadEvents ()
 		{
-			var debugType = new Mock<ITypeMirror>();
-			var debugAssembly = new Mock<IAssemblyMirror>();
-			SetAssemblyForType(debugType,debugAssembly);
-
-			ITypeMirror unloadedTypeMirror = null;
-			_typeMirrorProvider.TypeUnloaded += t => unloadedTypeMirror = t;
-			_session.Raise(s => s.TypeLoaded += null, debugType.Object);
-			_session.Raise(s => s.AssemblyUnloaded += null, debugAssembly.Object);
-
-			Assert.AreEqual(debugType.Object, unloadedTypeMirror);
+			vm.Reset ();
+			vm.LoadAssembly (typeof(type1).Assembly.Location);
+			ITypeMirror unloadedType = null;
+			typeProvider.TypeUnloaded += mirror => unloadedType = mirror;
+			vm.UnloadAssembly (typeof (type1).Assembly.FullName);
+			typeProvider.TypeLoaded += null;
+			Assert.IsNotNull (unloadedType);
 		}
-
 	}
 }

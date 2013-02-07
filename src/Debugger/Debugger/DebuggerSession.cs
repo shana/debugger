@@ -11,33 +11,67 @@ namespace Debugger
 	[CodeEditor.Composition.Export (typeof (IDebuggerSession))]
 	public class DebuggerSession : IDebuggerSession
 	{
-		public IVirtualMachine VM { get; private set; }
-		public ITypeProvider TypeProvider { get; private set; }
-		public ISourceProvider SourceProvider { get; private set; }
-		public IExecutionProvider ExecutionProvider { get; private set; }
-		public IThreadProvider ThreadProvider { get; private set; }
-		public IBreakpointProvider BreakpointProvider { get; set; }
-
-		public event Action<string> TraceCallback;
-		public event Action Loaded;
-
-		static string[] Ignore = {
-			"mscorlib",
-			"System",
-			"Unity",
-			"ICSharpCode",
-			"Mono",
-			"I18N",
-			"nunit",
-			"Boo"
-		};
-
-
 		private ProcessStartInfo psi;
 		private string options;
 		private object obj = new object ();
 		private IThreadMirror mainThread;
 		private bool active;
+		private IVirtualMachine vm;
+		private ITypeProvider typeProvider;
+		private IExecutionProvider executionProvider;
+		private IThreadProvider threadProvider;
+		private IBreakpointProvider breakpointProvider;
+
+		public IVirtualMachine VM {
+			get {
+				if (vm == null)
+					vm = Factory.CreateVirtualMachine ();
+				return vm;
+			}
+		}
+
+		public ITypeProvider TypeProvider
+		{
+			get
+			{
+				if (typeProvider == null)
+					typeProvider = new TypeProvider (VM);
+				return typeProvider;
+			}
+		}
+
+		public IExecutionProvider ExecutionProvider
+		{
+			get
+			{
+				if (executionProvider == null)
+					executionProvider = new ExecutionProvider (VM);
+				return executionProvider;
+			}
+		}
+
+		public IThreadProvider ThreadProvider
+		{
+			get
+			{
+				if (threadProvider == null)
+					threadProvider = new ThreadProvider (VM, ExecutionProvider);
+				return threadProvider;
+			}
+		}
+
+		public IBreakpointProvider BreakpointProvider
+		{
+			get
+			{
+				if (breakpointProvider == null)
+					breakpointProvider = new BreakpointProvider (TypeProvider);
+				return breakpointProvider;
+			}
+		}
+
+		public event Action<string> TraceCallback;
+		public event Action Loaded;
 
 		public string[] Params { get; set; }
 		public int Port { get; set; }
@@ -64,17 +98,20 @@ namespace Debugger
 			}
 		}
 
+		public DebuggerSession ()
+		{
+		}
+
 		[CodeEditor.Composition.ImportingConstructor]
 		public DebuggerSession (IVirtualMachine vm, ITypeProvider typeProvider,
-			ISourceProvider sourceProvider, IExecutionProvider executionProvider,
-			IThreadProvider threadProvider, IBreakpointProvider breakpointProvider)
+			IExecutionProvider executionProvider, IThreadProvider threadProvider,
+			IBreakpointProvider breakpointProvider)
 		{
-			this.TypeProvider = typeProvider;
-			this.SourceProvider = sourceProvider;
-			this.ExecutionProvider = executionProvider;
-			this.ThreadProvider = threadProvider;
-			this.BreakpointProvider = breakpointProvider;
-			this.VM = vm;
+			this.typeProvider = typeProvider;
+			this.executionProvider = executionProvider;
+			this.threadProvider = threadProvider;
+			this.breakpointProvider = breakpointProvider;
+			this.vm = vm;
 		}
 
 		//public DebuggerSession (ProcessStartInfo psi, string options)
@@ -90,7 +127,7 @@ namespace Debugger
 			LogProvider.Debug += LogOnDebug;
 			LogProvider.Error += LogOnError;
 
-			VM.OnVM += OnVm;
+			VM.VMStateChanged += OnVMStateChanged;
 			VM.Attach (Port);
 		}
 
@@ -101,11 +138,11 @@ namespace Debugger
 				active = false;
 				mainThread = null;
 //			}
-			VM.OnVM -= OnVm;
+			VM.VMStateChanged -= OnVMStateChanged;
 			VM.Detach ();
 		}
 
-		private void OnVm (IEvent ev)
+		private void OnVMStateChanged (IEvent ev)
 		{
 			if (ev.State != State.Start) {
 				LogOnDebug ("VM disconnected");

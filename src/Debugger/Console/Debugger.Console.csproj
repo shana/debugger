@@ -75,6 +75,10 @@
       <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
       <Name>Debugger %28Debugger\Debugger%29</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Frontend\Debugger.Frontend.csproj">
+      <Project>{9FC9E578-64AB-43F0-BCF7-F87D18CADAC0}</Project>
+      <Name>Debugger.Frontend</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

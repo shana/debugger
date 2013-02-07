@@ -76,7 +76,7 @@ namespace Debugger.IntegrationTests
 									}
 								};
 
-			_vm.OnBreakpoint += e => {
+			_vm.BreakpointHit += e => {
 										Assert.AreEqual ("Main", e.Method.Name);
 										Assert.AreSame (e.Request, request);
 										Finish ();

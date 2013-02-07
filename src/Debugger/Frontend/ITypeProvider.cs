@@ -1,15 +1,22 @@
 using System;
+using System.Collections.Generic;
 using Debugger.Backend;
 
 namespace Debugger
 {
 	public interface ITypeProvider
 	{
-		event Action<ITypeEvent, ITypeMirror> TypeLoaded;
+		string BasePath { get; set; }
+		IList<ITypeMirror> LoadedTypes { get; }
+		IList<string> SourceFiles { get; } 
+
+		event Action<ITypeMirror> TypeLoaded;
 		event Action<ITypeMirror> TypeUnloaded;
-		ITypeMirror[] LoadedTypes { get; }
-		void AddFilter (params string[] typeNames);
-		void RemoveFilter (params string[] typeNames);
-		void RemoveAllFilters ();
+
+		void AddFilter (string path);
+		void ClearFilters ();
+		IList<ITypeMirror> TypesFor(string file);
+		string MapFile (string file);
+		
 	}
 }

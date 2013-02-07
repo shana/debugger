@@ -12,6 +12,18 @@ namespace Debugger
 		private readonly IExecutionProvider executionProvider;
 		private IList<IThreadMirror> threads = null;
 
+		public IList<IThreadMirror> Threads
+		{
+			get
+			{
+				if (threads == null)
+					threads = vm.Threads;
+				return threads;
+			}
+		}
+
+		public IThreadMirror CurrentThread { get; private set; }
+
 		[ImportingConstructor]
 		public ThreadProvider (IVirtualMachine vm, IExecutionProvider executionProvider)
 		{
@@ -25,17 +37,5 @@ namespace Debugger
 			threads = null;
 			CurrentThread = thread;
 		}
-
-		public IEnumerable<IThreadMirror> Threads
-		{
-			get
-			{
-				if (threads == null)
-					this.threads = vm.GetThreads ().ToList ();
-				return threads;
-			}
-		}
-
-		public IThreadMirror CurrentThread { get; private set; }
 	}
 }

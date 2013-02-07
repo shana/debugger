@@ -8,8 +8,8 @@
     <ProjectGuid>{3EBF45F9-8587-425F-A438-D699488850BB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeEditor.Debugger.Tests</RootNamespace>
-    <AssemblyName>CodeEditor.Debugger.Tests</AssemblyName>
+    <RootNamespace>Debugger.Tests</RootNamespace>
+    <AssemblyName>Debugger.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <StartupObject>
@@ -34,6 +34,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <SolutionDir Condition="'$(SolutionDir)' == ''">..\..\..\</SolutionDir>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -65,26 +66,41 @@
       <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
       <Name>Debugger.Backend</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Debugger\Debugger\Debugger.csproj">
-      <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
-      <Name>Debugger %28Debugger\Debugger%29</Name>
+    <ProjectReference Include="..\..\Debugger\Frontend\Debugger.Frontend.csproj">
+      <Project>{9FC9E578-64AB-43F0-BCF7-F87D18CADAC0}</Project>
+      <Name>Debugger.Frontend</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Debugger.DummyProviders\Debugger.DummyProviders.csproj">
+      <Project>{43EEB420-AB01-42EB-A1A0-69BCA815E5F1}</Project>
+      <Name>Debugger.DummyProviders</Name>
+    </ProjectReference>
+    <ProjectReference Include="TestLibraries\TestLibrary1\TestLibrary1.csproj">
+      <Project>{53EABAB3-883B-4DC2-9C3E-6E6A611CF83C}</Project>
+      <Name>TestLibrary1</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseDebuggerSessionTest.cs" />
     <Compile Include="TypeProviderTests.cs" />
     <Compile Include="SourceToTypeMapperTests.cs" />
-    <Compile Include="UnityServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CodeEditor.Composition">
-      <HintPath>..\..\..\libs\CodeEditor.Composition.dll</HintPath>
+      <HintPath>..\..\..\libs\editor\CodeEditor.Composition.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\libs\Cecil\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb">
+      <HintPath>..\..\..\..\unity\Tools\Mono.Cecil\Mono.Cecil.Pdb.dll</HintPath>
     </Reference>
     <Reference Include="Moq">
-      <HintPath>..\..\..\libs\Moq.dll</HintPath>
+      <HintPath>..\..\..\..\unity\Tools\Moq\Moq.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)..\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\unity\Tools\NUnit\bin\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>

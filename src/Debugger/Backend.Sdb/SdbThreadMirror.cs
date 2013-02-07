@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using MDS = Mono.Debugger.Soft;
 using System.Linq;
 
@@ -16,8 +17,7 @@ namespace Debugger.Backend.Sdb
 		{
 		}
 
-
-		public IStackFrame[] GetFrames ()
+		public IList<IStackFrame> GetFrames ()
 		{
 			if (frames == null)
 				frames = threadMirror.GetFrames ().Select (x => new SdbStackFrame (x)).ToArray ();

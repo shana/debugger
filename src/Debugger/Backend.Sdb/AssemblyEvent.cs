@@ -20,8 +20,8 @@ namespace Debugger.Backend.Sdb
 			}
 		}
 
-		public AssemblyEvent (MDS.Event ev, State state)
-			: base (ev, state)
+		public AssemblyEvent (MDS.Event ev)
+			: base (ev)
 		{ }
 	}
 }

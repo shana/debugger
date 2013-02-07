@@ -5,12 +5,14 @@ namespace Debugger
 {
 	public interface IExecutionProvider
 	{
-		bool Running { get; }
-		ILocation Location { get; }
 		IThreadMirror CurrentThread { get; }
-		void Resume ();
-		event Action<IThreadMirror> Suspended;
+		ILocation Location { get; }
+		bool Running { get; }
+
 		event Action Break;
+		event Action<IThreadMirror> Suspended;
+
+		void Resume ();
 		void Step ();
 	}
 }

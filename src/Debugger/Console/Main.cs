@@ -13,18 +13,18 @@ namespace Debugger
 	public class Program
 	{
 		static int Port { get; set; }
+		static string Path { get; set; }
 
 		DebuggerSession session;
-		BreakpointMediator breakpointMediator;
 
 		delegate bool CommandHandler (string command, Stack<string> commands, Dictionary<string, CommandHandler> calls);
 		Dictionary<string, Dictionary<string, CommandHandler>> Commands = new Dictionary<string, Dictionary<string, CommandHandler>> ();
-		//Dictionary<string, Tuple<Func<string, Stack<string>, bool>, Dictionary<string, Func<string, Stack<string>, bool>>>> Commands = new Dictionary<string, Tuple<Func<string, Stack<string>, bool>, Dictionary<string, Func<string, Stack<string>, bool>>>> ();
 
 		static void Main (string[] args)
 		{
 			var p = new OptionSet () {
-				{ "p|port=",	v => Port = int.Parse(v) },
+				{ "p|port=", v => Port = int.Parse(v) },
+				{ "s|path=", v => Path = v }
 			};
 
 			try
@@ -46,18 +46,12 @@ namespace Debugger
 				f.Close ();
 				Port = int.Parse (str.Substring ("Listening on 0.0.0.0:".Length, 5));
 			}
-
-			var compositionContainer = new CompositionContainer (new DirectoryCatalog (Environment.CurrentDirectory));
-			new Program (compositionContainer.GetExportedValue<IDebuggerSession> ()).Run ();
 		}
 
-		public Program (IDebuggerSession session)
+		public Program ()
 		{
-			this.session = session as DebuggerSession;
-			this.session.SourceProvider.AddFilter ("source1.cs");
-			this.breakpointMediator = new BreakpointMediator (this.session);
+			this.session = new DebuggerSession();
 
-			//Func<string, Stack<string>, Dictionary<string, Func<string, Stack<string>, bool>>, bool> c;
 			var subs = new Dictionary<string, CommandHandler> ();
 			subs.Add ("threads", ListThreads);
 			subs.Add ("breakpoints", ListBreakpoints);
@@ -113,6 +107,7 @@ namespace Debugger
 
 		public void Run ()
 		{
+			session.TypeProvider.BasePath = Path;
 			session.Port = Port;
 
 			bool active = false;
@@ -175,7 +170,7 @@ namespace Debugger
 
 		private bool ListSources (string command, Stack<string> commands, Dictionary<string, CommandHandler> calls)
 		{
-			foreach (var t in session.SourceProvider.SourceFiles)
+			foreach (var t in session.TypeProvider.SourceFiles)
 				Console.WriteLine ("{0}", t);
 			return true;
 		}
@@ -233,24 +228,24 @@ namespace Debugger
 				case "d":
 				case "delete":
 					{
-						if (br >= session.BreakpointProvider.Breakpoints.Count () || session.BreakpointProvider.Breakpoints.ElementAt (br) == null)
+						if (br >= session.BreakpointProvider.Breakpoints.Count () || session.BreakpointProvider[br] == null)
 						{
 							Console.WriteLine ("breakpoint {0} doesn't exist", arg1);
 							return true;
 						}
-						var breakpoint = session.BreakpointProvider.Breakpoints.ElementAt (br);
+						var breakpoint = session.BreakpointProvider[br];
 						session.BreakpointProvider.RemoveBreakpoint (breakpoint);
 						Console.WriteLine ("deleted breakpoint {0} on {1}:{2}", arg1, breakpoint.Location.SourceFile, breakpoint.Location.LineNumber);
 					}
 					break;
 				case "enable":
 					{
-						if (br >= session.BreakpointProvider.Breakpoints.Count () || session.BreakpointProvider.Breakpoints.ElementAt (br) == null)
+						if (br >= session.BreakpointProvider.Breakpoints.Count () || session.BreakpointProvider[br] == null)
 						{
 							Console.WriteLine ("breakpoint {0} doesn't exist", arg1);
 							return true;
 						}
-						var breakpoint = session.BreakpointProvider.Breakpoints.ElementAt (br);
+						var breakpoint = session.BreakpointProvider[br];
 						if (!breakpoint.Enabled)
 						{
 							breakpoint.Enable ();
@@ -262,12 +257,12 @@ namespace Debugger
 					break;
 				case "disable":
 					{
-						if (br >= session.BreakpointProvider.Breakpoints.Count () || session.BreakpointProvider.Breakpoints.ElementAt (br) == null)
+						if (br >= session.BreakpointProvider.Breakpoints.Count () || session.BreakpointProvider[br] == null)
 						{
 							Console.WriteLine ("breakpoint {0} doesn't exist", arg1);
 							return true;
 						}
-						var breakpoint = session.BreakpointProvider.Breakpoints.ElementAt (br);
+						var breakpoint = session.BreakpointProvider[br];
 						if (breakpoint.Enabled)
 						{
 							breakpoint.Disable ();
@@ -293,7 +288,7 @@ namespace Debugger
 
 		private bool ListBreakpoints (string command, Stack<string> commands, Dictionary<string, CommandHandler> calls)
 		{
-			var bps = session.BreakpointProvider.Breakpoints.ToArray ();
+			var bps = session.BreakpointProvider.Breakpoints.Keys.ToArray ();
 			for (int i = 0; i < bps.Length; i++)
 			{
 				var l = bps[i].Location;
@@ -305,10 +300,10 @@ namespace Debugger
 		private bool ListThreads (string command, Stack<string> commands, Dictionary<string, CommandHandler> calls)
 		{
 			session.VM.Suspend ();
-			var threads = session.VM.GetThreads ();
+			var threads = session.VM.Threads;
 			foreach (var t in threads)
 			{
-				Console.WriteLine ("{0} '{1}' {2}", t.Id, t.Name, t.GetFrames ().Length);
+				Console.WriteLine ("{0} '{1}' {2}", t.Id, t.Name, t.GetFrames ().Count);
 			}
 			session.VM.Resume ();
 
@@ -338,7 +333,6 @@ namespace Debugger
 
 		private bool DoExit (string command, Stack<string> commands, Dictionary<string, CommandHandler> calls)
 		{
-			session.VM.ClearAllBreakpoints ();
 			session.Stop ();
 			Console.WriteLine ("exiting...");
 			return false;

@@ -7,8 +7,8 @@ namespace Debugger.Backend.Sdb
 	{
 		private SdbTypeMirror typeMirror;
 
-		public TypeEvent (MDS.Event ev, State state)
-			: base (ev, state)
+		public TypeEvent (MDS.Event ev)
+			: base (ev)
 		{
 		}
 

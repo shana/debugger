@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mono.Debugger.Soft;
@@ -7,8 +8,8 @@ namespace Debugger.Backend.Sdb
 	public class SdbTypeMirror : Wrapper, ITypeMirror
 	{
 		private readonly TypeMirror sdbType;
-		private IEnumerable<IMethodMirror> methodsMirror;
-		private IEnumerable<string> sourceFiles;
+		private IList<IMethodMirror> methodsMirror;
+		private IList<string> sourceFiles;
 		private IAssemblyMirror assembly;
 		public IAssemblyMirror Assembly
 		{
@@ -20,22 +21,22 @@ namespace Debugger.Backend.Sdb
 			}
 		}
 
-		public IEnumerable<string> SourceFiles
+		public IList<string> SourceFiles
 		{
 			get
 			{
 				if (sourceFiles == null)
-					sourceFiles = this.sdbType.GetSourceFiles (true);
+					sourceFiles = Array.AsReadOnly (sdbType.GetSourceFiles (true));
 				return sourceFiles;
 			}
 		}
 
-		public IEnumerable<IMethodMirror> Methods
+		public IList<IMethodMirror> Methods
 		{
 			get
 			{
 				if (methodsMirror == null)
-					methodsMirror = sdbType.GetMethods ().Select (m => Cache.Lookup<SdbMethodMirror> (m) as IMethodMirror);
+					methodsMirror = Array.AsReadOnly (sdbType.GetMethods ().Select (m => Cache.Lookup<SdbMethodMirror> (m) as IMethodMirror).ToArray ());
 				return methodsMirror;
 			}
 		}
@@ -61,5 +62,19 @@ namespace Debugger.Backend.Sdb
 		{
 			return FullName;
 		}
+
+		public override int GetHashCode ()
+		{
+			return (Assembly.FullName + "_" + "_" + FullName).GetHashCode ();
+		}
+
+		public override bool Equals (object o)
+		{
+			var right = o as SdbTypeMirror;
+			if (right == null)
+				return false;
+			return this.GetHashCode () == right.GetHashCode ();
+		}
+
 	}
 }

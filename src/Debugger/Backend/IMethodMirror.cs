@@ -4,7 +4,7 @@ namespace Debugger.Backend
 {
 	public interface IMethodMirror : IWrapper
 	{
-		IEnumerable<ILocation> Locations { get; }
+		IList<ILocation> Locations { get; }
 		string FullName { get; }
 		ITypeMirror DeclaringType { get; }
 		string Name { get; }

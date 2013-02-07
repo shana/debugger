@@ -30,7 +30,7 @@ namespace Debugger.Backend.Sdb
 			}
 		}
 
-		public Event (MDS.Event ev, State state) : base(ev)
+		public Event (MDS.Event ev, State state = State.None) : base(ev)
 		{
 			State = state;
 		}
