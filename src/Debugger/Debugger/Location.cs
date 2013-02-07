@@ -10,12 +10,13 @@ namespace Debugger
 		private readonly int _line;
 		private readonly string _file;
 
-		static Location()
+		static Location ()
 		{
-			_default = new Location(0, "");
+			_default = new Location ("", 0);
 		}
 
-		public Location(int line,string file) : base(null)
+		public Location (string file, int line)
+			: base (null)
 		{
 			_line = line;
 			_file = file;

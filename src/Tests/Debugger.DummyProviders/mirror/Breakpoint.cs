@@ -5,6 +5,11 @@ namespace Debugger.DummyProviders
 
 	class Breakpoint : EventRequest, IBreakpoint
 	{
+		public Breakpoint (ILocation location)
+		{
+			Location = location;
+		}
+
 		public override void Enable ()
 		{
 			Enabled = true;

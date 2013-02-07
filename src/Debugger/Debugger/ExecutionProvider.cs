@@ -65,7 +65,7 @@ namespace Debugger
 
 				currentThread = suspendingEvent.Thread;
 				var frames = currentThread.GetFrames();
-				currentLocation = frames.Count == 0 ? new Location (0, "") : frames[0].Location;
+				currentLocation = frames.Count == 0 ? new Location ("", 0) : frames[0].Location;
 			}
 		}
 

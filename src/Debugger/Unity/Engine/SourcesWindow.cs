@@ -35,7 +35,7 @@ namespace Debugger.Unity.Engine
 			foreach (var file in sourcesProvider.Sources)
 			{
 				if (GUILayout.Button (Path.GetFileName (file)))
-					sourceNavigator.ShowSourceLocation (new Location (1, file));
+					sourceNavigator.ShowSourceLocation (new Location (file, 1));
 			}
 		}
 

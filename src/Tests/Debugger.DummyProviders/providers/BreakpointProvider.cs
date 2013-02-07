@@ -37,7 +37,7 @@ namespace Debugger.DummyProviders
 
 			var breakPoint = GetBreakpointAt (file, line);
 			if (breakPoint == null)
-				AddBreakpoint (new Mock<IBreakpoint>(new Mock<ILocation>(file, line).Object).Object);
+				AddBreakpoint (new Breakpoint (new Location (file, line)));
 			else
 				RemoveBreakpoint (breakPoint);
 		}
@@ -55,7 +55,7 @@ namespace Debugger.DummyProviders
 			file = typeProvider.MapFile (file);
 			if (file == null)
 				return null;
-			var bp = new Breakpoint (new Location (line, file));
+			var bp = new Breakpoint (new Location (file, line));
 			if (AddBreakpoint (bp))
 				return bp;
 			return null;
