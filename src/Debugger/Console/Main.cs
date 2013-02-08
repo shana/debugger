@@ -46,6 +46,8 @@ namespace Debugger
 				f.Close ();
 				Port = int.Parse (str.Substring ("Listening on 0.0.0.0:".Length, 5));
 			}
+
+			new Program().Run ();
 		}
 
 		public Program ()
