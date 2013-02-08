@@ -14,5 +14,6 @@ namespace Debugger
 		bool RemoveBreakpoint (string file, int line);
 
 		IBreakpoint this [int index] { get; }
+		event Action<IBreakpoint> BreakpointBound;
 	}
 }

@@ -12,7 +12,9 @@ namespace Debugger
 	{
 		private readonly ITypeProvider typeProvider;
 		private readonly Dictionary<IBreakpoint, IBreakpoint> breakpoints = new Dictionary<IBreakpoint, IBreakpoint> ();
-		public IDictionary<IBreakpoint, IBreakpoint> Breakpoints { get { return breakpoints; }} 
+		public IDictionary<IBreakpoint, IBreakpoint> Breakpoints { get { return breakpoints; }}
+
+		public event Action<IBreakpoint> BreakpointBound;
 
 		[ImportingConstructor]
 		public BreakpointProvider (ITypeProvider typeProvider)
@@ -97,6 +99,8 @@ namespace Debugger
 					var b = Factory.CreateBreakpoint (bestLocation);
 					breakpoints[bp.Key] = b;
 					b.Enable ();
+					if (BreakpointBound != null)
+						BreakpointBound (b);
 					break;
 				}
 			}
