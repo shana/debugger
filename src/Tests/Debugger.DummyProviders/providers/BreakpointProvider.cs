@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,6 +24,7 @@ namespace Debugger.DummyProviders
 		}
 
 		public IBreakpoint this[int index] { get { return breakpoints.Keys.ElementAt (index); } }
+		public event Action<IBreakpoint> BreakpointBound;
 
 		public IBreakpoint GetBreakpointAt (string file, int line)
 		{

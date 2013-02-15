@@ -117,6 +117,9 @@ namespace Debugger
 				File.Delete ("console.log");
 
 			session.TraceCallback += s => File.AppendAllText ("console.log", s + "\n");
+			session.BreakpointProvider.BreakpointBound += (breakpoint, location) => Console.WriteLine("breakpoint {0} bound at {1}", session.BreakpointProvider.IndexOf (breakpoint), location.LineNumber);
+			session.BreakpointProvider.BreakpointUnbound += (breakpoint, location) => Console.WriteLine("breakpoint {0} unbound from {1}", session.BreakpointProvider.IndexOf (breakpoint), location.LineNumber);
+
 			session.ExecutionProvider.Break += () => {
 				var location = session.ExecutionProvider.Location;
 				Console.WriteLine ();
@@ -290,8 +293,8 @@ namespace Debugger
 
 		private bool ListBreakpoints (string command, Stack<string> commands, Dictionary<string, CommandHandler> calls)
 		{
-			var bps = session.BreakpointProvider.Breakpoints.Keys.ToArray ();
-			for (int i = 0; i < bps.Length; i++)
+			var bps = session.BreakpointProvider.Breakpoints;
+			for (int i = 0; i < bps.Count; i++)
 			{
 				var l = bps[i].Location;
 				Console.WriteLine ("breakpoint {0} on {1}:{2}", i + 1, l.SourceFile, l.LineNumber);

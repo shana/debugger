@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using CodeEditor.Composition;
@@ -12,9 +13,13 @@ namespace Debugger
 	{
 		private readonly ITypeProvider typeProvider;
 		private readonly Dictionary<IBreakpoint, IBreakpoint> breakpoints = new Dictionary<IBreakpoint, IBreakpoint> ();
-		public IDictionary<IBreakpoint, IBreakpoint> Breakpoints { get { return breakpoints; }}
+		public IList<IBreakpoint> Breakpoints { get { return new ReadOnlyCollection<IBreakpoint> (breakpoints.Keys.ToList ());}}
 
-		public event Action<IBreakpoint> BreakpointBound;
+		public event Action<IBreakpoint, ILocation> BreakpointBound;
+		public event Action<IBreakpoint, ILocation> BreakpointUnbound;
+
+
+		public IBreakpoint this[int index] { get { return breakpoints.Keys.ElementAt (index); } }
 
 		[ImportingConstructor]
 		public BreakpointProvider (ITypeProvider typeProvider)
@@ -24,12 +29,32 @@ namespace Debugger
 			typeProvider.TypeUnloaded += OnTypeUnloaded;
 		}
 
-		public IBreakpoint this[int index] { get { return breakpoints.Keys.ElementAt (index); } }
+		public IEnumerable<ILocation> GetBoundLocations (IBreakpoint breakpoint)
+		{
+			return breakpoints.Where (x => x.Key == breakpoint).Select (b => b.Value.Location as ILocation);
+		}
+
+		public IEnumerable<IBreakpoint> GetBreakpoints (bool bound)
+		{
+			if (bound)
+				return breakpoints.Where (x => x.Value != null).Select (b => b.Key);
+			return breakpoints.Keys;
+		}
 
 		public IBreakpoint GetBreakpointAt (string file, int line)
 		{
 			file = typeProvider.MapFile (file);
 			return breakpoints.Keys.FirstOrDefault (bp => bp.Location.SourceFile == file && bp.Location.LineNumber == line);
+		}
+
+		public int IndexOf (IBreakpoint breakpoint)
+		{
+			int i  = 0;
+			var keys = breakpoints.Keys.ToArray ();
+			for (i = 0; i < keys.Length; i++)
+				if (keys[i] == breakpoint)
+					return i;
+			return -1;
 		}
 
 		public void ToggleBreakpointAt (string file, int line)
@@ -73,6 +98,18 @@ namespace Debugger
 			return true;
 		}
 
+		public bool IsBound (IBreakpoint breakpoint)
+		{
+			IBreakpoint val = null;
+			return breakpoints.TryGetValue (breakpoint, out val) && val != null;
+		}
+
+		public ILocation GetBoundLocation (IBreakpoint breakpoint)
+		{
+			IBreakpoint val = null;
+			return breakpoints.TryGetValue (breakpoint, out val) && val != null ? val.Location : null;
+		}
+
 		public bool RemoveBreakpoint (string file, int line)
 		{
 			file = typeProvider.MapFile (file);
@@ -100,7 +137,7 @@ namespace Debugger
 					breakpoints[bp.Key] = b;
 					b.Enable ();
 					if (BreakpointBound != null)
-						BreakpointBound (b);
+						BreakpointBound (bp.Key, b.Location);
 					break;
 				}
 			}
@@ -109,14 +146,16 @@ namespace Debugger
 		private void OnTypeUnloaded (ITypeMirror typeMirror)
 		{
 			var bps = breakpoints.Where (x => typeMirror.SourceFiles.Contains(x.Value.Location.SourceFile)).ToArray ();
-			foreach (var bp in bps)
+			foreach (var bp in bps) {
+				if (BreakpointUnbound != null)
+					BreakpointUnbound (bp.Key, bp.Value.Location);
 				breakpoints.Remove (bp.Key);
+			}
 		}
 
 		private ILocation BestLocationIn (IMethodMirror method, IBreakpoint bp)
 		{
 			return method.Locations.FirstOrDefault (l => l.SourceFile == bp.Location.SourceFile && l.LineNumber == bp.Location.LineNumber);
 		}
-
 	}
 }
