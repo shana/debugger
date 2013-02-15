@@ -12,5 +12,6 @@ namespace Debugger.DummyProviders
 		{
 			return new StackFrame[0];
 		}
+		public System.Threading.ThreadState ThreadState { get { return System.Threading.ThreadState.Running; } }
 	}
 }

@@ -6,6 +6,7 @@ namespace Debugger.Backend
 	{	
 		long Id { get; }
 		string Name { get; }
+		System.Threading.ThreadState ThreadState { get; }
 		IList<IStackFrame> GetFrames ();
 	}
 }
