@@ -287,7 +287,7 @@ namespace Debugger
 
 		private bool DoExecution (string command, Stack<string> commands, Dictionary<string, CommandHandler> calls)
 		{
-			session.ExecutionProvider.Step ();
+			session.ExecutionProvider.Step (StepType.Into);
 			return true;
 		}
 

@@ -48,7 +48,7 @@ namespace Debugger.Backend
 	{
 		public static Func<IVirtualMachine> CreateVirtualMachine {get; private set;} 
 		public static Func<ILocation, IBreakpoint> CreateBreakpoint {get; private set; }
-		public static Func<IThreadMirror, IEventRequest> CreateStepRequest {get; private set; }
+		public static Func<IThreadMirror, StepType, IEventRequest> CreateStepRequest {get; private set; }
 		public static Func<IEventRequest> CreateMethodEntryRequest {get; private set; }
 		public static Func<IEventRequest> CreateMethodExitRequest {get; private set; }
 		public static Func<string, int, ILocation> CreateLocation { get; private set; }
@@ -66,7 +66,7 @@ namespace Debugger.Backend
 
 		public static void Register (
 			Func<ILocation, IBreakpoint> createBreakpoint, 
-			Func<IThreadMirror, IEventRequest> createStepRequest,
+			Func<IThreadMirror, StepType, IEventRequest> createStepRequest,
 			Func<IEventRequest> createMethodEntryRequest,
 			Func<IEventRequest> createMethodExitRequest,
 			Func<string, int, ILocation> createLocation)

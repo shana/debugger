@@ -13,6 +13,6 @@ namespace Debugger
 		event Action<IThreadMirror> Suspended;
 
 		void Resume ();
-		void Step ();
+		void Step (StepType stepType);
 	}
 }
