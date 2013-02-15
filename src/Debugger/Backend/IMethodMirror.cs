@@ -7,6 +7,7 @@ namespace Debugger.Backend
 		IList<ILocation> Locations { get; }
 		string FullName { get; }
 		ITypeMirror DeclaringType { get; }
+		ITypeMirror ReturnType { get; }
 		string Name { get; }
 	}
 }
