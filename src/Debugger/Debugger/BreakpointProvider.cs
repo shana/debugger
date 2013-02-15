@@ -15,8 +15,8 @@ namespace Debugger
 		private readonly Dictionary<IBreakpoint, IBreakpoint> breakpoints = new Dictionary<IBreakpoint, IBreakpoint> ();
 		public IList<IBreakpoint> Breakpoints { get { return new ReadOnlyCollection<IBreakpoint> (breakpoints.Keys.ToList ());}}
 
-		public event Action<IBreakpoint, ILocation> BreakpointBound;
-		public event Action<IBreakpoint, ILocation> BreakpointUnbound;
+		public event Action<IBreakpoint, IBreakpoint, ILocation> BreakpointBound;
+		public event Action<IBreakpoint, IBreakpoint, ILocation> BreakpointUnbound;
 
 
 		public IBreakpoint this[int index] { get { return breakpoints.Keys.ElementAt (index); } }
@@ -137,7 +137,7 @@ namespace Debugger
 					breakpoints[bp.Key] = b;
 					b.Enable ();
 					if (BreakpointBound != null)
-						BreakpointBound (bp.Key, b.Location);
+						BreakpointBound (bp.Key, b, b.Location);
 					break;
 				}
 			}
@@ -148,7 +148,7 @@ namespace Debugger
 			var bps = breakpoints.Where (x => typeMirror.SourceFiles.Contains(x.Value.Location.SourceFile)).ToArray ();
 			foreach (var bp in bps) {
 				if (BreakpointUnbound != null)
-					BreakpointUnbound (bp.Key, bp.Value.Location);
+					BreakpointUnbound (bp.Key, bp.Value, bp.Value.Location);
 				breakpoints.Remove (bp.Key);
 			}
 		}
