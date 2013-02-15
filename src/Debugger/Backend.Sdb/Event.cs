@@ -5,7 +5,8 @@ namespace Debugger.Backend.Sdb
 {
 	public class Event : Wrapper, IEvent
 	{
-		private SdbThreadMirror threadMirror;
+		private IThreadMirror threadMirror;
+		private SdbThreadMirror sdbThreadMirror;
 		private IEventRequest request;
 		public bool Cancel { get; set; }
 		public State State { get; private set; }
@@ -14,9 +15,12 @@ namespace Debugger.Backend.Sdb
 		{
 			get
 			{
-				if (threadMirror == null)
-					threadMirror = Cache.Lookup<SdbThreadMirror> (Unwrap<MDS.Event>().Thread);
-				return threadMirror;
+				if (threadMirror != null)
+					return threadMirror;
+
+				if (sdbThreadMirror == null)
+					sdbThreadMirror = Cache.Lookup<SdbThreadMirror> (Unwrap<MDS.Event>().Thread);
+				return sdbThreadMirror;
 			}
 		}
 
@@ -28,6 +32,12 @@ namespace Debugger.Backend.Sdb
 					request = Cache.Lookup<EventRequest> (Unwrap<MDS.Event> ().Request);
 				return request;
 			}
+		}
+
+		public Event (IThreadMirror thread) : base(null)
+		{
+			threadMirror = thread;
+			request = null;
 		}
 
 		public Event (MDS.Event ev, State state = State.None) : base(ev)
