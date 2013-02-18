@@ -113,8 +113,12 @@ namespace Debugger.Backend.Sdb
 		public void Suspend ()
 		{
 			vm.Suspend ();
-			if (VMSuspended != null)
-				VMSuspended (null);
+			if (VMSuspended != null) {
+				var thread = vm.GetThreads ().FirstOrDefault();
+				if (thread != null) {
+					VMSuspended (new Event(Cache.Lookup<SdbThreadMirror> (thread)));
+				}
+			}
 		}
 
 		public void Resume ()
