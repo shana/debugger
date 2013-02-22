@@ -11,32 +11,51 @@ namespace Debugger.Unity.Engine
 	public class SourcesWindow : DebuggerWindow
 	{
 		private ISourcesProvider sourcesProvider;
+		private ITypeProvider typeProvider;
 		private ISourceNavigator sourceNavigator;
 
 		[ImportingConstructor]
-		public SourcesWindow (ISourcesProvider sourcesProvider, ISourceNavigator sourceNavigator)
+		public SourcesWindow (ITypeProvider typeProvider, ISourceNavigator sourceNavigator,
+			ISourcesProvider sourcesProvider
+)
 		{
-			this.sourcesProvider = sourcesProvider;
+			this.typeProvider = typeProvider;
 			this.sourceNavigator = sourceNavigator;
+			this.sourcesProvider = sourcesProvider;
 		}
 
 		public void StartRefreshing ()
 		{
-			sourcesProvider.FileChanged += (f) => { if (sourceNavigator.CurrentSource.SourceFile == f) sourceNavigator.RefreshSource (); };
-			sourcesProvider.StartRefreshingSources ();
+			sourcesProvider.FileChanged += (f) => { if (sourceNavigator.CurrentLocation.SourceFile == f) sourceNavigator.RefreshSource (); };
+			sourcesProvider.Start ();
 		}
+
+		IList<string> sourceFiles;
+		private Vector2 scrollPosition;
 
 		public override void OnGUI ()
 		{
-			GUI.enabled = true;
-			var backup = GUI.skin.button.alignment;
-			GUI.skin.button.alignment = TextAnchor.MiddleLeft;
+			if (Event.current.type == EventType.Layout)
+				sourceFiles = sourcesProvider.SourceFiles;
 
-			foreach (var file in sourcesProvider.Sources)
+			scrollPosition = GUILayout.BeginScrollView (scrollPosition, false, true);
+
+			foreach (var file in sourceFiles)
 			{
-				if (GUILayout.Button (Path.GetFileName (file)))
+				if (sourceNavigator.CurrentLocation != null && sourceNavigator.CurrentLocation.SourceFile == file)
+				{
+					Color oldColor = GUI.contentColor;
+					GUI.contentColor = new Color (0.42f, 0.7f, 1.0f, 1.0f);
+					GUILayout.Label(Path.GetFileName (file));
+					GUI.contentColor = oldColor;
+					continue;
+				}
+
+				if (GUILayout.Button (Path.GetFileName (file), GUI.skin.label))
 					sourceNavigator.ShowSourceLocation (new Location (file, 1));
 			}
+
+			GUILayout.EndScrollView ();
 		}
 
 		public override string Title

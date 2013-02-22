@@ -5,16 +5,16 @@ using UnityEngine;
 
 namespace Debugger.Unity.Engine
 {
-	class BreakPointMargin : ITextViewMargin
+	class BreakpointMargin : ITextViewMargin
 	{
-		private readonly ITextView _textView;
+		private readonly ITextView textView;
 
-		private readonly IBreakpointProvider _breakpointProvider;
+		private readonly IBreakpointProvider breakpointProvider;
 
-		public BreakPointMargin(ITextView textView, IBreakpointProvider breakpointProvider)
+		public BreakpointMargin (ITextView textView, IBreakpointProvider breakpointProvider)
 		{
-			_breakpointProvider = breakpointProvider;
-			_textView = textView;
+			this.breakpointProvider = breakpointProvider;
+			this.textView = textView;
 		}
 
 		public float Width
@@ -22,41 +22,36 @@ namespace Debugger.Unity.Engine
 			get { return 16; }
 		}
 
-		public void HandleInputEvent(ITextViewLine line, Rect marginRect)
+		public void HandleInputEvent (ITextViewLine line, Rect marginRect)
 		{
 			if (Event.current.type != EventType.mouseDown)
 				return;
 
-			if (!marginRect.Contains(Event.current.mousePosition))
+			if (!marginRect.Contains (Event.current.mousePosition))
 				return;
 
-			SetBreakPoint(line);
+			SetBreakpoint (line);
 		}
 
-		public void Repaint(ITextViewLine line, Rect marginRect)
+		public void Repaint (ITextViewLine line, Rect marginRect)
 		{
-			if (GetBreakPoint(line) != null)
-				Draw(marginRect);
+			if (GetBreakpoint (line) != null)
+				Draw (marginRect);
 		}
 
-		private void SetBreakPoint(ITextViewLine line)
+		private void SetBreakpoint (ITextViewLine line)
 		{
-			_breakpointProvider.ToggleBreakpointAt(File().FullName, line.LineNumber);
+			breakpointProvider.ToggleBreakpointAt (((File)textView.Document.File).FullName, line.LineNumber + 1);
 		}
 
-		private IBreakpoint GetBreakPoint(ITextViewLine line)
+		private IBreakpoint GetBreakpoint (ITextViewLine line)
 		{
-			return _breakpointProvider.GetBreakpointAt(File().FullName, line.LineNumber);
+			return breakpointProvider.GetBreakpointAt (((File)textView.Document.File).FullName, line.LineNumber + 1);
 		}
 
-		private File File()
+		private void Draw (Rect marginRect)
 		{
-			return (File) _textView.Document.File;
-		}
-
-		private void Draw(Rect marginRect)
-		{
-			GUIUtils.DrawRect(marginRect,Color.red);
+			GUIUtils.DrawRect (marginRect, Color.red);
 		}
 	}
 }

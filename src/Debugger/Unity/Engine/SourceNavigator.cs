@@ -8,7 +8,7 @@ namespace Debugger.Unity.Engine
 	{
 		void ShowSourceLocation (ILocation location);
 		void RefreshSource ();
-		ILocation CurrentSource { get; }
+		ILocation CurrentLocation { get; }
 	}
 
 	[Export (typeof (ISourceNavigator))]
@@ -16,7 +16,7 @@ namespace Debugger.Unity.Engine
 	{
 		[Import]
 		public SourceWindow SourceWindow { get; set; }
-		public ILocation CurrentSource { get; private set; }
+		public ILocation CurrentLocation { get; private set; }
 
 		public void RefreshSource ()
 		{
@@ -28,13 +28,14 @@ namespace Debugger.Unity.Engine
 			if (!IsValidLocation (location))
 				return;
 
-			CurrentSource = location;
+			CurrentLocation = location;
 			//Trace("{0}:{1}", location.SourceFile, location.LineNumber);
-			SourceWindow.ShowSourceLocation (CurrentSource);
+			SourceWindow.ShowSourceLocation (CurrentLocation);
 		}
 
 		static bool IsValidLocation (ILocation location)
 		{
+			LogProvider.Log ("checking {0} {1}", location.SourceFile, File.Exists (location.SourceFile));
 			return location.LineNumber >= 1 && File.Exists (location.SourceFile);
 		}
 	}

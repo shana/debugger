@@ -13,20 +13,20 @@ namespace Debugger.Unity.Engine
 		BottomRight
 	}
 
-public class DebuggerWindow : IDebuggerWindow
+	public abstract class DebuggerWindow : IDebuggerWindow
 	{
 
-		public static Rect Default = new Rect(0, 0, 0, 0);
+		public static Rect Default = new Rect (0, 0, 0, 0);
 		private Rect rect;
 
-		public DebuggerWindow()
+		public DebuggerWindow ()
 		{
 			rect = Default;
 		}
 
 		public virtual void OnGUI ()
 		{
-			
+
 		}
 
 		public virtual string Title
@@ -42,6 +42,17 @@ public class DebuggerWindow : IDebuggerWindow
 		{
 			get { return rect; }
 			set { rect = value; }
+		}
+
+		public virtual void DrawHeader ()
+		{
+			GUILayout.BeginHorizontal ("Toolbar");
+
+			GUILayout.Label (Title);
+
+			GUILayout.FlexibleSpace ();
+
+			GUILayout.EndHorizontal ();
 		}
 	}
 }

@@ -55,8 +55,8 @@ namespace Debugger.Backend
 
 		static Factory ()
 		{
-			var compositionContainer = new CompositionContainer (new DirectoryCatalog (Environment.CurrentDirectory));
-			compositionContainer.GetExportedValue<IFactory> ().Initialize ();
+			//var compositionContainer = new CompositionContainer (new DirectoryCatalog (Environment.CurrentDirectory));
+			//compositionContainer.GetExportedValue<IFactory> ().Initialize ();
 		}
 
 		public static void Register (Func<IVirtualMachine> createVM)

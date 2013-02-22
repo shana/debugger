@@ -15,6 +15,11 @@ namespace Debugger.Unity.Engine
 		private volatile int pendingSourceLine;
 		private string currentDocument = "";
 
+		public override string Title
+		{
+			get { return currentDocument; }
+		}
+
 		[ImportingConstructor]
 		public SourceWindow (ITextViewFactory viewFactory)
 		{
@@ -34,14 +39,13 @@ namespace Debugger.Unity.Engine
 				textView.EnsureCursorIsVisible ();
 
 				pendingSourceLocation = null;
+				
 			}
 
 			if (textView == null)
 				return;
 
-			GUILayout.BeginArea (ViewPort, currentDocument, GUI.skin.window);
 			textView.OnGUI ();
-			GUILayout.EndArea ();
 		}
 
 		public void ShowSourceLocation (ILocation location)

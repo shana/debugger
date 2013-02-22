@@ -13,6 +13,9 @@ namespace Debugger.Backend.Sdb
 	[Export(typeof(IFactory))]
 	public class VMFactory : IFactory
 	{
+		public VMFactory ()
+		{}
+
 		public void Initialize ()
 		{
 			Factory.Register (() => new VirtualMachine ());
@@ -73,12 +76,12 @@ namespace Debugger.Backend.Sdb
 			: base (null)
 		{
 			Factory.Register (
-				location => new SdbBreakpoint (vm.CreateBreakpointRequest (location.Unwrap<MDS.Location> ()), location),
-				thread => Cache.Lookup<EventRequest> (vm.CreateStepRequest (thread.Unwrap<MDS.ThreadMirror> ())),
-				() => new EventRequest (vm.CreateMethodEntryRequest ()),
-				() => new EventRequest (vm.CreateMethodExitRequest ()),
-				(source, line) => new SdbLocation (source, line)
-				);
+			    location => new SdbBreakpoint (vm.CreateBreakpointRequest (location.Unwrap<MDS.Location> ()), location),
+			    thread => Cache.Lookup<EventRequest> (vm.CreateStepRequest (thread.Unwrap<MDS.ThreadMirror> ())),
+			    () => new EventRequest (vm.CreateMethodEntryRequest ()),
+			    () => new EventRequest (vm.CreateMethodExitRequest ()),
+			    (source, line) => new SdbLocation (source, line)
+			    );
 		}
 
 		public void Attach (int port)
@@ -102,13 +105,23 @@ namespace Debugger.Backend.Sdb
 
 		public void Suspend ()
 		{
+			LogProvider.Log ("VM: Suspending ");
+
 			vm.Suspend ();
 			if (VMSuspended != null) {
 				var thread = vm.GetThreads ().FirstOrDefault();
+				LogProvider.Log ("VM: thread " + thread.Name);
 				if (thread != null) {
-					VMSuspended (new Event(Cache.Lookup<SdbThreadMirror> (thread)));
+				    VMSuspended (new Event(Cache.Lookup<SdbThreadMirror> (thread)));
 				}
 			}
+		}
+
+		public void Suspend (IEvent ev)
+		{
+			vm.Suspend ();
+			if (VMSuspended != null)
+				VMSuspended (ev);
 		}
 
 		public void Resume ()

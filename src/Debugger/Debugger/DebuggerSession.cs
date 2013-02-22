@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Debugger.Backend;
 using Debugger.Backend.Event;
+using Debugger.Backend.Sdb;
 using Mono.Cecil;
 
 namespace Debugger
@@ -24,8 +25,10 @@ namespace Debugger
 
 		public IVirtualMachine VM {
 			get {
-				if (vm == null)
-					vm = Factory.CreateVirtualMachine ();
+				if (vm == null) {
+					vm = new Debugger.Backend.Sdb.VirtualMachine ();
+					//vm = Factory.CreateVirtualMachine ();
+				}
 				return vm;
 			}
 		}

@@ -27,5 +27,6 @@ namespace Debugger.Backend
 		void Suspend ();
 		void Resume ();
 
+		void Suspend (IEvent ev);
 	}
 }

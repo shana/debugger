@@ -14,6 +14,7 @@ namespace Debugger
 		private readonly List<ITypeMirror> loadedTypes = new List<ITypeMirror> ();
 		private readonly List<string> filter = new List<string> ();
 		private string basePath;
+		private IList<string> sourceFiles = new List<string> ();
 
 		public string BasePath
 		{
@@ -26,7 +27,7 @@ namespace Debugger
 		}
 
 		public IList<ITypeMirror> LoadedTypes { get { return loadedTypes.ToArray (); } }
-		public IList<string> SourceFiles { get { return loadedTypes.SelectMany (t => t.SourceFiles).ToList ().ToArray (); } }
+		public IList<string> SourceFiles { get { return sourceFiles.ToArray (); } }
 
 		public event Action<ITypeMirror> TypeLoaded;
 		public event Action<ITypeMirror> TypeUnloaded;
@@ -55,6 +56,11 @@ namespace Debugger
 					unloaded.Add (loadedType);
 			}
 
+			foreach (var typeMirror in unloaded)
+				foreach (var file in typeMirror.SourceFiles)
+					if (sourceFiles.Contains (file))
+						sourceFiles.Remove (file);
+
 			unloaded.ForEach (t => loadedTypes.Remove (t));
 			if (TypeUnloaded != null)
 				unloaded.ForEach (t => TypeUnloaded (t));
@@ -63,6 +69,9 @@ namespace Debugger
 		private void OnTypeLoaded (ITypeEvent typeEvent)
 		{
 			loadedTypes.Add (typeEvent.Type);
+			foreach (var file in typeEvent.Type.SourceFiles)
+				if (!sourceFiles.Contains (file))
+					sourceFiles.Add (file);
 			if (TypeLoaded != null)
 				TypeLoaded (typeEvent.Type);
 		}
@@ -88,9 +97,11 @@ namespace Debugger
 
 		public string MapFile (string file)
 		{
+			file = file.Replace ('/', Path.DirectorySeparatorChar);
+			file = file.Replace ('\\', Path.DirectorySeparatorChar);
 			if (Path.IsPathRooted (file))
 				return file;
-			return Path.Combine (basePath, "Assets/" + file);
+			return Path.Combine (basePath, Path.Combine("Assets", file));
 		}
 	}
 }

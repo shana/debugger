@@ -5,19 +5,19 @@ namespace Debugger.DummyProviders
 {
 	class EventRequest : BaseMirror, IEventRequest
 	{
-		public event Action<IEventRequest> RequestEnabled;
-		public event Action<IEventRequest> RequestDisabled;
+		public event Action<IEventRequest> OnRequestEnabled;
+		public event Action<IEventRequest> OnRequestDisabled;
 
 		public virtual void Enable ()
 		{
-			if (RequestEnabled != null)
-				RequestEnabled (this);
+			if (OnRequestEnabled != null)
+				OnRequestEnabled (this);
 		}
 
 		public virtual void Disable ()
 		{
-			if (RequestDisabled != null)
-				RequestDisabled (this);
+			if (OnRequestDisabled != null)
+				OnRequestDisabled (this);
 		}
 	}
 }

@@ -20,7 +20,8 @@ namespace Debugger
 		public event Action<IThreadMirror> Suspended;
 		public event Action Break;
 
-		public ILocation Location { get { return currentLocation; }}
+		public ILocation Location { get { return currentLocation ?? Debugger.Location.Default; }}
+
 		public bool Running { get { lock (obj) { return running;} }}
 		public IThreadMirror CurrentThread  { get { return currentThread; }}
 
@@ -39,7 +40,7 @@ namespace Debugger
 
 		private void OnBreakpointHit (IBreakpointEvent ev)
 		{
-			vm.Suspend ();
+			vm.Suspend (ev);
 			if (Break != null)
 				Break ();
 		}
@@ -97,7 +98,7 @@ namespace Debugger
 
 		private void OnStepped (IEvent ev)
 		{
-			vm.Suspend ();
+			vm.Suspend (ev);
 			ev.Request.Disable ();
 			
 			if (Break != null)

@@ -4,67 +4,67 @@ using UnityEngine;
 
 namespace Debugger.Unity.Engine
 {
-	[Export(typeof(ITextViewAppearanceProvider))]
+	[Export (typeof (ITextViewAppearanceProvider))]
 	class TextViewAppearanceProvider : ITextViewAppearanceProvider
 	{
-		public ITextViewAppearance AppearanceFor(ITextViewDocument document)
+		public ITextViewAppearance AppearanceFor (ITextViewDocument document)
 		{
-			return new TextViewAppearance();
+			return new TextViewAppearance ();
 		}
 	}
 
 	public class TextViewAppearance : ITextViewAppearance
 	{
-		private readonly GUIStyle _background;
-		private readonly GUIStyle _text;
-		private readonly GUIStyle _lineNumber;
-		private readonly Color _lineNumberColor;
-		private readonly Color _selectionColor;
+		private readonly GUIStyle background;
+		private readonly GUIStyle text;
+		private readonly GUIStyle lineNumber;
+		private readonly Color lineNumberColor;
+		private readonly Color selectionColor;
 
-		public TextViewAppearance()
+		public TextViewAppearance ()
 		{
-			_background = new GUIStyle();
+			background = new GUIStyle ();
 
-			_text = new GUIStyle(_background)
+			text = new GUIStyle (background)
 			{
 				fontSize = 14,
 				richText = true,
 				alignment = TextAnchor.UpperLeft,
 				padding = { left = 0, right = 0 }
 			};
-			_text.normal.textColor = Color.white;
+			text.normal.textColor = Color.white;
 
-			_lineNumber = new GUIStyle(_text)
+			lineNumber = new GUIStyle (text)
 			{
 				richText = false,
 				alignment = TextAnchor.UpperRight
 			};
-			_lineNumberColor = new Color(1, 1, 1, 0.5f);
+			lineNumberColor = new Color (1, 1, 1, 0.5f);
 		}
 
 		public GUIStyle Background
 		{
-			get { return _background; }
+			get { return background; }
 		}
 
 		public GUIStyle Text
 		{
-			get { return _text; }
+			get { return text; }
 		}
 
 		public GUIStyle LineNumber
 		{
-			get { return _lineNumber; }
+			get { return lineNumber; }
 		}
 
 		public Color LineNumberColor
 		{
-			get { return _lineNumberColor; }
+			get { return lineNumberColor; }
 		}
 
 		public Color SelectionColor
 		{
-			get { return _selectionColor; }
+			get { return selectionColor; }
 		}
 	}
 }

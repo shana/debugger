@@ -4,19 +4,20 @@ using CodeEditor.Text.UI.Unity.Engine;
 
 namespace Debugger.Unity.Engine
 {
-	[Export(typeof(ITextViewMarginProvider))]
-	class BreakPointMarginProvider : ITextViewMarginProvider
+	[Export (typeof (ITextViewMarginProvider))]
+	class BreakpointMarginProvider : ITextViewMarginProvider
 	{
-		[Import] private IBreakpointProvider _breakpointProvider;
+		[Import]
+		public IBreakpointProvider BreakpointProvider { get; set; }
 
-		public ITextViewMargin MarginFor(ITextView textView)
+		public ITextViewMargin MarginFor (ITextView textView)
 		{
-			return textView.Document.File is File ? CreateMargin(textView) : null;
+			return textView.Document.File is File ? CreateMargin (textView) : null;
 		}
 
-		private BreakPointMargin CreateMargin(ITextView textView)
+		private BreakpointMargin CreateMargin (ITextView textView)
 		{
-			return new BreakPointMargin(textView, _breakpointProvider);
+			return new BreakpointMargin (textView, BreakpointProvider);
 		}
 	}
 }

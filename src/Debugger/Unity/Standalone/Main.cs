@@ -8,35 +8,34 @@ namespace Debugger.Unity.Standalone
 	{
 		static MainWindow view;
 
-		public static void Start()
+		public static void Start ()
 		{
-			Console.WriteLine("Start: " + AssemblyPath);
-			var compositionContainer = new CompositionContainer(new DirectoryCatalog(AssemblyPath));
-			view = compositionContainer.GetExportedValue<MainWindow>();
+			var compositionContainer = new CompositionContainer (new DirectoryCatalog (AssemblyPath));
+			view = compositionContainer.GetExportedValue<MainWindow> ();
 		}
 
-		public static void OnGUI()
+		public static void OnGUI ()
 		{
-			view.OnGUI();
+			view.OnGUI ();
 		}
 
-		public static void OnApplicationQuit()
+		public static void OnApplicationQuit ()
 		{
-			view.OnApplicationQuit();
+			view.OnApplicationQuit ();
 		}
 
 		static string AssemblyPath
 		{
-			get { return Path.GetDirectoryName(typeof(Main).Assembly.ManifestModule.FullyQualifiedName); }
+			get { return Path.GetDirectoryName (typeof (Main).Assembly.ManifestModule.FullyQualifiedName); }
 		}
 
-		public static void Update()
+		public static void Update ()
 		{
 		}
 
-		public static void FixedUpdate()
+		public static void FixedUpdate ()
 		{
-			
+
 		}
 	}
 }

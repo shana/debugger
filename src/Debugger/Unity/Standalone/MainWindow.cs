@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using CodeEditor.Composition;
 using Debugger.Unity.Engine;
@@ -16,12 +17,15 @@ namespace Debugger.Unity.Standalone
 		private readonly ExecutionWindow executionWindow;
 
 		private readonly IDebuggerSession session;
+		private readonly ITypeProvider typeProvider;
 		private readonly DebuggerWindowManager windowManager;
+
+		public static GUISkin skin;
 
 		[ImportingConstructor]
 		public MainWindow (
 			IDebuggerSession session,
-			ISourcesProvider sourcesProvider,
+			ITypeProvider typeProvider,
 			SourcesWindow sourcesWindow,
 			SourceWindow sourceWindow,
 			LogWindow log,
@@ -36,29 +40,51 @@ namespace Debugger.Unity.Standalone
 			this.sourcesWindow = sourcesWindow;
 			this.sourceWindow = sourceWindow;
 			this.session = session;
+			this.typeProvider = typeProvider;
 			this.windowManager = windowManager;
 
+			Initialize ();
+		}
+
+		void Initialize ()
+		{
+
 			if (HasArguments ())
-				this.session.Port = SdbPortFromCommandLine ();
+				session.Port = SdbPortFromCommandLine ();
+
+			else
+			{
+				var f = new StreamReader (File.Open (@"C:\debug.log", FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+				var str = f.ReadLine ();
+				f.Close ();
+				session.Port = int.Parse (str.Substring ("Listening on 0.0.0.0:".Length, 5));
+				Debug.Log ("Connecting to " + session.Port);
+			}
 
 			Camera.main.backgroundColor = new Color (0.125f, 0.125f, 0.125f, 0);
 			Application.runInBackground = true;
 
 			AdjustLayout ();
 
-			if (!HasArguments ())
-				return;
+//			if (!HasArguments ())
+//				return;
 
-			this.session.TraceCallback += s => Trace (s);
-			sourcesProvider.Path = ProjectPathFromCommandLine ();
+			session.TraceCallback += s => Debug.Log (s);
+			typeProvider.BasePath = ProjectPathFromCommandLine ();
+
 
 			sourcesWindow.StartRefreshing ();
 
 			session.Start ();
+
+			skin = Resources.Load("Skins/Generated/DarkSkin", typeof(GUISkin)) as GUISkin;
+			Debug.Log ("skin " + skin);
 		}
 
 		public void OnGUI ()
 		{
+			GUI.skin = skin;
+
 			windowManager.OnGUI ();
 		}
 

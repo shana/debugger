@@ -32,10 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\unity\Tools\Unity.Remoting\Unity.Remoting.csproj">
-      <Project>{F3B4F98B-CC7D-4E3F-A8B6-FEA8E8C4A078}</Project>
-      <Name>Unity.Remoting</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Debugger\Debugger.csproj">
       <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
       <Name>Debugger %28Debugger\Debugger%29</Name>
@@ -222,7 +218,7 @@
   <!-- This target is called by the BuildDebuggerProject target. It builds the unity debugger
        project and deploys the result to the proper directories -->
   <Target Name="_BuildDebuggerProject" DependsOnTargets="_SetupDebuggerProject" Inputs="@(_Files)" Outputs="$(_DebuggerExe)">
-    <Exec Command="$(_UnityCmd) -batchmode -logfile &quot;$(_ProjectAbsPath)Project\output.log&quot; -projectpath &quot;$(_ProjectAbsPath)Project&quot; -quit" />
+    <Exec Command="$(_UnityCmd) -batchmode -logfile &quot;$(_ProjectAbsPath)Project\output.log&quot; -projectpath &quot;$(_ProjectAbsPath)Project&quot; -forgetProjectPath -quit" />
     <Touch Files="$(_DebuggerExe)" />
     <!-- Clean out files that aren't needed anymore -->
     <Delete Files="$(_ProjectAbsPath)$(UnityDebuggerProjectBuildDir)Debugger_Data\Managed\CodeEditor.*" />

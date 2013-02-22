@@ -4,32 +4,32 @@ namespace Debugger
 {
 	public class Location : Wrapper, ILocation
 	{
-		private static Location _default;
-		public static Location Default { get { return _default; } }
+		private static Location defaultLocation;
+		public static Location Default { get { return defaultLocation; } }
 
-		private readonly int _line;
-		private readonly string _file;
+		private readonly int line;
+		private readonly string file;
 
 		static Location ()
 		{
-			_default = new Location ("", 0);
+			defaultLocation = new Location ("", 0);
 		}
 
 		public Location (string file, int line)
 			: base (null)
 		{
-			_line = line;
-			_file = file;
+			this.line = line;
+			this.file = file;
 		}
 
 		public int LineNumber
 		{
-			get { return _line; }
+			get { return line; }
 		}
 
 		public string SourceFile
 		{
-			get { return _file; }
+			get { return file; }
 		}
 	}
 }

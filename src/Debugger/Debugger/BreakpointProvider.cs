@@ -74,7 +74,13 @@ namespace Debugger
 		{
 			if (breakpoints.ContainsKey (breakpoint))
 				return false;
+
 			breakpoints.Add (breakpoint, null);
+
+			foreach(var type in typeProvider.TypesFor (breakpoint.Location.SourceFile))
+				if (BindBreakpoint (type, breakpoint))
+					break;
+
 			return true;
 		}
 
@@ -94,6 +100,8 @@ namespace Debugger
 			if (!breakpoints.ContainsKey (breakpoint))
 				return false;
 
+			if (IsBound (breakpoint) && breakpoint.Enabled)
+				breakpoint.Disable ();
 			breakpoints.Remove (breakpoint);
 			return true;
 		}
@@ -123,24 +131,28 @@ namespace Debugger
 		private void OnTypeLoaded (ITypeMirror type)
 		{
 			var sourcefiles = type.SourceFiles;
-			var relevantBreakpoints = breakpoints.Where (bp => sourcefiles.Contains (bp.Key.Location.SourceFile));
+			var relevantBreakpoints = breakpoints.Where (bp => sourcefiles.Contains (bp.Key.Location.SourceFile)).ToArray ();
 
 			foreach (var bp in relevantBreakpoints)
-			{
-				foreach (var method in type.Methods)
-				{
-					var bestLocation = BestLocationIn (method, bp.Key);
-					if (bestLocation == null)
-						continue;
+				BindBreakpoint (type, bp.Key);
+		}
 
-					var b = Factory.CreateBreakpoint (bestLocation);
-					breakpoints[bp.Key] = b;
-					b.Enable ();
-					if (BreakpointBound != null)
-						BreakpointBound (bp.Key, b.Location);
-					break;
-				}
+		private bool BindBreakpoint (ITypeMirror type, IBreakpoint bp)
+		{
+			foreach (var method in type.Methods)
+			{
+				var bestLocation = BestLocationIn (method, bp);
+				if (bestLocation == null)
+					continue;
+
+				var b = Factory.CreateBreakpoint (bestLocation);
+				breakpoints[bp] = b;
+				b.Enable ();
+				if (BreakpointBound != null)
+					BreakpointBound (bp, b.Location);
+				return true;
 			}
+			return false;
 		}
 
 		private void OnTypeUnloaded (ITypeMirror typeMirror)

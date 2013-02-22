@@ -28,6 +28,5 @@ namespace Debugger
 			if (OnDisable != null)
 				OnDisable (this);
 		}
-
 	}
 }

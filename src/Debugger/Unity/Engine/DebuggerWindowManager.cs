@@ -13,6 +13,7 @@ namespace Debugger.Unity.Engine
 		DockType DockType { get; set; }
 		bool ExpandWidth { get; set; }
 		bool ExpandHeight { get; set; }
+		void DrawHeader ();
 	}
 
 	[Export]
@@ -75,7 +76,8 @@ namespace Debugger.Unity.Engine
 				window.ViewPort = new Rect(x, y, w, h);
 
 				GUI.enabled = true;
-				GUILayout.BeginArea (window.ViewPort, window.Title, GUI.skin.window);
+				GUILayout.BeginArea (window.ViewPort, "", "CN Box");
+				window.DrawHeader ();
 				window.OnGUI ();
 				GUILayout.EndArea ();
 
@@ -94,7 +96,8 @@ namespace Debugger.Unity.Engine
 			foreach (var window in windows)
 			{
 				GUI.enabled = true;
-				GUILayout.BeginArea (rect, window.Title, GUI.skin.window);
+				GUILayout.BeginArea (rect, "", "CN Box");
+				window.DrawHeader ();
 				window.OnGUI ();
 				GUILayout.EndArea ();
 				rect.x = rect.x + width + gapwidth;

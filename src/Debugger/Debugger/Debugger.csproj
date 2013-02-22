@@ -41,6 +41,10 @@
   </Target>
   -->
   <ItemGroup>
+    <ProjectReference Include="..\Backend.Sdb\Debugger.Backend.Sdb.csproj">
+      <Project>{796B13D9-48B9-4EBA-B274-BBF297AFBD66}</Project>
+      <Name>Debugger.Backend.Sdb</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Backend\Debugger.Backend.csproj">
       <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
       <Name>Debugger.Backend</Name>
