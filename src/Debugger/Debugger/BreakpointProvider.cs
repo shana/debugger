@@ -123,21 +123,21 @@ namespace Debugger
 		private void OnTypeLoaded (ITypeMirror type)
 		{
 			var sourcefiles = type.SourceFiles;
-			var relevantBreakpoints = breakpoints.Where (bp => sourcefiles.Contains (bp.Key.Location.SourceFile));
+			var relevantBreakpoints = Breakpoints.Where (bp => sourcefiles.Contains (bp.Location.SourceFile));
 
 			foreach (var bp in relevantBreakpoints)
 			{
 				foreach (var method in type.Methods)
 				{
-					var bestLocation = BestLocationIn (method, bp.Key);
+					var bestLocation = BestLocationIn (method, bp);
 					if (bestLocation == null)
 						continue;
 
 					var b = Factory.CreateBreakpoint (bestLocation);
-					breakpoints[bp.Key] = b;
+					breakpoints[bp] = b;
 					b.Enable ();
 					if (BreakpointBound != null)
-						BreakpointBound (bp.Key, b, b.Location);
+						BreakpointBound (bp, b, b.Location);
 					break;
 				}
 			}
