@@ -77,7 +77,17 @@ namespace Debugger.Backend.Sdb
 		{
 			Factory.Register (
 			    location => new SdbBreakpoint (vm.CreateBreakpointRequest (location.Unwrap<MDS.Location> ()), location),
-			    thread => Cache.Lookup<EventRequest> (vm.CreateStepRequest (thread.Unwrap<MDS.ThreadMirror> ())),
+				(thread, stepType) =>
+				{
+					var request = vm.CreateStepRequest(thread.Unwrap<MDS.ThreadMirror>());
+					switch (stepType)
+					{
+						case StepType.Into: request.Depth = MDS.StepDepth.Into; break;
+						case StepType.Over: request.Depth = MDS.StepDepth.Over; break;
+						case StepType.Out: request.Depth = MDS.StepDepth.Out; break;
+					}
+					return Cache.Lookup<EventRequest>(request);
+				},
 			    () => new EventRequest (vm.CreateMethodEntryRequest ()),
 			    () => new EventRequest (vm.CreateMethodExitRequest ()),
 			    (source, line) => new SdbLocation (source, line)

@@ -80,14 +80,14 @@ namespace Debugger
 			vm.Resume ();
 		}
 
-		public void Step ()
+		public void Step(StepType stepType)
 		{
 			lock (obj) {
 				if (!running)
 				{
 					IEventRequest request;
 					if (!requests.TryGetValue (currentThread, out request)) {
-						request = Factory.CreateStepRequest (currentThread);
+						request = Factory.CreateStepRequest (currentThread, stepType);
 						requests.Add (currentThread, request);
 					}
 					request.Enable ();

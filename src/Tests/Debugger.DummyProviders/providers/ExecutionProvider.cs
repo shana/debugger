@@ -32,7 +32,7 @@ namespace Debugger.DummyProviders
 			Running = true;
 		}
 
-		public void Step ()
+		public void Step (StepType stepType)
 		{
 			
 		}

@@ -35,6 +35,11 @@ namespace Debugger.Backend.Sdb
 			get { return Cache.Lookup<SdbTypeMirror> (methodMirror.DeclaringType); }
 		}
 
+		public ITypeMirror ReturnType
+		{
+			get { return Cache.Lookup<SdbTypeMirror>(methodMirror.ReturnType); }
+		}
+
 		private static ILocation SdbLocationFor (MDS.Location l)
 		{
 			return Cache.Lookup<SdbLocation> (l);

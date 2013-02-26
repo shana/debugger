@@ -11,6 +11,7 @@ namespace Debugger.Backend.Sdb
 
 		public long Id { get { return Unwrap<MDS.ThreadMirror> ().Id; } }
 		public string Name { get { return Unwrap<MDS.ThreadMirror> ().Name; } }
+		public System.Threading.ThreadState ThreadState { get { return Unwrap<MDS.ThreadMirror>().ThreadState; } }
 
 		public SdbThreadMirror (MDS.ThreadMirror threadMirror)
 			: base (threadMirror)

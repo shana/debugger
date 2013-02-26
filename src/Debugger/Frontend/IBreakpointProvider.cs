@@ -58,7 +58,7 @@ namespace Debugger
 
 		int IndexOf (IBreakpoint breakpoint);
 
-		event Action<IBreakpoint, ILocation> BreakpointBound;
-		event Action<IBreakpoint, ILocation> BreakpointUnbound;
+		event Action<IBreakpoint, IBreakpoint, ILocation> BreakpointBound;
+		event Action<IBreakpoint, IBreakpoint, ILocation> BreakpointUnbound;
 	}
 }

@@ -55,8 +55,9 @@ namespace Debugger.DummyProviders
 
 		List<IMethodMirror> LoadMethods ()
 		{
+			// TODO: pass appropriate type for return type?
 			return Metadata.Methods.Select (m =>
-				new MethodMirror (m.FullName, m.Name, this, m.MetadataToken.ToInt32 (), m,
+				new MethodMirror (m.FullName, m.Name, this, null, m.MetadataToken.ToInt32 (), m,
 					new List<ILocation> (m.Body.Instructions.Where (i => i.SequencePoint != null).Select (il =>
 						new Location (il.SequencePoint.Document.Url, il.SequencePoint.StartLine) as ILocation))
 					.ToArray ()

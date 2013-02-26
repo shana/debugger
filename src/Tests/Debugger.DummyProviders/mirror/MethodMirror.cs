@@ -11,6 +11,7 @@ namespace Debugger.DummyProviders
 
 		public string FullName { get; set; }
 		public ITypeMirror DeclaringType { get; set; }
+		public ITypeMirror ReturnType { get; set; }
 		public string Name { get; set; }
 
 		public int MetadataToken { get; set; }
@@ -25,11 +26,12 @@ namespace Debugger.DummyProviders
 			}
 		}
 
-		public MethodMirror (string fullName, string name, ITypeMirror type, int token, MethodDefinition def, ILocation[] locations)
+		public MethodMirror (string fullName, string name, ITypeMirror type, ITypeMirror returnType, int token, MethodDefinition def, ILocation[] locations)
 		{
 			this.FullName = fullName;
 			this.Name = name;
 			this.DeclaringType = type;
+			this.ReturnType = returnType;
 			this.MetadataToken = token;
 			this.metadata = def;
 			this.locations = locations;

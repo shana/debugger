@@ -15,8 +15,8 @@ namespace Debugger
 		private readonly Dictionary<IBreakpoint, IBreakpoint> breakpoints = new Dictionary<IBreakpoint, IBreakpoint> ();
 		public IList<IBreakpoint> Breakpoints { get { return new ReadOnlyCollection<IBreakpoint> (breakpoints.Keys.ToList ());}}
 
-		public event Action<IBreakpoint, ILocation> BreakpointBound;
-		public event Action<IBreakpoint, ILocation> BreakpointUnbound;
+		public event Action<IBreakpoint, IBreakpoint, ILocation> BreakpointBound;
+		public event Action<IBreakpoint, IBreakpoint, ILocation> BreakpointUnbound;
 
 
 		public IBreakpoint this[int index] { get { return breakpoints.Keys.ElementAt (index); } }
@@ -131,10 +131,10 @@ namespace Debugger
 		private void OnTypeLoaded (ITypeMirror type)
 		{
 			var sourcefiles = type.SourceFiles;
-			var relevantBreakpoints = breakpoints.Where (bp => sourcefiles.Contains (bp.Key.Location.SourceFile)).ToArray ();
+			var relevantBreakpoints = Breakpoints.Where (bp => sourcefiles.Contains (bp.Location.SourceFile));
 
 			foreach (var bp in relevantBreakpoints)
-				BindBreakpoint (type, bp.Key);
+				BindBreakpoint (type, bp);
 		}
 
 		private bool BindBreakpoint (ITypeMirror type, IBreakpoint bp)
@@ -149,7 +149,7 @@ namespace Debugger
 				breakpoints[bp] = b;
 				b.Enable ();
 				if (BreakpointBound != null)
-					BreakpointBound (bp, b.Location);
+						BreakpointBound (bp, b, b.Location);
 				return true;
 			}
 			return false;
@@ -160,7 +160,7 @@ namespace Debugger
 			var bps = breakpoints.Where (x => typeMirror.SourceFiles.Contains(x.Value.Location.SourceFile)).ToArray ();
 			foreach (var bp in bps) {
 				if (BreakpointUnbound != null)
-					BreakpointUnbound (bp.Key, bp.Value.Location);
+					BreakpointUnbound (bp.Key, bp.Value, bp.Value.Location);
 				breakpoints.Remove (bp.Key);
 			}
 		}
