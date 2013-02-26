@@ -13,7 +13,7 @@ namespace Debugger
 		private readonly IVirtualMachine virtualMachine;
 		private readonly List<ITypeMirror> loadedTypes = new List<ITypeMirror> ();
 		private readonly List<string> filter = new List<string> ();
-		private string basePath;
+		private string basePath = String.Empty;
 		private IList<string> sourceFiles = new List<string> ();
 
 		public string BasePath
@@ -78,7 +78,7 @@ namespace Debugger
 
 		public void AddFilter (string path)
 		{
-			if (path == null)
+			if (String.IsNullOrEmpty(path))
 				return;
 			if (!filter.Contains (path))
 				filter.Add (path);

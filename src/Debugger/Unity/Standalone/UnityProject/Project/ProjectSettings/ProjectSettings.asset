@@ -39,7 +39,7 @@ PlayerSettings:
   enableHWStatistics: 1
   usePlayerLog: 1
   stripPhysics: 0
-  resizableWindow: 0
+  resizableWindow: 1
   useMacAppStoreValidation: 0
   xboxSkinOnGPU: 1
   xboxEnableAvatar: 0
@@ -66,6 +66,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
+  productGUID: 0de5bc4e46bb6d04cad8dd5ae1ea93ac
   iPhoneBundleIdentifier: com.Company.ProductName
   iPhoneBundleVersion: 1.0
   AndroidBundleVersionCode: 1
