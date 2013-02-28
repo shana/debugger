@@ -97,6 +97,7 @@ namespace Debugger.Backend.Sdb
 		public void Attach (int port)
 		{
 			LogProvider.Log ("Attempting connection at port {0}...", port);
+			MDS.VirtualMachineManager.DefaultTimeout = 500;
 			vm = MDS.VirtualMachineManager.Connect (new IPEndPoint (IPAddress.Loopback, port));
 			vm.EnableEvents (
 				MDS.EventType.AppDomainCreate,

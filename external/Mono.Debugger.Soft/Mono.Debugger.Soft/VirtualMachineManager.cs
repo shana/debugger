@@ -35,6 +35,8 @@ namespace Mono.Debugger.Soft
 		private delegate VirtualMachine ListenCallback (Socket dbg_sock, Socket con_sock); 
 		private delegate VirtualMachine ConnectCallback (Socket dbg_sock, Socket con_sock, IPEndPoint dbg_ep, IPEndPoint con_ep); 
 
+		public static int DefaultTimeout { get; set; }
+
 		internal VirtualMachineManager () {
 		}
 
@@ -328,6 +330,8 @@ namespace Mono.Debugger.Soft
 			
 			vm.StandardOutput = standardOutput;
 			vm.StandardError = standardError;
+			if (DefaultTimeout > 0)
+				vm.SetSocketTimeouts (DefaultTimeout, DefaultTimeout, 0);
 			
 			transport.EventHandler = new EventHandler (vm);
 

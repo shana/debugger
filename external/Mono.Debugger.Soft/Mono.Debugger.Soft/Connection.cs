@@ -1049,6 +1049,8 @@ namespace Mono.Debugger.Soft
 			while (offset < len) {
 				int n = TransportReceive (buf, buf_offset + offset, len - offset);
 
+				if (n < 0)
+					return n;
 				if (n == 0)
 					return offset;
 				offset += n;
@@ -1105,6 +1107,8 @@ namespace Mono.Debugger.Soft
 			byte[] header = new byte [HEADER_LENGTH];
 
 			int len = Receive (header, 0, header.Length);
+			if (len < 0)
+				return null;
 			if (len == 0)
 				return new byte [0];
 			if (len != HEADER_LENGTH) {
@@ -1172,6 +1176,9 @@ namespace Mono.Debugger.Soft
 
 		bool ReceivePacket () {
 				byte[] packet = ReadPacket ();
+
+				if (packet == null)
+					return true;
 
 				if (packet.Length == 0) {
 					return false;
@@ -1635,7 +1642,8 @@ namespace Mono.Debugger.Soft
 		internal void SetSocketTimeouts (int send_timeout, int receive_timeout, int keepalive_interval)
 		{
 			TransportSetTimeouts (send_timeout, receive_timeout);
-			SendReceive (CommandSet.VM, (int)CmdVM.SET_KEEPALIVE, new PacketWriter ().WriteId (keepalive_interval));
+			if (keepalive_interval > 0)
+				SendReceive (CommandSet.VM, (int)CmdVM.SET_KEEPALIVE, new PacketWriter ().WriteId (keepalive_interval));
 		}
 
 		internal long[] VM_GetTypesForSourceFile (string fname, bool ignoreCase) {
@@ -2340,7 +2348,13 @@ namespace Mono.Debugger.Soft
 		
 		protected override int TransportReceive (byte[] buf, int buf_offset, int len)
 		{
-			return socket.Receive (buf, buf_offset, len, SocketFlags.None);
+			try {
+				return socket.Receive (buf, buf_offset, len, SocketFlags.None);
+			} catch (SocketException ex) {
+				if (ex.ErrorCode == (int)SocketError.TimedOut)
+					return -1;
+				throw;
+			}
 		}
 		
 		protected override void TransportSetTimeouts (int send_timeout, int receive_timeout)
