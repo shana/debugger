@@ -15,6 +15,9 @@ namespace Debugger
 		private readonly Dictionary<IBreakpoint, IBreakpoint> breakpoints = new Dictionary<IBreakpoint, IBreakpoint> ();
 		public IList<IBreakpoint> Breakpoints { get { return new ReadOnlyCollection<IBreakpoint> (breakpoints.Keys.ToList ());}}
 
+		public event Action<IBreakpoint> BreakpointAdded;
+		public event Action<IBreakpoint> BreakpointRemoved;
+
 		public event Action<IBreakpoint, IBreakpoint, ILocation> BreakpointBound;
 		public event Action<IBreakpoint, IBreakpoint, ILocation> BreakpointUnbound;
 
@@ -59,7 +62,7 @@ namespace Debugger
 
 		public void ToggleBreakpointAt (string file, int line)
 		{
-			LogProvider.Log ("Toggling breakpoint at line: " + line);
+			LogProvider.Log ("Toggling breakpoint at file {0} line {1}", file, line);
 
 			file = typeProvider.MapFile (file);
 
@@ -76,6 +79,8 @@ namespace Debugger
 				return false;
 
 			breakpoints.Add (breakpoint, null);
+			if (BreakpointAdded != null)
+				BreakpointAdded (breakpoint);
 
 			foreach(var type in typeProvider.TypesFor (breakpoint.Location.SourceFile))
 				if (BindBreakpoint (type, breakpoint))
@@ -102,6 +107,9 @@ namespace Debugger
 
 			if (IsBound (breakpoint) && breakpoint.Enabled)
 				breakpoint.Disable ();
+
+			if (BreakpointRemoved != null)
+				BreakpointRemoved (breakpoint);
 			breakpoints.Remove (breakpoint);
 			return true;
 		}

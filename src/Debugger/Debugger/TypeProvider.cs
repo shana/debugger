@@ -68,6 +68,7 @@ namespace Debugger
 
 		private void OnTypeLoaded (ITypeEvent typeEvent)
 		{
+			LogProvider.Log ("TypeLoaded {0}", typeEvent.Type.Name);
 			loadedTypes.Add (typeEvent.Type);
 			foreach (var file in typeEvent.Type.SourceFiles)
 				if (!sourceFiles.Contains (file))

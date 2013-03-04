@@ -5,7 +5,7 @@ using CodeEditor.Composition;
 using Debugger.Unity.Engine;
 using UnityEngine;
 
-namespace Debugger.Unity.Standalone
+namespace Debugger.Unity.Engine
 {
 	[Export]
 	public class MainWindow
@@ -15,6 +15,7 @@ namespace Debugger.Unity.Standalone
 		private readonly LogWindow log;
 		private readonly CallStackDisplay callStackDisplay;
 		private readonly ExecutionWindow executionWindow;
+		private readonly BreakpointsWindow breakpointsWindow;
 
 		private readonly IDebuggerSession session;
 		private readonly ITypeProvider typeProvider;
@@ -31,12 +32,14 @@ namespace Debugger.Unity.Standalone
 			LogWindow log,
 			CallStackDisplay callStackDisplay,
 			ExecutionWindow executionWindow,
+			BreakpointsWindow breakpointsWindow,
 			DebuggerWindowManager windowManager
 		)
 		{
 			this.log = log;
 			this.callStackDisplay = callStackDisplay;
 			this.executionWindow = executionWindow;
+			this.breakpointsWindow = breakpointsWindow;
 			this.sourcesWindow = sourcesWindow;
 			this.sourceWindow = sourceWindow;
 			this.session = session;
@@ -58,8 +61,9 @@ namespace Debugger.Unity.Standalone
 				var str = f.ReadLine ();
 				f.Close ();
 				session.Port = int.Parse (str.Substring ("Listening on 0.0.0.0:".Length, 5));
-				Debug.Log ("Connecting to " + session.Port);
 			}
+
+			log.Log ("Connecting to " + session.Port);
 
 			Camera.main.backgroundColor = new Color (0.125f, 0.125f, 0.125f, 0);
 			Application.runInBackground = true;

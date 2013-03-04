@@ -52,19 +52,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CodeEditor.Composition">
-      <HintPath>..\..\..\..\libs\editor\CodeEditor.Composition.dll</HintPath>
+      <HintPath>..\..\..\..\lib\Editor\CodeEditor.Composition.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.IO">
-      <HintPath>..\..\..\..\libs\editor\CodeEditor.IO.dll</HintPath>
+      <HintPath>..\..\..\..\lib\Editor\CodeEditor.IO.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Text.Data">
-      <HintPath>..\..\..\..\libs\editor\CodeEditor.Text.Data.dll</HintPath>
+      <HintPath>..\..\..\..\lib\Editor\CodeEditor.Text.Data.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Text.UI">
-      <HintPath>..\..\..\..\libs\editor\CodeEditor.Text.UI.dll</HintPath>
+      <HintPath>..\..\..\..\lib\Editor\CodeEditor.Text.UI.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Text.UI.Unity.Engine">
-      <HintPath>..\..\..\..\libs\editor\CodeEditor.Text.UI.Unity.Engine.dll</HintPath>
+      <HintPath>..\..\..\..\lib\Editor\CodeEditor.Text.UI.Unity.Engine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -78,11 +78,13 @@
     <Compile Include="BreakpointMargin.cs" />
     <Compile Include="BreakpointMarginProvider.cs" />
     <Compile Include="CallStackDisplay.cs" />
+    <Compile Include="BreakpointsWindow.cs" />
     <Compile Include="DebuggerWindow.cs" />
     <Compile Include="ExecutingLineAdornment.cs" />
     <Compile Include="ExecutionWindow.cs" />
     <Compile Include="LogWindow.cs" />
     <Compile Include="DebuggerWindowManager.cs" />
+    <Compile Include="MainWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SourceNavigator.cs" />
     <Compile Include="SourcesProvider.cs">

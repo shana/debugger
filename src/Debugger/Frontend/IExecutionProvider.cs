@@ -9,7 +9,7 @@ namespace Debugger
 		ILocation Location { get; }
 		bool Running { get; }
 
-		event Action Break;
+		event Action<ILocation> Break;
 		event Action<IThreadMirror> Suspended;
 
 		void Resume ();

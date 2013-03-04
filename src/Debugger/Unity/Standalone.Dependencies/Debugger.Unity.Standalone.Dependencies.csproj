@@ -62,67 +62,67 @@
     </Reference>
     <Reference Include="Boo.Adt, Version=1.0.4528.0, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\Boo.Adt.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\Boo.Adt.dll</HintPath>
     </Reference>
     <Reference Include="Boo.Lang, Version=1.0.4528.0, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\Boo.Lang.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\Boo.Lang.dll</HintPath>
     </Reference>
     <Reference Include="Boo.Lang.PatternMatching, Version=1.0.4528.0, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\Boo.Lang.PatternMatching.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\Boo.Lang.PatternMatching.dll</HintPath>
     </Reference>
     <Reference Include="Boo.OMeta, Version=1.0.4528.0, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\Boo.OMeta.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\Boo.OMeta.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Collections, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Collections.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\CodeEditor.Collections.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Composition, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Composition.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\CodeEditor.Composition.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Grammars, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Grammars.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\CodeEditor.Grammars.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.IO, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\CodeEditor.IO.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\CodeEditor.IO.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Languages.Boo, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Languages.Boo.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\CodeEditor.Languages.Boo.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Languages.Common, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Languages.Common.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\CodeEditor.Languages.Common.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Languages.CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Languages.CSharp.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\CodeEditor.Languages.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Languages.UnityScript, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Languages.UnityScript.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\CodeEditor.Languages.UnityScript.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Text.UI.Unity.Engine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Text.UI.Unity.Engine.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\CodeEditor.Text.UI.Unity.Engine.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Text.Data, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Text.Data.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\CodeEditor.Text.Data.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Text.Logic, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Text.Logic.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\CodeEditor.Text.Logic.dll</HintPath>
     </Reference>
     <Reference Include="CodeEditor.Text.UI, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\editor\CodeEditor.Text.UI.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Editor\CodeEditor.Text.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using CodeEditor.Composition.Hosting;
+using Debugger.Unity.Engine;
 
 namespace Debugger.Unity.Standalone
 {

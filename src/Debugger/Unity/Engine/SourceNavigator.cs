@@ -12,7 +12,7 @@ namespace Debugger.Unity.Engine
 	}
 
 	[Export (typeof (ISourceNavigator))]
-	internal class SourceNavigator : ISourceNavigator
+	public class SourceNavigator : ISourceNavigator
 	{
 		[Import]
 		public SourceWindow SourceWindow { get; set; }

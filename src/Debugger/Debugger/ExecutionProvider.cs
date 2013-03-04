@@ -18,12 +18,12 @@ namespace Debugger
 		private readonly Dictionary<IThreadMirror, IEventRequest> requests = new Dictionary<IThreadMirror, IEventRequest> ();
 
 		public event Action<IThreadMirror> Suspended;
-		public event Action Break;
+		public event Action<ILocation> Break;
 
-		public ILocation Location { get { return currentLocation ?? Debugger.Location.Default; }}
+		public ILocation Location { get { return currentLocation ?? Debugger.Location.Default; } }
 
-		public bool Running { get { lock (obj) { return running;} }}
-		public IThreadMirror CurrentThread  { get { return currentThread; }}
+		public bool Running { get { lock (obj) { return running; } } }
+		public IThreadMirror CurrentThread { get { return currentThread; } }
 
 		[ImportingConstructor]
 		public ExecutionProvider (IVirtualMachine vm)
@@ -42,7 +42,7 @@ namespace Debugger
 		{
 			vm.Suspend (ev);
 			if (Break != null)
-				Break ();
+				Break (currentLocation);
 		}
 
 		private void OnThreadStarted (IEvent ev)
@@ -50,7 +50,8 @@ namespace Debugger
 			if (ev.State == State.Unload)
 			{
 				var reqs = requests.Keys.Where (t => t.Equals (ev.Thread));
-				foreach (var t in reqs) {
+				foreach (var t in reqs)
+				{
 					requests[t].Disable ();
 					requests.Remove (t);
 				}
@@ -59,34 +60,39 @@ namespace Debugger
 
 		private void VMSuspended (IEvent suspendingEvent)
 		{
-			lock (obj) {
+			lock (obj)
+			{
 				running = false;
 				if (Suspended != null)
 					Suspended (suspendingEvent.Thread);
 
 				currentThread = suspendingEvent.Thread;
-				var frames = currentThread.GetFrames();
+				var frames = currentThread.GetFrames ();
 				currentLocation = frames.Count == 0 ? new Location ("", 0) : frames[0].Location;
 			}
 		}
 
 		public void Resume ()
 		{
-			lock (obj) {
-				if (!running) {
+			lock (obj)
+			{
+				if (!running)
+				{
 					running = true;
 				}
 			}
 			vm.Resume ();
 		}
 
-		public void Step(StepType stepType)
+		public void Step (StepType stepType)
 		{
-			lock (obj) {
+			lock (obj)
+			{
 				if (!running)
 				{
 					IEventRequest request;
-					if (!requests.TryGetValue (currentThread, out request)) {
+					if (!requests.TryGetValue (currentThread, out request))
+					{
 						request = Factory.CreateStepRequest (currentThread, stepType);
 						requests.Add (currentThread, request);
 					}
@@ -100,9 +106,9 @@ namespace Debugger
 		{
 			vm.Suspend (ev);
 			ev.Request.Disable ();
-			
+
 			if (Break != null)
-				Break ();
+				Break (currentLocation);
 		}
 	}
 }

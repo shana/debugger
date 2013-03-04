@@ -60,5 +60,7 @@ namespace Debugger
 
 		event Action<IBreakpoint, IBreakpoint, ILocation> BreakpointBound;
 		event Action<IBreakpoint, IBreakpoint, ILocation> BreakpointUnbound;
+		event Action<IBreakpoint> BreakpointAdded;
+		event Action<IBreakpoint> BreakpointRemoved;
 	}
 }

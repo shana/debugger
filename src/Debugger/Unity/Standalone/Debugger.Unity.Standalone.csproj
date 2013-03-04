@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CodeEditor.Composition">
-      <HintPath>..\..\..\..\libs\editor\CodeEditor.Composition.dll</HintPath>
+      <HintPath>..\..\..\..\lib\Editor\CodeEditor.Composition.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -46,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BootStrap.cs" />
-    <Compile Include="MainWindow.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -58,7 +57,7 @@
     <ProjectReference Include="..\..\Debugger\Debugger.csproj">
       <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
       <Name>Debugger %28Debugger\Debugger%29</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Frontend\Debugger.Frontend.csproj">
       <Project>{9FC9E578-64AB-43F0-BCF7-F87D18CADAC0}</Project>
@@ -67,7 +66,7 @@
     <ProjectReference Include="..\Engine\Debugger.Unity.Engine.csproj">
       <Project>{0E6DFD1C-426E-4F74-AD5B-D908458B3D7B}</Project>
       <Name>Debugger.Unity.Engine</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

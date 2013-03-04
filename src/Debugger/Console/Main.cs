@@ -117,8 +117,8 @@ namespace Debugger
 				File.Delete ("console.log");
 
 			session.TraceCallback += s => File.AppendAllText ("console.log", s + "\n");
-			session.BreakpointProvider.BreakpointBound += (breakpoint, location) => Console.WriteLine("breakpoint {0} bound at {1}", session.BreakpointProvider.IndexOf (breakpoint), location.LineNumber);
-			session.BreakpointProvider.BreakpointUnbound += (breakpoint, location) => Console.WriteLine("breakpoint {0} unbound from {1}", session.BreakpointProvider.IndexOf (breakpoint), location.LineNumber);
+			session.BreakpointProvider.BreakpointBound += (breakpoint, bound, location) => Console.WriteLine("breakpoint {0} bound at {1}", session.BreakpointProvider.IndexOf (breakpoint), location.LineNumber);
+			session.BreakpointProvider.BreakpointUnbound += (breakpoint, bound, location) => Console.WriteLine("breakpoint {0} unbound from {1}", session.BreakpointProvider.IndexOf (breakpoint), location.LineNumber);
 
 			session.ExecutionProvider.Break += () => {
 				var location = session.ExecutionProvider.Location;
