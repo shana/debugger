@@ -69,7 +69,7 @@
       <HintPath>..\..\..\lib\Editor\CodeEditor.Text.UI.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
-      <HintPath>..\..\..\libs\Cecil\Mono.Cecil.dll</HintPath>
+      <HintPath>..\..\..\lib\Cecil\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">

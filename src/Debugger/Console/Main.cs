@@ -120,7 +120,7 @@ namespace Debugger
 			session.BreakpointProvider.BreakpointBound += (breakpoint, bound, location) => Console.WriteLine("breakpoint {0} bound at {1}", session.BreakpointProvider.IndexOf (breakpoint), location.LineNumber);
 			session.BreakpointProvider.BreakpointUnbound += (breakpoint, bound, location) => Console.WriteLine("breakpoint {0} unbound from {1}", session.BreakpointProvider.IndexOf (breakpoint), location.LineNumber);
 
-			session.ExecutionProvider.Break += () => {
+			session.ExecutionProvider.Break += (l) => {
 				var location = session.ExecutionProvider.Location;
 				Console.WriteLine ();
 				Console.WriteLine ("breaking on {0}:{1}", location.SourceFile, location.LineNumber);

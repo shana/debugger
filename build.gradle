@@ -2,6 +2,8 @@ version = '0.1.0'
 
 configurations {
 	editor
+	moq
+	nunit
 }
 
 buildscript {
@@ -23,16 +25,32 @@ allprojects {
 
 
 def editorReferences = [
-	'CodeEditor.Composition',
-	'CodeEditor.IO',
-	'CodeEditor.Text.Data',
-	'CodeEditor.Text.UI',
+    'CodeEditor.Collections',
+    'CodeEditor.Composition',
+    'CodeEditor.Grammars',
+    'CodeEditor.IO',
+    'CodeEditor.Languages.Boo',
+    'CodeEditor.Languages.Common',
+    'CodeEditor.Languages.CSharp',
+    'CodeEditor.Languages.UnityScript',
+    'CodeEditor.Text.UI.Unity.Engine',
+    'CodeEditor.Text.Data',
+    'CodeEditor.Text.Logic',
+    'CodeEditor.Text.UI'
 ]
 
 dependencies {
 	editorReferences.each {
 		'editor' group: 'CodeEditor', name: it, version: '0+'
 	}
+
+    'editor' group: 'boo-extensions', name: 'Boo.Adt', version: '0+'
+    'editor' group: 'boo-extensions', name: 'Boo.OMeta', version: '0+'
+    'editor' group: 'boo-extensions', name: 'Boo.OMeta', version: '0+'
+    'editor' group: 'boo', name: 'Boo.Lang', version: '0+'
+    'editor' group: 'boo', name: 'Boo.Lang.PatternMatching', version: '0+'
+    'moq' group: 'Moq', name: 'Moq', version: '4+'
+    'nunit' group: 'nunit', name: 'nunit.framework', version: '2.6+'
 }
 
 

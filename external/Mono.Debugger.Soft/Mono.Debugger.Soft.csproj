@@ -28,7 +28,6 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>..\..\..\..\External\Mono\builds\monodistribution\lib\mono\2.0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -38,7 +37,6 @@
     <DefineConstants>NET_1_1;NET_2_0;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>..\..\..\..\External\Mono\builds\monodistribution\lib\mono\2.0</AdditionalLibPaths>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -140,7 +138,7 @@
     </Reference>
     <Reference Include="Mono.Cecil.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\libs\Cecil\Mono.Cecil.dll</HintPath>
+      <HintPath>..\..\lib\Cecil\Mono.Cecil.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Core.dll">

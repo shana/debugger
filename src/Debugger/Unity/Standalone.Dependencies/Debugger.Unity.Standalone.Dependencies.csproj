@@ -58,7 +58,7 @@
     </ProjectReference>
     <Reference Include="Mono.Cecil, Version=0.6.9.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)libs\Mono.Cecil.dll</HintPath>
+      <HintPath>$(SolutionDir)lib\Cecil\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="Boo.Adt, Version=1.0.4528.0, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

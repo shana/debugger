@@ -65,7 +65,7 @@
       <HintPath>..\..\..\lib\Editor\CodeEditor.Composition.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
-      <HintPath>..\..\..\libs\Cecil\Mono.Cecil.dll</HintPath>
+      <HintPath>..\..\..\lib\Cecil\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
