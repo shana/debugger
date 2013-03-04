@@ -1,0 +1,12 @@
+// automatically include all directories under src/ as projects 
+def srcDir = file('src')
+srcDir.eachDirRecurse {
+	if (new File (it.getAbsolutePath(), 'build.gradle').exists ()) {
+		include it.getAbsolutePath().substring (srcDir.getAbsolutePath().size () + 1)
+	}
+}
+
+rootProject.children.each {
+  it.projectDir = new File(srcDir, it.name)
+  it.buildFileName = "build.gradle"
+}

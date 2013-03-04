@@ -1,0 +1,48 @@
+version = '0.1.0'
+
+configurations {
+	editor
+}
+
+buildscript {
+	repositories {
+		ivy { url '../repository' }
+		ivy { url 'http://unity-technologies.github.com/kaizen/repositories/unstable' }
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'kaizen:kaizen:0.2.7'
+	}
+}
+
+allprojects {
+	repositories {
+		ivy { url 'http://unity-technologies.github.com/kaizen/repositories/unstable' }
+	}
+}
+
+
+def editorReferences = [
+	'CodeEditor.Composition',
+	'CodeEditor.IO',
+	'CodeEditor.Text.Data',
+	'CodeEditor.Text.UI',
+]
+
+dependencies {
+	editorReferences.each {
+		'editor' group: 'CodeEditor', name: it, version: '0+'
+	}
+}
+
+
+apply plugin: 'kaizen-bundle'
+
+//def bundleDependencies = project.dependencies
+//subprojects { subProject ->
+//	bundleDependencies.add('debugger', bundleDependencies.project(path: subProject.path))
+//	apply plugin: 'assembly'
+//	configurations {
+//		debugger
+//	}
+//}
