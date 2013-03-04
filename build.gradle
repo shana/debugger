@@ -46,7 +46,6 @@ dependencies {
 
     'editor' group: 'boo-extensions', name: 'Boo.Adt', version: '0+'
     'editor' group: 'boo-extensions', name: 'Boo.OMeta', version: '0+'
-    'editor' group: 'boo-extensions', name: 'Boo.OMeta', version: '0+'
     'editor' group: 'boo', name: 'Boo.Lang', version: '0+'
     'editor' group: 'boo', name: 'Boo.Lang.PatternMatching', version: '0+'
     'moq' group: 'Moq', name: 'Moq', version: '4+'
