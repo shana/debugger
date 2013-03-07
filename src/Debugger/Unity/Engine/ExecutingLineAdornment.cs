@@ -21,7 +21,7 @@ namespace Debugger.Unity.Engine
 		{
 			if (executionProvider.Running)
 				return;
-			if (line.LineNumber == executionProvider.Location.LineNumber)
+			if (line.LineNumber == executionProvider.Location.LineNumber - 1)
 				Draw (lineRect);
 		}
 

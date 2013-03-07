@@ -41,41 +41,13 @@
   </Target>
   -->
   <ItemGroup>
-    <ProjectReference Include="..\Backend.Sdb\Debugger.Backend.Sdb.csproj">
-      <Project>{796B13D9-48B9-4EBA-B274-BBF297AFBD66}</Project>
-      <Name>Debugger.Backend.Sdb</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Backend\Debugger.Backend.csproj">
-      <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
-      <Name>Debugger.Backend</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Frontend\Debugger.Frontend.csproj">
-      <Project>{9FC9E578-64AB-43F0-BCF7-F87D18CADAC0}</Project>
-      <Name>Debugger.Frontend</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="CodeEditor.Composition">
       <HintPath>..\..\..\lib\Editor\CodeEditor.Composition.dll</HintPath>
-    </Reference>
-    <Reference Include="CodeEditor.IO">
-      <HintPath>..\..\..\lib\Editor\CodeEditor.IO.dll</HintPath>
-    </Reference>
-    <Reference Include="CodeEditor.Text.Data">
-      <HintPath>..\..\..\lib\Editor\CodeEditor.Text.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="CodeEditor.Text.UI">
-      <HintPath>..\..\..\lib\Editor\CodeEditor.Text.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>..\..\..\lib\Cecil\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Breakpoint.cs" />
@@ -91,5 +63,19 @@
   <ItemGroup>
     <Compile Include="DebuggerSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Backend.Sdb\Debugger.Backend.Sdb.csproj">
+      <Project>{796B13D9-48B9-4EBA-B274-BBF297AFBD66}</Project>
+      <Name>Debugger.Backend.Sdb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Backend\Debugger.Backend.csproj">
+      <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
+      <Name>Debugger.Backend</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Frontend\Debugger.Frontend.csproj">
+      <Project>{9FC9E578-64AB-43F0-BCF7-F87D18CADAC0}</Project>
+      <Name>Debugger.Frontend</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

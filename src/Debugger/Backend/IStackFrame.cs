@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Debugger.Backend
 {
 	public interface IStackFrame : IWrapper
@@ -6,5 +8,8 @@ namespace Debugger.Backend
 		IMethodMirror Method { get; }
 		int ILOffset { get; }
 		ILocation Location { get; }
+		IList<IVariable> Locals { get; }
+		IList<IVariable> VisibleVariables { get; }
+		object GetValue (IVariable variable);
 	}
 }

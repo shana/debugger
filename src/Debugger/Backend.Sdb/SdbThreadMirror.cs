@@ -20,8 +20,7 @@ namespace Debugger.Backend.Sdb
 
 		public IList<IStackFrame> GetFrames ()
 		{
-			if (frames == null)
-				frames = threadMirror.GetFrames ().Select (x => new SdbStackFrame (x)).ToArray ();
+			frames = threadMirror.GetFrames ().Select (x => new SdbStackFrame (x)).ToArray ();
 			return frames;
 		}
 

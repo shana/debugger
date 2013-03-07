@@ -8,8 +8,8 @@
     <ProjectGuid>{9FC9E578-64AB-43F0-BCF7-F87D18CADAC0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Frontend</RootNamespace>
-    <AssemblyName>Frontend</AssemblyName>
+    <RootNamespace>Debugger.Frontend</RootNamespace>
+    <AssemblyName>Debugger.Frontend</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

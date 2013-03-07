@@ -17,6 +17,7 @@ namespace Debugger.Backend.Sdb
 			{
 				if (metadata == null) {
 					metadata = AssemblyDefinition.ReadAssembly (mirror.Location);
+					mirror.Metadata = metadata;
 				}
 				return metadata;
 			}

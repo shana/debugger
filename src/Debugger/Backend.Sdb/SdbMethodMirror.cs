@@ -1,13 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
+using Mono.Cecil;
 using MDS=Mono.Debugger.Soft;
 
 namespace Debugger.Backend.Sdb
 {
-	internal class SdbMethodMirror : Wrapper, IMethodMirror
+	class SdbMethodMirror : Wrapper, IMethodMirror
 	{
 		private MDS.MethodMirror methodMirror { get { return obj as MDS.MethodMirror; } }
 		private readonly List<ILocation> locations;
+		private MethodDefinition metadata;
 
 		public SdbMethodMirror (MDS.MethodMirror methodMirror)
 			: base (methodMirror)
@@ -45,6 +47,11 @@ namespace Debugger.Backend.Sdb
 			return Cache.Lookup<SdbLocation> (l);
 		}
 
+		public MethodDefinition Metadata
+		{
+			get { return methodMirror.Metadata; }
+		}
+
 		public override int GetHashCode ()
 		{
 			return (DeclaringType.Assembly.FullName + "_" + DeclaringType.FullName + "_" + FullName).GetHashCode ();
@@ -57,6 +64,5 @@ namespace Debugger.Backend.Sdb
 				return false;
 			return this.GetHashCode () == right.GetHashCode ();
 		}
-
 	}
 }

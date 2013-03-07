@@ -28,13 +28,13 @@ namespace Debugger.DummyProviders
 
 		public IBreakpoint GetBreakpointAt (string file, int line)
 		{
-			file = typeProvider.MapFile (file);
+			file = typeProvider.MapFullPath (file);
 			return breakpoints.Keys.FirstOrDefault (bp => bp.Location.SourceFile == file && bp.Location.LineNumber == line);
 		}
 
 		public void ToggleBreakpointAt (string file, int line)
 		{
-			file = typeProvider.MapFile (file);
+			file = typeProvider.MapFullPath (file);
 
 			var breakPoint = GetBreakpointAt (file, line);
 			if (breakPoint == null)
@@ -53,7 +53,7 @@ namespace Debugger.DummyProviders
 
 		public IBreakpoint AddBreakpoint (string file, int line)
 		{
-			file = typeProvider.MapFile (file);
+			file = typeProvider.MapFullPath (file);
 			if (file == null)
 				return null;
 			var bp = new Breakpoint (new Location (file, line));
@@ -73,7 +73,7 @@ namespace Debugger.DummyProviders
 
 		public bool RemoveBreakpoint (string file, int line)
 		{
-			file = typeProvider.MapFile (file);
+			file = typeProvider.MapFullPath (file);
 
 			var breakpoint = GetBreakpointAt (file, line);
 			if (breakpoint != null)

@@ -35,8 +35,11 @@ namespace Debugger.Unity.Engine
 
 		public void Repaint (ITextViewLine line, Rect marginRect)
 		{
-			if (GetBreakpoint (line) != null)
-				Draw (marginRect);
+			var breakpoint = GetBreakpoint (line);
+			if (breakpoint != null)
+				Draw (marginRect,
+					breakpointProvider.IsBound (breakpoint), breakpoint.Enabled
+					);
 		}
 
 		private void SetBreakpoint (ITextViewLine line)
@@ -49,9 +52,11 @@ namespace Debugger.Unity.Engine
 			return breakpointProvider.GetBreakpointAt (((File)textView.Document.File).FullName, line.LineNumber + 1);
 		}
 
-		private void Draw (Rect marginRect)
+		private void Draw (Rect marginRect, bool on, bool enabled)
 		{
-			GUIUtils.DrawRect (marginRect, Color.red);
+			Texture texture = enabled ?  Styles.textureBreakpointEnabled : Styles.textureBreakpointDisabled;
+			GUI.DrawTexture (marginRect, texture, ScaleMode.ScaleToFit);
+			//style.Draw (marginRect, new GUIContent ("AA"), false, on, false, false);
 		}
 	}
 }

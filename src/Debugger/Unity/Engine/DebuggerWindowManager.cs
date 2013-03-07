@@ -19,24 +19,24 @@ namespace Debugger.Unity.Engine
 	[Export]
 	public class DebuggerWindowManager
 	{
-		private readonly List<IDebuggerWindow> windows;
-		private readonly List<IDebuggerWindow> customWindows;
+		private readonly List<IDebuggerWindow> windows = new List<IDebuggerWindow> ();
+		private readonly List<IDebuggerWindow> customWindows = new List<IDebuggerWindow> ();
 
 		public Rect ViewPort { get; set; }
 
-		[Export]
-		public class ImportedWindows
-		{
-			[ImportMany]
-			internal IDebuggerWindow[] importedWindows;
-		}
+		//[Export]
+		//public class ImportedWindows
+		//{
+		//    [ImportMany]
+		//    internal IDebuggerWindow[] importedWindows;
+		//}
 
-		[ImportingConstructor]
-		public DebuggerWindowManager (ImportedWindows windows)
-		{
-			this.windows = windows.importedWindows.Where (w => w.ViewPort.Equals (DebuggerWindow.Default)).ToList ();
-			customWindows = windows.importedWindows.Where (w => !w.ViewPort.Equals (DebuggerWindow.Default)).ToList ();
-		}
+		//[ImportingConstructor]
+		//public DebuggerWindowManager (ImportedWindows windows)
+		//{
+		//    this.windows = windows.importedWindows.Where (w => w.ViewPort.Equals (DebuggerWindow.Default)).ToList ();
+		//    customWindows = windows.importedWindows.Where (w => !w.ViewPort.Equals (DebuggerWindow.Default)).ToList ();
+		//}
 
 		public T Get<T> () where T : class
 		{
@@ -61,7 +61,7 @@ namespace Debugger.Unity.Engine
 
 		public void OnGUI ()
 		{
-			int gapwidth = 10;
+			int padding = 2;
 			float currentX = 0;
 
 			foreach (var window in customWindows)
@@ -81,7 +81,7 @@ namespace Debugger.Unity.Engine
 				window.OnGUI ();
 				GUILayout.EndArea ();
 
-				currentX += w + gapwidth;
+				currentX += w + padding;
 			}
 
 			GUI.enabled = true;
@@ -89,7 +89,7 @@ namespace Debugger.Unity.Engine
 
 			int windowCount = windows.Count ();
 			int gaps = windowCount - 1;
-			int width = (Screen.width - gaps * gapwidth) / windowCount;
+			int width = (Screen.width - gaps * padding) / windowCount;
 
 			var rect = new Rect (0, 0, width, ViewPort.height);
 
@@ -100,7 +100,7 @@ namespace Debugger.Unity.Engine
 				window.DrawHeader ();
 				window.OnGUI ();
 				GUILayout.EndArea ();
-				rect.x = rect.x + width + gapwidth;
+				rect.x = rect.x + width + padding;
 			}
 
 			GUILayout.EndArea ();

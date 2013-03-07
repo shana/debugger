@@ -77,8 +77,9 @@
   <ItemGroup>
     <Compile Include="BreakpointMargin.cs" />
     <Compile Include="BreakpointMarginProvider.cs" />
-    <Compile Include="CallStackDisplay.cs" />
+    <Compile Include="CallstackWindow.cs" />
     <Compile Include="BreakpointsWindow.cs" />
+    <Compile Include="LocalsWindow.cs" />
     <Compile Include="DebuggerWindow.cs" />
     <Compile Include="ExecutingLineAdornment.cs" />
     <Compile Include="ExecutionWindow.cs" />
@@ -92,13 +93,14 @@
     </Compile>
     <Compile Include="SourcesWindow.cs" />
     <Compile Include="SourceWindow.cs" />
+    <Compile Include="Styles.cs" />
     <Compile Include="TextViewAppearanceProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">
       <Project>{F2D07F82-9C51-4889-8987-4CEF47490751}</Project>
       <Name>Mono.Debugger.Soft</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Backend\Debugger.Backend.csproj">
       <Project>{3C524BBD-42F2-4BF2-A96A-329A8C76F7F9}</Project>
@@ -107,7 +109,7 @@
     <ProjectReference Include="..\..\Debugger\Debugger.csproj">
       <Project>{6441A270-0DF3-42C9-9409-02BC273507DA}</Project>
       <Name>Debugger %28Debugger\Debugger%29</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Frontend\Debugger.Frontend.csproj">
       <Project>{9FC9E578-64AB-43F0-BCF7-F87D18CADAC0}</Project>

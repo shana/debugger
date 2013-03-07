@@ -46,6 +46,7 @@
     <Compile Include="IStackFrame.cs" />
     <Compile Include="IThreadMirror.cs" />
     <Compile Include="ITypeMirror.cs" />
+    <Compile Include="IVariable.cs" />
     <Compile Include="IVirtualMachine.cs" />
     <Compile Include="IWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

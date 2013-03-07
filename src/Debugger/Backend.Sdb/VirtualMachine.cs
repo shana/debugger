@@ -106,7 +106,8 @@ namespace Debugger.Backend.Sdb
 				MDS.EventType.VMDeath,
 				MDS.EventType.VMDisconnect,
 				MDS.EventType.AssemblyLoad,
-				MDS.EventType.AssemblyUnload
+				MDS.EventType.AssemblyUnload,
+				MDS.EventType.TypeLoad
 			);
 
 			methodEntryRequest = new EventRequest (vm.CreateMethodEntryRequest ());
@@ -116,12 +117,12 @@ namespace Debugger.Backend.Sdb
 
 		public void Suspend ()
 		{
-			LogProvider.Log ("VM: Suspending ");
+			//LogProvider.Log ("VM: Suspending ");
 
 			vm.Suspend ();
 			if (VMSuspended != null) {
 				var thread = vm.GetThreads ().FirstOrDefault();
-				LogProvider.Log ("VM: thread " + thread.Name);
+				//LogProvider.Log ("VM: thread " + thread.Name);
 				if (thread != null) {
 				    VMSuspended (new Event(Cache.Lookup<SdbThreadMirror> (thread)));
 				}
@@ -176,7 +177,7 @@ namespace Debugger.Backend.Sdb
 
 		private bool HandleEvent (MDS.Event e, MDS.SuspendPolicy policy)
 		{
-			LogProvider.Log ("Received Event: " + e.GetType ());
+			//LogProvider.Log ("Received Event: " + e.GetType ());
 
 			bool exit = false;
 			lock (vm)

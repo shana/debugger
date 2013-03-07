@@ -21,7 +21,7 @@ namespace Debugger
 			get { return basePath; }
 			set
 			{
-				basePath = value;
+				basePath = NormalizePath(value);
 				AddFilter (basePath);
 			}
 		}
@@ -43,8 +43,9 @@ namespace Debugger
 
 		private void OnAssemblyLoaded (IAssemblyEvent ev)
 		{
-			LogProvider.Log (ev.Assembly.Path);
-			ev.Cancel = filter.Count > 0 && !filter.Any (f => ev.Assembly.Path.StartsWith (f));
+			var path = NormalizePath (ev.Assembly.Path);
+			//ev.Cancel = true;
+			ev.Cancel = filter.Count > 0 && !filter.Any (f => path.StartsWith (f));
 		}
 
 		private void OnAssemblyUnloaded (IAssemblyEvent assemblyEvent)
@@ -68,7 +69,10 @@ namespace Debugger
 
 		private void OnTypeLoaded (ITypeEvent typeEvent)
 		{
-			LogProvider.Log ("TypeLoaded {0}", typeEvent.Type.Name);
+			//LogProvider.Log ("TypeLoaded {0} {1}", typeEvent.Type.Name, typeEvent.Type.Assembly.Path);
+			if (!filter.Any (f => typeEvent.Type.Assembly.Path.StartsWith (f)))
+				return;
+
 			loadedTypes.Add (typeEvent.Type);
 			foreach (var file in typeEvent.Type.SourceFiles)
 				if (!sourceFiles.Contains (file))
@@ -81,6 +85,7 @@ namespace Debugger
 		{
 			if (String.IsNullOrEmpty(path))
 				return;
+			path = NormalizePath (path);
 			if (!filter.Contains (path))
 				filter.Add (path);
 		}
@@ -90,19 +95,37 @@ namespace Debugger
 			filter.Clear ();
 		}
 
+
 		public IList<ITypeMirror> TypesFor (string file)
 		{
-			file = MapFile (file);
+			file = MapFullPath (file);
 			return loadedTypes.Where (t => t.SourceFiles.Contains (file)).ToList ();
 		}
 
-		public string MapFile (string file)
+		public string MapFullPath (string path)
 		{
-			file = file.Replace ('/', Path.DirectorySeparatorChar);
-			file = file.Replace ('\\', Path.DirectorySeparatorChar);
-			if (Path.IsPathRooted (file))
-				return file;
-			return Path.Combine (basePath, Path.Combine("Assets", file));
+			path = NormalizePath (path);
+			if (Path.IsPathRooted (path))
+				return path;
+			return Path.Combine (basePath, Path.Combine("Assets", path));
+		}
+
+		public string MapRelativePath (string path)
+		{
+			path = NormalizePath (path);
+			if (!Path.IsPathRooted (path))
+				return path;
+			var assets = Path.Combine (BasePath, "Assets" + Path.DirectorySeparatorChar);
+			if (path.StartsWith (assets))
+				return path.Substring (assets.Length);
+			return path;
+		}
+
+		private static string NormalizePath (string path)
+		{
+			path = path.Replace ('/', Path.DirectorySeparatorChar);
+			path = path.Replace ('\\', Path.DirectorySeparatorChar);
+			return path;
 		}
 	}
 }

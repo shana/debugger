@@ -45,6 +45,7 @@
     <Compile Include="SdbStackFrame.cs" />
     <Compile Include="SdbThreadMirror.cs" />
     <Compile Include="SdbTypeMirror.cs" />
+    <Compile Include="SdbVariable.cs" />
     <Compile Include="TypeEvent.cs" />
     <Compile Include="VirtualMachine.cs" />
   </ItemGroup>

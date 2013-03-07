@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CodeEditor.Composition;
 
 namespace Debugger.Unity.Engine
@@ -35,7 +36,7 @@ namespace Debugger.Unity.Engine
 		public void Start ()
 		{
 			RescanFS (null, null);
-			fsw = new FileSystemWatcher (Path, "*.cs") { IncludeSubdirectories = true };
+			fsw = new FileSystemWatcher (Path) { IncludeSubdirectories = true };
 			fsw.Changed += FSChanged;
 			fsw.Created += RescanFS;
 		}
@@ -47,17 +48,21 @@ namespace Debugger.Unity.Engine
 			fsw = null;
 		}
 
+		string[] extensions = { ".cs", ".js" };
 		private void RescanFS (object sender, FileSystemEventArgs e)
 		{
-			sources = Directory.GetFiles (Path, "*.cs", SearchOption.AllDirectories);
+			sources = Directory.GetFiles (Path, "*", SearchOption.AllDirectories).Where (f => extensions.Contains (System.IO.Path.GetExtension (f))).ToArray ();
 			if (SourcesChanged != null)
 				SourcesChanged ();
 		}
 
 		private void FSChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
 		{
-			if (FileChanged != null)
-				FileChanged (fileSystemEventArgs.FullPath);
+			if (FileChanged != null) {
+				var ext = System.IO.Path.GetExtension (fileSystemEventArgs.FullPath);
+				if (ext == "cs" || ext == "js")
+					FileChanged (fileSystemEventArgs.FullPath);
+			}
 		}
 	}
 

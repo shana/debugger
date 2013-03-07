@@ -13,12 +13,22 @@ namespace Debugger.Unity.Engine
 		private readonly IDebuggerSession session;
 		private readonly IExecutionProvider executionProvider;
 
+		ILocation lastStop;
+
 		[ImportingConstructor]
 		public ExecutionWindow (IDebuggerSession session, IExecutionProvider executionProvider)
 		{
 			this.session = session;
 			this.executionProvider = executionProvider;
-			this.executionProvider.Break += location => SourceNavigator.ShowSourceLocation (location);
+			this.executionProvider.Break += location =>
+				{
+					if (lastStop == location) {
+						executionProvider.Resume ();
+						return;
+					}
+					lastStop = location;
+					SourceNavigator.ShowSourceLocation (location);
+				};
 		}
 
 		public override void OnGUI()

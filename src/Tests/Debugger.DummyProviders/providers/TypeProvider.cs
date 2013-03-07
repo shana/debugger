@@ -81,11 +81,11 @@ namespace Debugger.DummyProviders
 			return loadedTypes.Where (t => t.SourceFiles.Select (s => Path.GetFileName (s)).Contains (file)).ToList ();
 		}
 
-		public string MapFile (string file)
+		public string MapFullPath (string path)
 		{
-			if (Path.IsPathRooted (file))
-				return file;
-			return Path.Combine (basePath, file);
+			if (Path.IsPathRooted (path))
+				return path;
+			return Path.Combine (basePath, path);
 		}
 	}
 }

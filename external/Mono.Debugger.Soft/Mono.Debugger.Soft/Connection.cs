@@ -1779,7 +1779,7 @@ namespace Mono.Debugger.Soft
 			return info;
 		}
 
-		internal LocalsInfo Method_GetLocalsInfo (long id) {
+		internal	LocalsInfo Method_GetLocalsInfo (long id) {
 			var res = SendReceive (CommandSet.METHOD, (int)CmdMethod.GET_LOCALS_INFO, new PacketWriter ().WriteId (id));
 
 			LocalsInfo info = new LocalsInfo ();

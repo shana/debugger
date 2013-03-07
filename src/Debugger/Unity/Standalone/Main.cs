@@ -13,6 +13,7 @@ namespace Debugger.Unity.Standalone
 		{
 			var compositionContainer = new CompositionContainer (new DirectoryCatalog (AssemblyPath));
 			view = compositionContainer.GetExportedValue<MainWindow> ();
+			view.Initialize (compositionContainer);
 		}
 
 		public static void OnGUI ()
@@ -30,13 +31,13 @@ namespace Debugger.Unity.Standalone
 			get { return Path.GetDirectoryName (typeof (Main).Assembly.ManifestModule.FullyQualifiedName); }
 		}
 
-		public static void Update ()
-		{
-		}
+		//public static void Update ()
+		//{
+		//}
 
-		public static void FixedUpdate ()
-		{
+		//public static void FixedUpdate ()
+		//{
 
-		}
+		//}
 	}
 }

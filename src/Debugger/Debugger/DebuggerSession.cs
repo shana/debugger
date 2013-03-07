@@ -5,7 +5,6 @@ using System.Linq;
 using Debugger.Backend;
 using Debugger.Backend.Event;
 using Debugger.Backend.Sdb;
-using Mono.Cecil;
 
 namespace Debugger
 {

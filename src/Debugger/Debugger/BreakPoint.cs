@@ -13,10 +13,14 @@ namespace Debugger
 		public Breakpoint (ILocation location)
 		{
 			Location = location;
+			Enabled = true;
 		}
 	
 		public override void Enable ()
 		{
+			if (Enabled)
+				return;
+
 			Enabled = true;
 			if (OnEnable != null)
 				OnEnable (this);
@@ -24,6 +28,9 @@ namespace Debugger
 
 		public override void Disable ()
 		{
+			if (!Enabled)
+				return;
+
 			Enabled = false;
 			if (OnDisable != null)
 				OnDisable (this);

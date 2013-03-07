@@ -16,7 +16,8 @@ namespace Debugger
 		void AddFilter (string path);
 		void ClearFilters ();
 		IList<ITypeMirror> TypesFor(string file);
-		string MapFile (string file);
-		
+		string MapFullPath (string path);
+
+		string MapRelativePath (string path);
 	}
 }

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using CodeEditor.Composition;
+using CodeEditor.Composition.Hosting;
 using Debugger.Unity.Engine;
 using UnityEngine;
 
@@ -10,60 +11,51 @@ namespace Debugger.Unity.Engine
 	[Export]
 	public class MainWindow
 	{
-		private readonly SourcesWindow sourcesWindow;
-		private readonly SourceWindow sourceWindow;
-		private readonly LogWindow log;
-		private readonly CallStackDisplay callStackDisplay;
-		private readonly ExecutionWindow executionWindow;
-		private readonly BreakpointsWindow breakpointsWindow;
+		private SourcesWindow sourcesWindow;
+		private SourceWindow sourceWindow;
+		private LogWindow log;
 
 		private readonly IDebuggerSession session;
 		private readonly ITypeProvider typeProvider;
 		private readonly DebuggerWindowManager windowManager;
 
-		public static GUISkin skin;
-
 		[ImportingConstructor]
 		public MainWindow (
 			IDebuggerSession session,
 			ITypeProvider typeProvider,
-			SourcesWindow sourcesWindow,
-			SourceWindow sourceWindow,
-			LogWindow log,
-			CallStackDisplay callStackDisplay,
-			ExecutionWindow executionWindow,
-			BreakpointsWindow breakpointsWindow,
 			DebuggerWindowManager windowManager
 		)
 		{
-			this.log = log;
-			this.callStackDisplay = callStackDisplay;
-			this.executionWindow = executionWindow;
-			this.breakpointsWindow = breakpointsWindow;
-			this.sourcesWindow = sourcesWindow;
-			this.sourceWindow = sourceWindow;
 			this.session = session;
 			this.typeProvider = typeProvider;
 			this.windowManager = windowManager;
-
-			Initialize ();
 		}
 
-		void Initialize ()
+		public void Initialize (CompositionContainer composition)
 		{
+			sourcesWindow = composition.GetExportedValue<SourcesWindow> ();
+			sourceWindow = composition.GetExportedValue<SourceWindow> ();
+			windowManager.Add (sourcesWindow);
+			windowManager.Add (sourceWindow);
+			log = composition.GetExportedValue<LogWindow> ();
+//			windowManager.Add (log);
+			windowManager.Add (composition.GetExportedValue<CallstackWindow> ());
+			windowManager.Add (composition.GetExportedValue<LocalsWindow> ());
+			windowManager.Add (composition.GetExportedValue<BreakpointsWindow> ());
+			windowManager.Add (composition.GetExportedValue<ExecutionWindow> ());
 
 			if (HasArguments ())
 				session.Port = SdbPortFromCommandLine ();
 
-			else
-			{
-				var f = new StreamReader (File.Open (@"C:\debug.log", FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
-				var str = f.ReadLine ();
-				f.Close ();
-				session.Port = int.Parse (str.Substring ("Listening on 0.0.0.0:".Length, 5));
-			}
+			//else
+			//{
+			//    var f = new StreamReader (File.Open (@"C:\debug.log", FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+			//    var str = f.ReadLine ();
+			//    f.Close ();
+			//    session.Port = int.Parse (str.Substring ("Listening on 0.0.0.0:".Length, 5));
+			//}
 
-			log.Log ("Connecting to " + session.Port);
+			log.WriteLine ("Connecting to " + session.Port);
 
 			Camera.main.backgroundColor = new Color (0.125f, 0.125f, 0.125f, 0);
 			Application.runInBackground = true;
@@ -73,21 +65,18 @@ namespace Debugger.Unity.Engine
 //			if (!HasArguments ())
 //				return;
 
-			session.TraceCallback += s => Debug.Log (s);
+			session.TraceCallback += s => Console.WriteLine (s);
 			typeProvider.BasePath = ProjectPathFromCommandLine ();
 
 
 			sourcesWindow.StartRefreshing ();
 
 			session.Start ();
-
-			skin = Resources.Load("Skins/Generated/DarkSkin", typeof(GUISkin)) as GUISkin;
-			Debug.Log ("skin " + skin);
 		}
 
 		public void OnGUI ()
 		{
-			GUI.skin = skin;
+			GUI.skin = Styles.skin;
 
 			windowManager.OnGUI ();
 		}

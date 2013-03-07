@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mono.Cecil;
 
 namespace Debugger.Backend
 {
@@ -9,5 +10,6 @@ namespace Debugger.Backend
 		ITypeMirror DeclaringType { get; }
 		ITypeMirror ReturnType { get; }
 		string Name { get; }
+		MethodDefinition Metadata { get; }
 	}
 }

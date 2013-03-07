@@ -1,92 +1,61 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using CodeEditor.Composition;
-using CodeEditor.Text.UI.Unity.Engine;
+using Debugger.Backend;
 using UnityEngine;
 
 namespace Debugger.Unity.Engine
 {
 	[Export]
+	[Export (typeof (IDebuggerWindow))]
 	public class BreakpointsWindow : DebuggerWindow
 	{
+		private readonly IDebuggerSession session;
 		private readonly IBreakpointProvider breakpointProvider;
-		private readonly ITextView textView;
-		private readonly ITextViewMargins margins;
+		private readonly ISourceNavigator sourceNavigator;
+		private IList<IBreakpoint> breakpoints;
+		private Vector2 scrollPosition;
 
 		[ImportingConstructor]
-		public BreakpointsWindow (ITextViewFactory viewFactory, IBreakpointProvider breakpointProvider)
+		public BreakpointsWindow (IDebuggerSession session,
+			IBreakpointProvider breakpointProvider,
+			ISourceNavigator sourceNavigator
+			)
 		{
+			this.session = session;
 			this.breakpointProvider = breakpointProvider;
-			this.breakpointProvider.BreakpointAdded += b => textView.Document.AppendLine (string.Format("{0}:{1}", b.Location.SourceFile,  b.Location.LineNumber));
-			this.breakpointProvider.BreakpointRemoved += b => textView.Document.DeleteLine (this.breakpointProvider.IndexOf (b));
-			textView = viewFactory.CreateView ();
-			textView.ViewPort = DebuggerWindow.Default;
-			margins = new MarginsFactory ().MarginsFor (this.textView);
-		}
-
-		public override Rect ViewPort
-		{
-			get { return textView.ViewPort; }
-			set { textView.ViewPort = value; }
+			this.sourceNavigator = sourceNavigator;
 		}
 
 		public override void OnGUI ()
 		{
-			textView.OnGUI ();
+			if (Event.current.type == EventType.Layout)
+				breakpoints = breakpointProvider.Breakpoints;
+
+			scrollPosition = GUILayout.BeginScrollView (scrollPosition, false, true);
+
+			GUI.enabled = session.Active;
+
+			foreach (var bp in breakpoints)
+			{
+				var texture = bp.Enabled ? Styles.textureBreakpointEnabled : Styles.textureBreakpointDisabled;
+				GUILayout.BeginHorizontal (GUILayout.ExpandWidth (true));
+				var content = new GUIContent (string.Format("{0}:{1}", session.TypeProvider.MapRelativePath (bp.Location.SourceFile), bp.Location.LineNumber));
+				GUI.DrawTexture (GUILayoutUtility.GetRect (20, 20), texture, ScaleMode.ScaleToFit);
+				if (GUILayout.Button (content, Styles.skin.label))
+					sourceNavigator.ShowSourceLocation (bp.Location);
+				GUILayout.FlexibleSpace ();
+				GUILayout.EndHorizontal ();
+			}
+
+			GUI.enabled = true;
+			GUILayout.EndScrollView ();
 		}
 
 		public override string Title
 		{
 			get { return "Breakpoints"; }
-		}
-
-		class MarginsFactory : ITextViewMarginsFactory
-		{
-			public ITextViewMargins MarginsFor (ITextView textView)
-			{
-				return new Margins () {new IconMargin ()};
-			}
-
-			class Margins : List<ITextViewMargin>, ITextViewMargins
-			{
-				public void Repaint (ITextViewLine line, Rect lineRect) {}
-				public void HandleInputEvent (ITextViewLine line, Rect lineRect) {}
-				public float TotalWidth { get; private set; }
-			}
-
-			class IconMargin : ITextViewMargin
-			{
-				[Import]
-				public IBreakpointProvider BreakpointProvider { get; set; }
-
-				GUIStyle styleOn = null;
-				GUIStyle styleOff = null;
-
-				public void Repaint (ITextViewLine line, Rect marginRect)
-				{
-					if (styleOn == null) {
-						styleOn = MainWindow.skin.FindStyle ("eventpin");
-						styleOff = MainWindow.skin.FindStyle ("eventpin on");
-					}
-
-					if (BreakpointProvider.IsBound (BreakpointProvider[line.LineNumber]))
-						styleOn.Draw (marginRect, false, true, true, false);
-					else
-						styleOff.Draw (marginRect, false, true, true, false);
-				}
-
-				public void HandleInputEvent (ITextViewLine line, Rect marginRect)
-				{
-					if (Event.current.type != EventType.mouseDown)
-						return;
-
-					if (!marginRect.Contains (Event.current.mousePosition))
-						return;
-
-				}
-
-				public float Width { get { return 10; } }
-			}
 		}
 	}
 }

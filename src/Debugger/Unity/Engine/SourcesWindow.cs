@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -26,7 +27,9 @@ namespace Debugger.Unity.Engine
 
 		public void StartRefreshing ()
 		{
-			sourcesProvider.FileChanged += (f) => { if (sourceNavigator.CurrentLocation.SourceFile == f) sourceNavigator.RefreshSource (); };
+			sourcesProvider.FileChanged += (f) => {
+				if (sourceNavigator.CurrentLocation.SourceFile == f) sourceNavigator.RefreshSource ();
+			};
 			sourcesProvider.Start ();
 		}
 
@@ -42,16 +45,17 @@ namespace Debugger.Unity.Engine
 
 			foreach (var file in sourceFiles)
 			{
+				var filename = typeProvider.MapRelativePath (file);
 				if (sourceNavigator.CurrentLocation != null && sourceNavigator.CurrentLocation.SourceFile == file)
 				{
 					Color oldColor = GUI.contentColor;
 					GUI.contentColor = new Color (0.42f, 0.7f, 1.0f, 1.0f);
-					GUILayout.Label(Path.GetFileName (file));
+					GUILayout.Label (filename);
 					GUI.contentColor = oldColor;
 					continue;
 				}
 
-				if (GUILayout.Button (Path.GetFileName (file), GUI.skin.label))
+				if (GUILayout.Button (filename, GUI.skin.label))
 					sourceNavigator.ShowSourceLocation (new Location (file, 1));
 			}
 

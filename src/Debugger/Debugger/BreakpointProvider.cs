@@ -30,6 +30,16 @@ namespace Debugger
 			this.typeProvider = typeProvider;
 			typeProvider.TypeLoaded += OnTypeLoaded;
 			typeProvider.TypeUnloaded += OnTypeUnloaded;
+			Breakpoint.OnEnable += breakpoint => {
+					IBreakpoint bound;
+					if (breakpoints.TryGetValue (breakpoint, out bound))
+						bound.Enable ();
+			};
+			Breakpoint.OnDisable += breakpoint => {
+					IBreakpoint bound;
+					if (breakpoints.TryGetValue (breakpoint, out bound))
+						bound.Disable ();
+			};
 		}
 
 		public IEnumerable<ILocation> GetBoundLocations (IBreakpoint breakpoint)
@@ -46,7 +56,7 @@ namespace Debugger
 
 		public IBreakpoint GetBreakpointAt (string file, int line)
 		{
-			file = typeProvider.MapFile (file);
+			file = typeProvider.MapFullPath (file);
 			return breakpoints.Keys.FirstOrDefault (bp => bp.Location.SourceFile == file && bp.Location.LineNumber == line);
 		}
 
@@ -62,9 +72,9 @@ namespace Debugger
 
 		public void ToggleBreakpointAt (string file, int line)
 		{
-			LogProvider.Log ("Toggling breakpoint at file {0} line {1}", file, line);
+			//LogProvider.Log ("Toggling breakpoint at file {0} line {1}", file, line);
 
-			file = typeProvider.MapFile (file);
+			file = typeProvider.MapFullPath (file);
 
 			var breakPoint = GetBreakpointAt (file, line);
 			if (breakPoint == null)
@@ -79,6 +89,7 @@ namespace Debugger
 				return false;
 
 			breakpoints.Add (breakpoint, null);
+			breakpoint.Enable ();
 			if (BreakpointAdded != null)
 				BreakpointAdded (breakpoint);
 
@@ -91,7 +102,7 @@ namespace Debugger
 
 		public IBreakpoint AddBreakpoint (string file, int line)
 		{
-			file = typeProvider.MapFile (file);
+			file = typeProvider.MapFullPath (file);
 			if (file == null)
 				return null;
 			var bp = new Breakpoint (new Location (file, line));
@@ -104,8 +115,8 @@ namespace Debugger
 		{
 			if (!breakpoints.ContainsKey (breakpoint))
 				return false;
-
-			if (IsBound (breakpoint) && breakpoint.Enabled)
+			IBreakpoint bp;
+			if (breakpoints.TryGetValue (breakpoint, out bp) && bp.Enabled)
 				breakpoint.Disable ();
 
 			if (BreakpointRemoved != null)
@@ -128,7 +139,7 @@ namespace Debugger
 
 		public bool RemoveBreakpoint (string file, int line)
 		{
-			file = typeProvider.MapFile (file);
+			file = typeProvider.MapFullPath (file);
 
 			var breakpoint = GetBreakpointAt (file, line);
 			if (breakpoint != null)
@@ -155,7 +166,8 @@ namespace Debugger
 
 				var b = Factory.CreateBreakpoint (bestLocation);
 				breakpoints[bp] = b;
-				b.Enable ();
+				if (bp.Enabled) b.Enable ();
+
 				if (BreakpointBound != null)
 						BreakpointBound (bp, b, b.Location);
 				return true;

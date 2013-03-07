@@ -35,7 +35,7 @@ namespace Debugger.Unity.Engine
 
 		static bool IsValidLocation (ILocation location)
 		{
-			LogProvider.Log ("checking {0} {1}", location.SourceFile, File.Exists (location.SourceFile));
+			//LogProvider.Log ("checking {0} {1}", location.SourceFile, File.Exists (location.SourceFile));
 			return location.LineNumber >= 1 && File.Exists (location.SourceFile);
 		}
 	}

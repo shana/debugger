@@ -10,6 +10,9 @@ namespace Debugger.Backend.Sdb
 		SdbMethodMirror sdbMethodMirror;
 		public ILocation Location {
 			get {
+				var request = Cache.Lookup<SdbBreakpoint> (Unwrap<MDS.BreakpointEvent> ().Request);
+				if (request != null)
+					return request.Location;
 				return new SdbLocation (Unwrap<MDS.BreakpointEvent> ().Method.SourceFile, (int)Unwrap<MDS.BreakpointEvent> ().Location);
 			}
 		}

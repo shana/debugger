@@ -9,20 +9,20 @@ namespace Debugger.Unity.Standalone
 			Main.Start();
 		}
 
-		private void Update()
-		{
-			Main.Update();
-		}
+		//private void Update()
+		//{
+		//    Main.Update();
+		//}
 
 		private void OnGUI()
 		{
 			Main.OnGUI();
 		}
 
-		private void FixedUpdate()
-		{
-			Main.FixedUpdate();
-		}
+		//private void FixedUpdate()
+		//{
+		//    Main.FixedUpdate();
+		//}
 
 		private void OnApplicationQuit()
 		{
