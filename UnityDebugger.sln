@@ -20,7 +20,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Debugger.Tests", "src\Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Debugger.IntegrationTests", "src\Tests\Debugger.IntegrationTests\Debugger.IntegrationTests.csproj", "{E169204B-D59F-4CDA-A0A9-CBCEF7F538B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Debugger.Soft", "external\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj", "{F2D07F82-9C51-4889-8987-4CEF47490751}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Debugger.Soft", "external\Mono.Debugger.Soft\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj", "{F2D07F82-9C51-4889-8987-4CEF47490751}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{5E2C45D4-AEA0-42A7-A339-B6EB9773AB30}"
 EndProject

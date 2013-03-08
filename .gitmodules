@@ -1,0 +1,3 @@
+[submodule "external/Mono.Debugger.Soft"]
+	path = external/Mono.Debugger.Soft
+	url = git@github.com:andreiagaita/Mono.Debugger.Soft
