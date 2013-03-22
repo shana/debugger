@@ -72,7 +72,7 @@ namespace Debugger
 
 		public void ToggleBreakpointAt (string file, int line)
 		{
-			//LogProvider.Log ("Toggling breakpoint at file {0} line {1}", file, line);
+			LogProvider.Log ("Toggling breakpoint at file {0} line {1}", file, line);
 
 			file = typeProvider.MapFullPath (file);
 
@@ -181,7 +181,7 @@ namespace Debugger
 			foreach (var bp in bps) {
 				if (BreakpointUnbound != null)
 					BreakpointUnbound (bp.Key, bp.Value, bp.Value.Location);
-				breakpoints.Remove (bp.Key);
+				breakpoints[bp.Key] = null;
 			}
 		}
 

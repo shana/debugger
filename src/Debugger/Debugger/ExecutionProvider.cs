@@ -31,11 +31,18 @@ namespace Debugger
 			this.vm = vm;
 			this.vm.VMSuspended += VMSuspended;
 			this.vm.Stepped += OnStepped;
-			this.vm.ThreadStarted += OnThreadStarted;
+			this.vm.ThreadStopped += OnThreadStopped;
 			this.vm.BreakpointHit += OnBreakpointHit;
+			this.vm.AppDomainUnloaded += OnAppDomainUnloaded;
 			currentLocation = null;
 			currentThread = null;
 			running = true;
+		}
+
+		void OnAppDomainUnloaded (IEvent ev)
+		{
+			requests.Values.All (x => {x.Disable (); return false; });
+			requests.Clear ();
 		}
 
 		private void OnBreakpointHit (IBreakpointEvent ev)
@@ -45,16 +52,13 @@ namespace Debugger
 				Break (currentLocation);
 		}
 
-		private void OnThreadStarted (IEvent ev)
+		private void OnThreadStopped (IEvent ev)
 		{
-			if (ev.State == State.Unload)
+			var reqs = requests.Keys.Where (t => t.Equals (ev.Thread));
+			foreach (var t in reqs)
 			{
-				var reqs = requests.Keys.Where (t => t.Equals (ev.Thread));
-				foreach (var t in reqs)
-				{
-					requests[t].Disable ();
-					requests.Remove (t);
-				}
+				requests[t].Disable ();
+				requests.Remove (t);
 			}
 		}
 
@@ -100,6 +104,9 @@ namespace Debugger
 						request = Factory.CreateStepRequest (currentThread, stepType);
 						requests.Add (currentThread, request);
 					}
+					LogProvider.Log ("Request enable {0}", request.GetHashCode ());
+					if (request.Enabled)
+						request.Disable ();
 					request.Enable ();
 				}
 			}
@@ -109,6 +116,7 @@ namespace Debugger
 		private void OnStepped (IEvent ev)
 		{
 			vm.Suspend (ev);
+			LogProvider.Log ("Request disable {0}", ev.Request.GetHashCode ());
 			ev.Request.Disable ();
 
 			if (Break != null)

@@ -6,6 +6,7 @@ namespace Debugger.Backend
 	{
 		event Action<IEventRequest> OnRequestEnabled;
 		event Action<IEventRequest> OnRequestDisabled;
+		bool Enabled { get; }
 
 		void Enable ();
 		void Disable ();

@@ -65,7 +65,7 @@ namespace Debugger.Unity.Engine
 //			if (!HasArguments ())
 //				return;
 
-			session.TraceCallback += s => Console.WriteLine (s);
+			session.TraceCallback += s => Trace (s);
 			typeProvider.BasePath = ProjectPathFromCommandLine ();
 
 

@@ -3,42 +3,6 @@ using CodeEditor.Composition.Hosting;
 
 namespace Debugger.Backend
 {
-	public static class LogProvider
-	{
-		public static event Action<string> Debug;
-		public static event Action<string> Error;
-
-		public static void Log (string format, params object[] args)
-		{
-			if (Debug != null)
-				Debug (string.Format (format, args));
-		}
-
-		public static void LogError (string format, params object[] args)
-		{
-			if (Error != null)
-				Error (string.Format (format, args));
-		}
-
-		public static void LogError (object value)
-		{
-			if (Error != null)
-				Error (value == null ? "" : value.ToString ());
-		}
-
-		public static void WithErrorLogging (Action action)
-		{
-			try
-			{
-				action ();
-			}
-			catch (Exception e)
-			{
-				LogError (e);
-			}
-		}
-	}
-
 	public interface IFactory
 	{
 		void Initialize ();

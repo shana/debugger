@@ -114,6 +114,9 @@ namespace Debugger
 			this.threadProvider = threadProvider;
 			this.breakpointProvider = breakpointProvider;
 			this.vm = vm;
+
+			LogProvider.Debug += s => LogOnDebug (s);
+			LogProvider.Error += s => LogOnError (s);
 		}
 
 		//public DebuggerSession (ProcessStartInfo psi, string options)

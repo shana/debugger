@@ -107,7 +107,8 @@ namespace Debugger.Backend.Sdb
 				MDS.EventType.VMDisconnect,
 				MDS.EventType.AssemblyLoad,
 				MDS.EventType.AssemblyUnload,
-				MDS.EventType.TypeLoad
+				MDS.EventType.ThreadStart,
+				MDS.EventType.ThreadDeath
 			);
 
 			methodEntryRequest = new EventRequest (vm.CreateMethodEntryRequest ());

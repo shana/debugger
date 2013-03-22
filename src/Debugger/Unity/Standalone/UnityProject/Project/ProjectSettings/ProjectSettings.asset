@@ -33,14 +33,12 @@ PlayerSettings:
   use32BitDisplayBuffer: 0
   use24BitDepthBuffer: 0
   defaultIsFullScreen: 0
-  defaultIsNativeResolution: 0
   runInBackground: 0
   captureSingleScreen: 0
   Override IPod Music: 0
   enableHWStatistics: 1
   usePlayerLog: 1
   stripPhysics: 0
-  forceSingleInstance: 0
   resizableWindow: 1
   useMacAppStoreValidation: 0
   xboxSkinOnGPU: 1
@@ -137,7 +135,6 @@ PlayerSettings:
   ps3BackgroundPath: 
   ps3SoundPath: 
   ps3TrophyCommId: 
-  ps3NpCommunicationPassphrase: 
   ps3TrophyPackagePath: 
   ps3BootCheckMaxSaveGameSizeKB: 128
   ps3TrophyCommSig: 
@@ -166,7 +163,6 @@ PlayerSettings:
   metroSplashScreenBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
   metroSplashScreenUseBackgroundColor: 0
   metroCapabilities: {}
-  metroCompilationOverrides: 1
   firstStreamedLevelWithResources: 0
   unityRebuildLibraryVersion: 9
   unityForwardCompatibleVersion: 37

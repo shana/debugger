@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CodeEditor.Composition;
+using UnityEngine;
 
 namespace Debugger.Unity.Engine
 {
@@ -37,6 +38,8 @@ namespace Debugger.Unity.Engine
 		{
 			RescanFS (null, null);
 			fsw = new FileSystemWatcher (Path) { IncludeSubdirectories = true };
+			fsw.EnableRaisingEvents = true;
+			fsw.Error += (sender, args) => Debug.Log (args.GetException ().Message);
 			fsw.Changed += FSChanged;
 			fsw.Created += RescanFS;
 		}
@@ -58,10 +61,12 @@ namespace Debugger.Unity.Engine
 
 		private void FSChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
 		{
+			var ext = System.IO.Path.GetExtension (fileSystemEventArgs.FullPath);
+			Debug.Log ("FSChanged: " + fileSystemEventArgs.FullPath + " " + ext);
 			if (FileChanged != null) {
-				var ext = System.IO.Path.GetExtension (fileSystemEventArgs.FullPath);
-				if (ext == "cs" || ext == "js")
+				if (extensions.Contains (ext)) {
 					FileChanged (fileSystemEventArgs.FullPath);
+				}
 			}
 		}
 	}

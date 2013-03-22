@@ -14,10 +14,11 @@ namespace Debugger.Unity.Engine
 		private volatile string pendingSourceLocation;
 		private volatile int pendingSourceLine;
 		private string currentDocument = "";
+		private string title = "";
 
 		public override string Title
 		{
-			get { return currentDocument; }
+			get { return title; }
 		}
 
 		[ImportingConstructor]
@@ -34,8 +35,9 @@ namespace Debugger.Unity.Engine
 				int topOffset = 25;
 				int bottomOffset = 10;
 				textView.ViewPort = new Rect (0, topOffset, ViewPort.width, ViewPort.height - topOffset - bottomOffset);
-				textView.Document.Caret.SetPosition (pendingSourceLine - 1, 0);
-				currentDocument = System.IO.Path.GetFileName (pendingSourceLocation);
+				textView.Document.Caret.SetPosition (pendingSourceLine, 0);
+				currentDocument = pendingSourceLocation;
+				title = System.IO.Path.GetFileName (currentDocument);
 				textView.EnsureCursorIsVisible ();
 
 				pendingSourceLocation = null;
@@ -57,6 +59,7 @@ namespace Debugger.Unity.Engine
 		public void RefreshSource ()
 		{
 			pendingSourceLine = textView.Document.CurrentLine.LineNumber;
+			pendingSourceLocation = currentDocument;
 		}
 	}
 }

@@ -13,6 +13,8 @@ namespace Debugger
 		public event Action<IEventRequest> OnRequestEnabled;
 		public event Action<IEventRequest> OnRequestDisabled;
 
+		public bool Enabled { get; private set; }
+
 		public virtual void Enable ()
 		{
 			if (OnRequestEnabled != null)

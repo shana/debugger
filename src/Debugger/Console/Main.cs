@@ -41,7 +41,7 @@ namespace Debugger
 			if (Port == 0)
 			{
 
-				var f = new StreamReader (File.Open (@"C:\debug.log", FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+				var f = new StreamReader (File.Open (@"C:\as3\sdb.log", FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
 				var str = f.ReadLine ();
 				f.Close ();
 				Port = int.Parse (str.Substring ("Listening on 0.0.0.0:".Length, 5));
@@ -287,7 +287,7 @@ namespace Debugger
 
 		private bool DoExecution (string command, Stack<string> commands, Dictionary<string, CommandHandler> calls)
 		{
-			session.ExecutionProvider.Step (StepType.Into);
+			session.ExecutionProvider.Step (StepType.Over);
 			return true;
 		}
 

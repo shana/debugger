@@ -69,7 +69,7 @@ namespace Debugger
 
 		private void OnTypeLoaded (ITypeEvent typeEvent)
 		{
-			//LogProvider.Log ("TypeLoaded {0} {1}", typeEvent.Type.Name, typeEvent.Type.Assembly.Path);
+			LogProvider.Log ("TypeLoaded {0} {1}", typeEvent.Type.Name, typeEvent.Type.Assembly.Path);
 			if (!filter.Any (f => typeEvent.Type.Assembly.Path.StartsWith (f)))
 				return;
 

@@ -28,7 +28,11 @@ namespace Debugger.Unity.Engine
 		public void StartRefreshing ()
 		{
 			sourcesProvider.FileChanged += (f) => {
-				if (sourceNavigator.CurrentLocation.SourceFile == f) sourceNavigator.RefreshSource ();
+				
+				if (sourceNavigator.CurrentLocation.SourceFile == f) {
+					Debug.Log ("Refreshing " + f);
+					sourceNavigator.RefreshSource ();
+				}
 			};
 			sourcesProvider.Start ();
 		}
